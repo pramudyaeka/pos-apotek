@@ -38,9 +38,9 @@
             </p>
             <p class="text-sm font-semibold mt-0.5">Please request a new shipment</p>
         </div>
-        <a href="#" class="hidden sm:inline-flex items-center text-sm font-medium bg-white/10 hover:bg-white/15 px-4 py-2 rounded-lg transition shrink-0">
+        {{-- <a href="#" class="hidden sm:inline-flex items-center text-sm font-medium bg-white/10 hover:bg-white/15 px-4 py-2 rounded-lg transition shrink-0">
             Request now
-        </a>
+        </a> --}}
     </div>
 
     {{-- Stat cards --}}

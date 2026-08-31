@@ -35,10 +35,10 @@
     </div>
 
     {{-- Konten utama: grid produk (kiri) + ringkasan order (kanan) --}}
-    <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
+    <div class="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-5 md:gap-4 lg:gap-6 items-start">
 
         {{-- Grid produk --}}
-        <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
+        <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
             @php
                 $products = [
                     ['name' => 'Somitril', 'category' => 'Pain Relief', 'price' => 5000],
@@ -73,9 +73,9 @@
                     </div>
 
                     <p class="text-sm font-semibold text-gray-900 truncate">{{ $p['name'] }}</p>
-                    <div class="flex items-center justify-between mt-2">
-                        <span class="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{{ $p['category'] }}</span>
-                        <span class="text-sm font-semibold text-gray-900">Rp{{ number_format($p['price'], 0, ',', '.') }}</span>
+                    <div class="flex items-center justify-between gap-1.5 mt-2">
+                        <span class="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full truncate">{{ $p['category'] }}</span>
+                        <span class="text-sm font-semibold text-gray-900 shrink-0">Rp{{ number_format($p['price'], 0, ',', '.') }}</span>
                     </div>
                 </button>
             @endforeach
@@ -86,14 +86,14 @@
         </div>
 
         {{-- Ringkasan order --}}
-        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 lg:sticky lg:top-6 flex flex-col max-h-[calc(100vh-160px)]">
+        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-6 flex flex-col min-h-0 max-h-[calc(100vh-160px)]">
 
             <div class="text-center px-6 pt-6 pb-4 shrink-0">
                 <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Summary Order</h2>
                 <p class="text-sm text-gray-400 mt-1">Order Number : #021</p>
             </div>
 
-            <div id="cartList" class="flex-1 overflow-y-auto px-4 space-y-3 pb-2"></div>
+            <div id="cartList" class="flex-1 min-h-0 overflow-y-auto px-4 space-y-3 pb-2"></div>
 
             <p id="cartEmpty" class="hidden text-center text-sm text-gray-400 px-6 py-8">
                 No items yet — tap a product on the left to add it here.

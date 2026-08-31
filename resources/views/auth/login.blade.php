@@ -3,16 +3,20 @@
 @section('content')
 
     <section class="min-h-screen flex items-center justify-center bg-[#EEF2EF] p-4">
-        <div class="w-full max-w-4xl rounded-3xl overflow-hidden shadow-xl shadow-black/5 bg-white flex flex-col md:flex-row relative">
+        <div
+            class="w-full max-w-4xl rounded-3xl overflow-hidden shadow-xl shadow-black/5 bg-white flex flex-col md:flex-row relative">
 
             {{-- Panel kiri: label resep --}}
-            <div class="hidden md:flex md:w-[42%] bg-[#1F4D3D] flex-col justify-between px-10 py-10 relative overflow-hidden">
+            <div
+                class="hidden md:flex md:w-[42%] bg-[#1F4D3D] flex-col justify-between px-10 py-10 relative overflow-hidden">
                 {{-- tekstur titik ala blister pack --}}
                 <div class="absolute inset-0 opacity-[0.07]"
-                     style="background-image: radial-gradient(circle, white 2.5px, transparent 2.5px); background-size: 22px 22px;"></div>
+                    style="background-image: radial-gradient(circle, white 2.5px, transparent 2.5px); background-size: 22px 22px;">
+                </div>
 
                 <div class="relative">
-                    <p class="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.25em] text-emerald-200/60 uppercase mb-6">Rx // Pos System</p>
+                    <p class="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.25em] text-emerald-200/60 uppercase mb-6">Rx //
+                        Pos System</p>
                     <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center mb-5">
                         <span class="text-white text-xl font-['Space_Grotesk'] leading-none">+</span>
                     </div>
@@ -31,7 +35,8 @@
 
             {{-- Garis perforasi vertikal (hanya tampil saat split aktif, md ke atas) --}}
             <div class="hidden md:block absolute top-0 bottom-0 left-[42%] w-4 -ml-2 z-10"
-                 style="background-image: radial-gradient(circle, #EEF2EF 6px, transparent 6.5px); background-size: 16px 16px; background-position: center;"></div>
+                style="background-image: radial-gradient(circle, #EEF2EF 6px, transparent 6.5px); background-size: 16px 16px; background-position: center;">
+            </div>
 
             {{-- Panel kanan: form --}}
             <div class="w-full md:w-[58%] px-8 py-10 md:px-12 flex flex-col justify-center">
@@ -62,11 +67,10 @@
                             </label>
                             <a href="#" class="text-sm text-[#B8632E] hover:text-[#96502A] font-medium">Forgot password?</a>
                         </div>
+                        <a href="{{ route('dashboard') }}"class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition flex items-center justify-center">
+                            Sign In
+                        </a>
 
-                        <button type="submit"
-                            class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition">
-                            Sign in
-                        </button>
                     </form>
                 </div>
             </div>

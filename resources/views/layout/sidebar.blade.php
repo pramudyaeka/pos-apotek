@@ -32,8 +32,9 @@
             sesuai titik yang Anda inginkan.
             --}}
             <aside id="sidebar" class="
-                fixed md:static inset-y-0 left-0 z-50
+                fixed md:sticky inset-y-0 md:inset-auto md:top-0 left-0 z-50
                 w-64 md:w-20 lg:w-64
+                md:h-screen
                 -translate-x-full md:translate-x-0
                 transition-transform duration-200 ease-in-out
                 flex flex-col bg-white border-r border-gray-100 shrink-0
@@ -116,7 +117,7 @@
                             Inventory</p>
                         <ul class="space-y-1">
                             <li>
-                                <a href="{{ route('category') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition
+                                <a href="{{ route('category') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
                                 md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
                                 lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('category') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -128,9 +129,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition
+                                <a href="{{ route('product') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
                                 md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5">
+                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('product') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                         class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -150,9 +151,9 @@
                             Report</p>
                         <ul class="space-y-1">
                             <li>
-                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition
+                                <a href="{{ route('reporting') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
                                 md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5">
+                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('reporting') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                         class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -171,9 +172,9 @@
                             Settings</p>
                         <ul class="space-y-1">
                             <li>
-                                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 text-sm font-medium transition
+                                <a href="{{ route('user-management') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
                                 md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5">
+                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('user-management') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                         class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
                                         <circle cx="12" cy="8" r="3.2" />
