@@ -176,7 +176,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('productsLogic', () => ({
                 searchQuery: '', showModal: false, editingProduct: null,
-                categoryOptions: @json($categories->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])->values()),
+                categoryOptions: @json($categoryData),
                 unitOptions: ['Tablet','Strip','Box','Tube','Sachet','Capsule','Pcs'],
                 form: { name:'', category_id:'', unit:'', price:null, stock:null, min_stock:null, is_active:true },
                 products: @json($productData),
