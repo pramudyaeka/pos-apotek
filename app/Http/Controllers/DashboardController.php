@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\\Models\\Category;
-use App\\Models\\Product;
-use App\\Models\\Sale;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Sale;
 
 class DashboardController extends Controller
 {
