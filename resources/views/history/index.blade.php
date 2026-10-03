@@ -20,7 +20,7 @@
                     class="w-full sm:w-56 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                 <select name="module" class="px-3 py-2 rounded-xl border border-gray-200 text-sm">
                     <option value="all">Semua modul</option>
-                    @foreach(['Authentication' => 'Authentication','Kategori' => 'Kategori','Produk' => 'Produk','Pengguna' => 'Pengguna','Sale' => 'Sale'] as $value => $label)
+                    @foreach(['Authentication' => 'Autentikasi','Category' => 'Kategori','Product' => 'Produk','User' => 'Pengguna','Sale' => 'Penjualan'] as $value => $label)
                         <option value="{{ $value }}" @selected(request('module') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -77,7 +77,7 @@
 
     <section class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
         <div class="mb-5">
-            <h2 class="font-['Space_Grotesk'] font-semibold text-lg">Stok Movement Riwayat</h2>
+            <h2 class="font-['Space_Grotesk'] font-semibold text-lg">Riwayat Pergerakan Stok</h2>
             <p class="text-xs text-gray-400 mt-1">Riwayat barang masuk, keluar, dan penyesuaian stok.</p>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -96,14 +96,14 @@
                 <thead>
                     <tr class="border-b border-gray-100 text-left text-xs text-gray-400 uppercase tracking-wide">
                         <th class="py-3 pr-4">Tanggal</th><th class="py-3 pr-4">Produk</th><th class="py-3 pr-4">Pengguna</th>
-                        <th class="py-3 pr-4">Type</th><th class="py-3 pr-4">Qty</th><th class="py-3">Stok</th>
+                        <th class="py-3 pr-4">Jenis</th><th class="py-3 pr-4">Jumlah</th><th class="py-3">Stok</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($stockMovements as $movement)
                         <tr class="border-b border-gray-50">
                             <td class="py-3 pr-4 whitespace-nowrap text-gray-500">{{ $movement->created_at->format('d M Y H:i') }}</td>
-                            <td class="py-3 pr-4 font-medium">{{ $movement->product?->name ?? 'Hapusd product' }}</td>
+                            <td class="py-3 pr-4 font-medium">{{ $movement->product?->name ?? 'Produk sudah dihapus' }}</td>
                             <td class="py-3 pr-4">{{ $movement->user?->name ?? 'System' }}</td>
                             <td class="py-3 pr-4"><span class="px-2.5 py-1 rounded-full {{ $movement->type === 'IN' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600' }} text-xs">{{ $movement->type }}</span></td>
                             <td class="py-3 pr-4">{{ $movement->quantity }}</td>
