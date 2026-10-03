@@ -56,11 +56,11 @@
                                 <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
                                     :class="cat.is_active ? 'bg-[#1F4D3D]/10 text-[#1F4D3D]' : 'bg-gray-100 text-gray-500'">
                                     <span class="w-1.5 h-1.5 rounded-full" :class="cat.is_active ? 'bg-[#1F4D3D]' : 'bg-gray-400'"></span>
-                                    <span x-text="cat.status"></span>
+                                    <span x-text="cat.is_active ? 'Active' : 'Inactive'"></span>
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-xs font-medium text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full" x-text="cat.totalItems + ' Items'"></span>
+                                <span class="text-xs font-medium text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full" x-text="cat.products_count + ' Items'"></span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-2">
@@ -134,7 +134,7 @@
             Alpine.data('categoriesLogic', () => ({
                 searchQuery:'', showModal:false, editingCategory:null,
                 form:{name:'',is_active:true},
-                categories:@json($categories->map(fn($c)=>['id'=>$c->id,'name'=>$c->name,'status'=>$c->is_active?'Active':'Inactive','totalItems'=>$c->products_count,'is_active'=>$c->is_active])->values()),
+                categories: @json($categories),
                 filteredCategories(){const q=this.searchQuery.trim().toLowerCase();return q?this.categories.filter(c=>c.name.toLowerCase().includes(q)):this.categories;},
                 openAddModal(){this.editingCategory=null;this.form={name:'',is_active:true};this.showModal=true;},
                 openEditModal(cat){this.editingCategory=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;},
@@ -144,7 +144,7 @@
                     const editing=this.editingCategory;const url=editing?'{{ url('/category') }}/'+editing.id:'{{ route('category.store') }}';
                     const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
                     const data=await response.json();if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Unable to save category');return;}
-                    const normalized={id:data.id,name:data.name,status:data.is_active?'Active':'Inactive',totalItems:data.products_count??editing?.totalItems??0,is_active:data.is_active};
+                    const normalized={id:data.id,name:data.name,is_active:data.is_active,products_count:data.products_count??editing?.products_count??0};
                     if(editing)Object.assign(editing,normalized);else this.categories.push(normalized);this.closeModal();
                 },
                 async deleteCategory(id){
