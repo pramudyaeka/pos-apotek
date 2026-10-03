@@ -117,7 +117,7 @@
                         class="w-11 h-6 rounded-full transition relative shrink-0"
                         :class="form.is_active ? 'bg-[#1F4D3D]' : 'bg-gray-300'">
                         <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all"
-                            :class="form.status === 'Active' ? 'left-[22px]' : 'left-0.5'"></span>
+                            :class="form.is_active ? 'left-[22px]' : 'left-0.5'"></span>
                     </button>
                 </div>
 
