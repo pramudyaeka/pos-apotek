@@ -158,7 +158,7 @@
                     backgroundColor: 'rgba(31, 77, 61, 0.08)',
                     tension: 0.35,
                     fill: true,
-                    pointKembaligroundColor: '#1F4D3D',
+                    pointBackgroundColor: '#1F4D3D',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
                     pointRadius: 5,
