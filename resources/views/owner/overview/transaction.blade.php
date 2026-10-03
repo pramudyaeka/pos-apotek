@@ -11,7 +11,7 @@
 
         <div class="mb-6">
             <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Transaksi</h1>
-            <p class="text-gray-500 mt-1">Manage and monitoring your sales in one page</p>
+            <p class="text-gray-500 mt-1">Kelola dan pantau penjualan dalam satu halaman</p>
         </div>
 
         {{--
@@ -42,7 +42,7 @@
                             <option value="highest">Nominal terbesar</option>
                             <option value="lowest">Nominal terkecil</option>
                         </select>
-                        <select x-model="methodFilter" aria-label="Filter payment method" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                        <select x-model="methodFilter" aria-label="Filter metode pembayaran" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                             <option value="all">Semua metode</option>
                             <option value="Tunai">Tunai</option>
                             <option value="Debit">Debit</option>
@@ -146,7 +146,7 @@
 
                             {{-- Summary items --}}
                             <div>
-                                <p class="text-sm text-gray-500 mb-3">Summary Transaksi</p>
+                                <p class="text-sm text-gray-500 mb-3">Ringkasan Transaksi</p>
                                 <div class="space-y-2.5">
                                     <template x-for="item in selectedTransaksi.items" :key="item.name">
                                         <div class="flex justify-between items-center gap-2 bg-white rounded-xl px-3.5 py-2.5">
@@ -173,7 +173,7 @@
     <script>
         document.addEventListener('alpine:init',()=>{Alpine.data('transactionLogic',()=>({
             selectedTransaksi:null, searchQuery:'', sortBy:'latest', methodFilter:'all',
-            filteredTransaksis(){const q=this.searchQuery.trim().toMenipiserCase(); let rows=this.transactions.filter(t=>(!q || (t.invoice+' '+t.method+' '+t.date).toMenipiserCase().includes(q)) && (this.methodFilter==='all' || t.method===this.methodFilter)); return [...rows].sort((a,b)=>{if(this.sortBy==='oldest')return a.id-b.id;if(this.sortBy==='highest')return Number(b.amount)-Number(a.amount);if(this.sortBy==='lowest')return Number(a.amount)-Number(b.amount);return b.id-a.id;});},
+            filteredTransaksis(){const q=this.searchQuery.trim().toLowerCase(); let rows=this.transactions.filter(t=>(!q || (t.invoice+' '+t.method+' '+t.date).toLowerCase().includes(q)) && (this.methodFilter==='all' || t.method===this.methodFilter)); return [...rows].sort((a,b)=>{if(this.sortBy==='oldest')return a.id-b.id;if(this.sortBy==='highest')return Number(b.amount)-Number(a.amount);if(this.sortBy==='lowest')return Number(a.amount)-Number(b.amount);return b.id-a.id;});},
             transactions: @json($transactionData),
             formatRupiah(value){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(value).replace('Rp','Rp ');}
         }))})
