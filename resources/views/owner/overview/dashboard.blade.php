@@ -65,10 +65,10 @@
                 <div class="w-9 h-9 rounded-lg bg-[#1F4D3D]/10 flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 4h6a1 1 0 0 1 1 1v1h1a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1V5a1 1 0 0 1 1-1Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 11h6M9 15h6"/></svg>
                 </div>
-                <span class="text-sm font-medium text-gray-500">Total Penjualan</span>
+                <span class="text-sm font-medium text-gray-500">Total Transaksi</span>
             </div>
             <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ number_format($totalOrders) }} Penjualan</p>
-            <p class="text-xs text-gray-400 mt-1">All recorded transactions</p>
+            <p class="text-xs text-gray-400 mt-1">Seluruh transaksi yang tercatat</p>
         </div>
 
         <div class="bg-white rounded-2xl border border-gray-100 p-5">
@@ -90,7 +90,7 @@
                 <span class="text-sm font-medium text-gray-500">Habis of Stoks</span>
             </div>
             <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ $outOfStockProducts }} Produk</p>
-            <p class="text-xs text-gray-400 mt-1">All items in stock</p>
+            <p class="text-xs text-gray-400 mt-1">Seluruh produk aktif</p>
         </div>
 
     </div>
@@ -121,16 +121,16 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 12.5 2.3 2.3 4.7-5"/></svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900">Payment via {{ $trx->payment_method }}</p>
+                            <p class="text-sm font-medium text-gray-900">Pembayaran: {{ $trx->payment_method }}</p>
                             <p class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 mt-0.5">{{ $trx->created_at->format('d M Y, H:i') }}</p>
                         </div>
                         <div class="text-right shrink-0">
                             <p class="text-sm font-semibold text-gray-900">+ Rp {{ number_format($trx->total, 0, ',', '.') }}</p>
-                            <span class="inline-block mt-1 text-[11px] font-medium text-[#1F4D3D] bg-[#1F4D3D]/10 px-2 py-0.5 rounded-full">Success</span>
+                            <span class="inline-block mt-1 text-[11px] font-medium text-[#1F4D3D] bg-[#1F4D3D]/10 px-2 py-0.5 rounded-full">Berhasil</span>
                         </div>
                     </li>
                 @endforeach
-                @if ($recentSales->isEmpty())<li class="py-8 text-center text-sm text-gray-400">No transactions yet.</li>@endif
+                @if ($recentSales->isEmpty())<li class="py-8 text-center text-sm text-gray-400">Belum ada transaksi.</li>@endif
             </ul>
         </div>
 
