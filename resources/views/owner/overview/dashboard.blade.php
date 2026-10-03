@@ -79,7 +79,7 @@
                 <span class="text-sm font-medium text-gray-500">Stok Menipis</span>
             </div>
             <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ $lowStockProducts }} Produk</p>
-            <p class="text-xs text-[#B8632E] mt-1 font-medium">Please restock your items</p>
+            <p class="text-xs text-[#B8632E] mt-1 font-medium">Perlu segera diisi ulang</p>
         </div>
 
         <div class="bg-white rounded-2xl border border-gray-100 p-5">
