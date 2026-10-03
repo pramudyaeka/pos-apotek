@@ -7,12 +7,13 @@ use App\Models\Sale;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class SaleController extends Controller
 {
     public function store(Request $request)
     {
-        $data=$request->validate(['items'=>'required|array|min:1','items.*.product_id'=>'required|integer|exists:products,id','items.*.quantity'=>'required|integer|min:1','payment_method'=>'required|string|max:30']);
+        $data=$request->validate(['items'=>'required|array|min:1','items.*.product_id'=>'required|integer|exists:products,id','items.*.quantity'=>'required|integer|min:1','payment_method'=>['required',Rule::in(['Cash','Debit','QRIS'])]]);
         $sale=DB::transaction(function() use($data,$request){
             $subtotal=0; $rows=[];
             foreach($data['items'] as $item){
