@@ -25,8 +25,8 @@
             </div>
 
             <div class="flex flex-wrap gap-2 shrink-0">
-                <select x-model="roleFilter" aria-label="Filter role" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">Semua peran</option><option value="Owner">Owner</option><option value="Kasir">Kasir</option></select>
-                <select x-model="statusFilter" aria-label="Filter status" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">Semua status</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
+                <select x-model="roleFilter" aria-label="Filter role" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">Semua peran</option><option value="Owner">Pemilik</option><option value="Cashier">Kasir</option></select>
+                <select x-model="statusFilter" aria-label="Filter status" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">Semua status</option><option value="Active">Aktif</option><option value="Inactive">Tidak Aktif</option></select>
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
@@ -66,19 +66,19 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
                                     :class="u.role === 'Owner' ? 'bg-[#1F4D3D]/10 text-[#1F4D3D]' : 'bg-gray-100 text-gray-600'">
-                                    <span x-text="u.role"></span>
+                                    <span x-text="u.role === 'Owner' ? 'Pemilik' : 'Kasir'"></span>
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
                                     :class="u.status === 'Active' ? 'bg-[#1F4D3D]/10 text-[#1F4D3D]' : 'bg-gray-100 text-gray-500'">
                                     <span class="w-1.5 h-1.5 rounded-full" :class="u.status === 'Active' ? 'bg-[#1F4D3D]' : 'bg-gray-400'"></span>
-                                    <span x-text="u.status"></span>
+                                    <span x-text="u.status === 'Active' ? 'Aktif' : 'Tidak Aktif'"></span>
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button @click="openEditModal(u)" aria-label="Edit"
+                                    <button @click="openEditModal(u)" aria-label="Ubah"
                                         class="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:text-[#1F4D3D] hover:border-[#1F4D3D]/30 hover:bg-[#1F4D3D]/5 transition">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1 1-4Z"/></svg>
                                     </button>
@@ -113,12 +113,12 @@
                 class="bg-white rounded-2xl w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto">
 
                 <div class="flex items-start justify-between mb-1">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingUser ? 'Ubah Pengguna' : 'Add New User'"></h2>
-                    <button @click="closeModal()" aria-label="Close" class="text-gray-400 hover:text-gray-600 shrink-0">
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingUser ? 'Ubah Pengguna' : 'Tambah Pengguna'"></h2>
+                    <button @click="closeModal()" aria-label="Tutup" class="text-gray-400 hover:text-gray-600 shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
                     </button>
                 </div>
-                <p class="text-sm text-gray-400 mb-6">Fill in the staff account details below.</p>
+                <p class="text-sm text-gray-400 mb-6">Isi informasi akun pengguna di bawah.</p>
 
                 <div class="space-y-4 mb-5">
                     <div>
@@ -134,7 +134,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">
                             Kata Sandi
-                            <span x-show="editingUser" class="text-gray-400 font-normal">(leave blank to keep current password)</span>
+                            <span x-show="editingUser" class="text-gray-400 font-normal">(kosongkan untuk mempertahankan kata sandi saat ini)</span>
                         </label>
                         <input type="password" x-model="form.password" placeholder="••••••••"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
