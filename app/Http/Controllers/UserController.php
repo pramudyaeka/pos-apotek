@@ -34,6 +34,6 @@ class UserController extends Controller
         $id = $user->id;
         $user->delete();
         ActivityLog::record($request->user(), 'User', 'delete', 'Menghapus akun '.$name.'.', User::class, $id);
-        return response()->json(['message'=>'User deleted.']);
+        return response()->json(['message'=>'Pengguna berhasil dihapus.']);
     }
 }
