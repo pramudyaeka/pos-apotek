@@ -119,6 +119,26 @@
                     <div>
                         <p
                             class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
+                            Monitoring</p>
+                        <ul class="space-y-1">
+                            <li>
+                                <a href="{{ route('history') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
+                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
+                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('history') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 2" />
+                                        <circle cx="12" cy="12" r="8.5" />
+                                    </svg>
+                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">History</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p
+                            class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
                             Inventory</p>
                         <ul class="space-y-1">
                             <li>
