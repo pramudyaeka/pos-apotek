@@ -22,26 +22,29 @@
                 <input type="text" placeholder="Search..."
                     class="pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm w-full sm:w-64 bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
             </div>
-            <button aria-label="Notifications" class="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 relative shrink-0 bg-white transition">
+            <button type="button" onclick="document.getElementById('inventoryAlert')?.scrollIntoView({behavior:'smooth',block:'center'})" aria-label="Notifications" class="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 relative shrink-0 bg-white transition">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-gray-600"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9a6 6 0 1 1 12 0v4.5l1.5 3H4.5L6 13.5V9Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg>
                 <span class="absolute top-2.5 right-3 w-2 h-2 rounded-full bg-[#B8632E] ring-2 ring-white"></span>
             </button>
         </div>
     </div>
 
-    {{-- Alert banner --}}
-    <div class="bg-[#1F4D3D] text-white rounded-2xl px-6 py-5 flex items-start gap-4 mb-6">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 shrink-0 text-emerald-200 mt-0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4 2.5 20h19L12 4Z"/><path stroke-linecap="round" d="M12 10.5v4M12 17h.01"/></svg>
-        <div class="flex-1">
-            <p class="text-sm text-emerald-50/90">
-                Your product stock with name <strong class="text-white font-semibold">{{ optional($recentSales->first()?->items->first())->product_name ?? "No product" }}</strong> has low stock items that need attention.
-            </p>
-            <p class="text-sm font-semibold mt-0.5">Please request a new shipment</p>
+    {{-- Inventory alert --}}
+    @if($lowStockProducts > 0 || $outOfStockProducts > 0)
+        <div id="inventoryAlert" class="bg-[#1F4D3D] text-white rounded-2xl px-5 sm:px-6 py-4 sm:py-5 flex items-start gap-4 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-emerald-200"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4 2.5 20h19L12 4Z"/><path stroke-linecap="round" d="M12 10.5v4M12 17h.01"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold">Inventory needs attention</p>
+                <p class="text-sm text-emerald-50/80 mt-0.5">
+                    @if($outOfStockProducts > 0) {{ $outOfStockProducts }} item(s) out of stock. @endif
+                    @if($lowStockProducts > 0) {{ $lowStockProducts }} item(s) running low. @endif
+                </p>
+            </div>
+            <a href="{{ route('product') }}" class="shrink-0 inline-flex items-center rounded-xl bg-white/10 hover:bg-white/15 px-3.5 py-2 text-xs font-semibold transition">Review stock</a>
         </div>
-        {{-- <a href="#" class="hidden sm:inline-flex items-center text-sm font-medium bg-white/10 hover:bg-white/15 px-4 py-2 rounded-lg transition shrink-0">
-            Request now
-        </a> --}}
-    </div>
+    @endif
 
     {{-- Stat cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
