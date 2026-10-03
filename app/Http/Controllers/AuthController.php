@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,13 +33,6 @@ class AuthController extends Controller
         return redirect()->intended(
             $user->isOwner() ? route('dashboard') : route('orders')
         );
-    }
-
-    public function signup(Request $request)
-    {
-        $data=$request->validate(['name'=>'required|string|max:255','email'=>'required|email|max:255|unique:users,email','password'=>'required|confirmed|min:8']);
-        User::create([...$data,'role'=>'Cashier','status'=>'Active']);
-        return redirect('/')->with('success','Akun berhasil dibuat. Silakan masuk.');
     }
 
     public function logout(Request $request)
