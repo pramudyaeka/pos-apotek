@@ -50,7 +50,7 @@
                     class="product-card text-left bg-white rounded-2xl border border-gray-100 p-3 hover:border-[#1F4D3D]/30 hover:shadow-md active:scale-[0.97] transition">
                     <div class="relative aspect-square rounded-xl bg-[#1F4D3D]/8 flex items-center justify-center mb-3">
                         <span class="font-['Space_Grotesk'] font-semibold text-2xl text-[#1F4D3D]/70">{{ $initials }}</span>
-                        <span id="badge-{{ $slug }}" class="hidden absolute top-2 right-2 min-w-[24px] h-6 px-1.5 rounded-full bg-[#1F4D3D] text-white text-[12px] font-semibold items-center justify-center">0</span>
+                        <span id="badge-{{ $p->id }}" class="hidden absolute top-2 right-2 min-w-[24px] h-6 px-1.5 rounded-full bg-[#1F4D3D] text-white text-[12px] font-semibold items-center justify-center">0</span>
                     </div>
                     <p class="text-sm font-semibold text-gray-900 truncate">{{ $p->name }}</p>
                     <div class="flex items-center justify-between gap-1.5 mt-2">
@@ -72,7 +72,7 @@
 
             <div class="text-center px-6 pt-6 pb-4 shrink-0">
                 <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Ringkasan Penjualan</h2>
-                <p id="orderNumber" class="text-sm text-gray-400 mt-1">New Order</p>
+                <p id="orderNumber" class="text-sm text-gray-400 mt-1">Pesanan Baru</p>
             </div>
 
             <div id="cartList" class="flex-1 min-h-0 overflow-y-auto px-4 space-y-3 pb-2"></div>
@@ -88,7 +88,7 @@
                     <span id="cartSubtotal">Rp 0</span>
                 </div>
                 <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
-                    <span>Tax</span>
+                    <span>Pajak</span>
                     <span id="cartTax">Rp 0</span>
                 </div>
                 <div class="mb-4">
@@ -141,9 +141,9 @@
                     <div class="w-14 h-14 rounded-xl bg-[#1F4D3D]/8 flex items-center justify-center shrink-0"><span class="font-['Space_Grotesk'] font-semibold text-[#1F4D3D]/70">${item.initials}</span></div>
                     <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-gray-900 truncate">${escapeHtml(item.name)}</p><p class="text-sm text-gray-500">${formatRupiah(item.price)}</p></div>
                     <div class="flex items-center gap-1 bg-gray-100 rounded-full p-1 shrink-0">
-                        <button type="button" onclick="changeQty(${index},-1)" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white text-gray-600 font-medium">-</button>
+                        <button type="button" aria-label="Kurangi ${escapeHtml(item.name)}" onclick="changeQty(${index},-1)" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white text-gray-600 font-medium">-</button>
                         <span class="w-6 text-center text-sm font-semibold text-gray-900">${item.qty}</span>
-                        <button type="button" onclick="changeQty(${index},1)" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white text-gray-600 font-medium">+</button>
+                        <button type="button" aria-label="Tambah ${escapeHtml(item.name)}" onclick="changeQty(${index},1)" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white text-gray-600 font-medium">+</button>
                     </div>
                 </div>`).join('');}
             const subtotal=cart.reduce((sum,i)=>sum+i.price*i.qty,0);
@@ -153,7 +153,7 @@
             const count=cart.reduce((sum,i)=>sum+i.qty,0); document.getElementById('productResultCount').textContent=count ? count+' produk dalam keranjang' : document.querySelectorAll('.product-card:not(.hidden)').length+' produk tersedia';
             btn.disabled=!cart.length || orderSubmitting; updateProductBadges();
         }
-        function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productSlug);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
+        function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productId);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
         async function placeOrder(){
             if(!cart.length){showToast('Tambahkan minimal satu produk ke pesanan.','warning');return;} if(orderSubmitting)return;
             const btn=document.getElementById('placeOrderBtn'); const originalText=btn.textContent; orderSubmitting=true; btn.disabled=true; btn.textContent='Memproses...';
