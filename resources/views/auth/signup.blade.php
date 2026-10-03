@@ -36,7 +36,7 @@
                     <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Create account</h2>
                     <p class="text-sm text-gray-500 mt-1 mb-7">Set up a new staff account for this pharmacy.</p>
 
-                    <form action="" method="POST" class="flex flex-col">
+                    <form action="{{ route('signup.store') }}" method="POST" class="flex flex-col">
                         @csrf
 
                         <div class="mb-4">
@@ -71,7 +71,7 @@
 
                     <p class="mt-7 text-sm text-gray-500 text-center">
                         Already have an account?
-                        <a href="" class="text-[#B8632E] font-semibold hover:text-[#96502A]">Sign in</a>
+                        <a href="{{ route('login') }}" class="text-[#B8632E] font-semibold hover:text-[#96502A]">Sign in</a>
                     </p>
                 </div>
             </div>
