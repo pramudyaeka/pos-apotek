@@ -157,11 +157,14 @@
         async function placeOrder(){
             if(!cart.length){showToast('Tambahkan minimal satu produk ke pesanan.','warning');return;} if(orderSubmitting)return;
             const btn=document.getElementById('placeOrderBtn'); const originalText=btn.textContent; orderSubmitting=true; btn.disabled=true; btn.textContent='Memproses...';
-            const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:document.getElementById('paymentMetode').value,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
-            const data=await response.json();
-            if(!response.ok){orderSubmitting=false;btn.disabled=false;btn.textContent=originalText;showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Transaksi gagal.','error');return;}
-            showToast('Transaksi berhasil. Nomor Faktur: '+data.invoice_number,'success',5000);
-            cart=[]; document.getElementById('orderNumber').textContent='Nomor Faktur: '+data.invoice_number; orderSubmitting=false; renderCart(); btn.disabled=true; btn.textContent=originalText;
+            try {
+                const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:document.getElementById('paymentMetode').value,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
+                const data=await response.json();
+                if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Transaksi gagal.','error');return;}
+                showToast('Transaksi berhasil. Nomor Faktur: '+data.invoice_number,'success',5000);
+                cart=[]; document.getElementById('orderNumber').textContent='Nomor Faktur: '+data.invoice_number; renderCart();
+            } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
+            finally { orderSubmitting=false; btn.disabled=!cart.length; btn.textContent=originalText; }
         }
         function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);document.getElementById('productResultCount').textContent=count+' produk ditemukan';}
         function updateClock(){const now=new Date();document.getElementById('liveTanggal').textContent=new Intl.DateTimeFormat('id-ID',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveWaktu').textContent=new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
