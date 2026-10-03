@@ -13,7 +13,21 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return view('owner.inventory.products',['products'=>Product::with('category')->orderBy('name')->get(),'categories'=>Category::where('is_active',true)->orderBy('name')->get()]);
+        $products = Product::with('category')->orderBy('name')->get();
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $productData = $products->map(fn ($p) => [
+            'id' => $p->id,
+            'name' => $p->name,
+            'category_id' => $p->category_id,
+            'category_name' => $p->category?->name,
+            'price' => (float) $p->price,
+            'stock' => $p->stock,
+            'min_stock' => $p->min_stock,
+            'unit' => $p->unit,
+            'is_active' => (bool) $p->is_active,
+        ])->values();
+
+        return view('owner.inventory.products', compact('products', 'categories', 'productData'));
     }
 
     public function store(Request $request)
