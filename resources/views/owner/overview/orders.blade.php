@@ -18,11 +18,11 @@
             <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4.5 h-4.5"><circle cx="11" cy="11" r="6.5"/><path stroke-linecap="round" d="m20 20-3.2-3.2"/></svg>
             </span>
-            <input type="text" id="productSearch" placeholder="Search..." oninput="filterProducts(this.value)"
+            <input type="text" id="productSearch" placeholder="Search products..." autocomplete="off" oninput="filterProducts(this.value)"
                 class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
         </div>
 
-        <div class="flex gap-3 shrink-0">
+        <div class="flex flex-wrap gap-2 shrink-0">
             <div class="flex items-center gap-2.5 border border-gray-200 rounded-xl px-4 py-3 bg-white">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4.5 h-4.5 text-gray-500 shrink-0"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path stroke-linecap="round" d="M8 3v4M16 3v4M3.5 9.5h17"/></svg>
                 <span id="liveDate" class="text-sm font-medium text-gray-700 whitespace-nowrap"></span>
@@ -38,6 +38,7 @@
     <div class="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-5 md:gap-4 lg:gap-6 items-start">
 
         {{-- Grid produk --}}
+        <div class="mb-3 flex items-center justify-between col-span-full md:col-span-1"><p id="productResultCount" class="text-xs text-gray-400"></p><button type="button" onclick="clearCart()" class="text-xs font-semibold text-gray-500 hover:text-red-600 transition">Clear cart</button></div>
         <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
             @foreach ($products as $p)
                 @php $slug = \Illuminate\Support\Str::slug($p->name); $initials = strtoupper(substr($p->name, 0, 2)); @endphp
@@ -74,7 +75,8 @@
             <div id="cartList" class="flex-1 min-h-0 overflow-y-auto px-4 space-y-3 pb-2"></div>
 
             <p id="cartEmpty" class="hidden text-center text-sm text-gray-400 px-6 py-8">
-                No items yet — tap a product on the left to add it here.
+
+                No items yet — select a product to start the order.
             </p>
 
             <div class="px-6 pt-4 pb-6 border-t border-gray-200/70 shrink-0 bg-[#F5F6F4] rounded-b-2xl">
@@ -110,6 +112,8 @@
 
     <script>
         let cart = [];
+        let orderSubmitting = false;
+        function clearCart(){if(!cart.length){showToast('Keranjang sudah kosong.','info');return;}if(!confirmAction('Kosongkan semua item dalam pesanan?'))return;cart=[];document.getElementById('orderNumber').textContent='New Order';renderCart();showToast('Keranjang dikosongkan.','info');}
 
         function formatRupiah(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
         function escapeHtml(value){return String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);}
@@ -143,19 +147,20 @@
             document.getElementById('cartSubtotal').textContent=formatRupiah(subtotal);
             document.getElementById('cartTax').textContent=formatRupiah(0);
             document.getElementById('cartTotal').textContent=formatRupiah(subtotal);
-            btn.disabled=!cart.length; updateProductBadges();
+            const count=cart.reduce((sum,i)=>sum+i.qty,0); document.getElementById('productResultCount').textContent=count ? count+' item(s) in cart' : 'Select a product to begin';
+            btn.disabled=!cart.length || orderSubmitting; updateProductBadges();
         }
         function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productSlug);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
         async function placeOrder(){
-            if(!cart.length){showToast('Tambahkan minimal satu produk ke pesanan.','warning');return;}
-            const btn=document.getElementById('placeOrderBtn'); const originalText=btn.textContent; btn.disabled=true; btn.textContent='Processing...';
+            if(!cart.length){showToast('Tambahkan minimal satu produk ke pesanan.','warning');return;} if(orderSubmitting)return;
+            const btn=document.getElementById('placeOrderBtn'); const originalText=btn.textContent; orderSubmitting=true; btn.disabled=true; btn.textContent='Processing...';
             const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:document.getElementById('paymentMethod').value,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
             const data=await response.json();
-            if(!response.ok){btn.disabled=false;btn.textContent=originalText;showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Transaksi gagal.','error');return;}
+            if(!response.ok){orderSubmitting=false;btn.disabled=false;btn.textContent=originalText;showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Transaksi gagal.','error');return;}
             showToast('Transaksi berhasil. Invoice: '+data.invoice_number,'success',5000);
-            cart=[]; renderCart(); document.getElementById('orderNumber').textContent='Invoice: '+data.invoice_number; btn.disabled=true; btn.textContent=originalText;
+            cart=[]; document.getElementById('orderNumber').textContent='Invoice: '+data.invoice_number; orderSubmitting=false; renderCart(); btn.disabled=true; btn.textContent=originalText;
         }
-        function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);}
+        function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);document.getElementById('productResultCount').textContent=count+' product(s) found';}
         function updateClock(){const now=new Date();document.getElementById('liveDate').textContent=new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveTime').textContent=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
         updateClock();setInterval(updateClock,1000);renderCart();
     </script>@endsection
