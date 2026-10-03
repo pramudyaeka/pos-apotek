@@ -62,7 +62,6 @@
 
                 <nav class="flex-1 overflow-y-auto px-4 md:px-2 lg:px-4 py-6 space-y-7">
 
-                    @if(auth()->user()->isOwner())
                     <div>
                         <p
                             class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
@@ -101,6 +100,7 @@
                                 </a>
                             </li>
                             @if(auth()->user()->isOwner())
+                            @if(auth()->user()->isOwner())
                             <li>
                                 <a href="{{ route('transaction') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
                                 md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
@@ -113,6 +113,7 @@
                                     <span class="md:text-[10px] md:leading-tight lg:text-sm">Transaction</span>
                                 </a>
                             </li>
+                             @endif
                              @endif
                         </ul>
                     </div>
@@ -137,6 +138,7 @@
                         </ul>
                     </div>
 
+                    @if(auth()->user()->isOwner())
                     <div>
                         <p
                             class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
@@ -171,9 +173,6 @@
                         </ul>
                     </div>
 
-                    @endif
-
-                    @if(auth()->user()->isOwner())
                     <div>
                         <p
                             class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
@@ -193,7 +192,8 @@
                                 </a>
                             </li>
                         </ul>
-                    </div>
+                    </di
+                    @endifv>
                     @endif
 
                     @if(auth()->user()->isOwner())
