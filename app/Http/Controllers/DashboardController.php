@@ -11,7 +11,7 @@ class DashboardController extends Controller
     public function index()
     {
         $todaySales=Sale::whereDate('created_at',today());
-        $hourly=$todaySales->selectRaw('HOUR(created_at) as hour, SUM(total) as total')->groupBy('hour')->pluck('total','hour');
+        $hourly=Sale::whereDate('created_at',today())->selectRaw('HOUR(created_at) as sale_hour, SUM(total) as total')->groupByRaw('HOUR(created_at)')->pluck('total','sale_hour');
         return view('owner.overview.dashboard',[
             'totalProducts'=>Product::where('is_active',true)->count(),
             'lowStockProducts'=>Product::where('is_active',true)->whereColumn('stock','<=','min_stock')->where('stock','>',0)->count(),
