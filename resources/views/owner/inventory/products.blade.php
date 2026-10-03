@@ -63,8 +63,8 @@
                             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900" x-text="formatRupiah(item.price)"></td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-2">
-                                    <span x-text="item.stock" :class="item.stock <= item.minStock ? 'text-[#B8632E] font-semibold' : 'text-gray-900'"></span>
-                                    <span x-show="item.stock <= item.minStock"
+                                    <span x-text="item.stock" :class="item.stock <= item.min_stock ? 'text-[#B8632E] font-semibold' : 'text-gray-900'"></span>
+                                    <span x-show="item.stock <= item.min_stock"
                                         class="text-[10px] font-semibold text-[#B8632E] bg-[#B8632E]/10 px-2 py-0.5 rounded-full whitespace-nowrap">
                                         Low Stock
                                     </span>
