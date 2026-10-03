@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -20,6 +21,7 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email'=>'Akun Anda sedang tidak aktif.']);
         }
         $request->session()->regenerate();
+        ActivityLog::record(Auth::user(), 'Authentication', 'login', 'User '.$request->user()->name.' berhasil login.');
         return redirect()->intended(route(Auth::user()->isOwner() ? 'dashboard' : 'cashier'));
     }
 
@@ -32,6 +34,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = $request->user();
+        ActivityLog::record($user, 'Authentication', 'logout', 'User '.($user?->name ?? 'Unknown').' logout dari sistem.');
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
