@@ -158,7 +158,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Minimum Stock</label>
-                            <input type="number" x-model.number="form.minStock" placeholder="0"
+                            <input type="number" x-model.number="form.min_stock" placeholder="0"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                         </div>
                     </div>
