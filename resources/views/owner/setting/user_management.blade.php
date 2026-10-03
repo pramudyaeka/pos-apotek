@@ -24,15 +24,15 @@
                     class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
             </div>
 
-            <div class="flex gap-3 shrink-0">
+            <div class="flex flex-wrap gap-2 shrink-0">
+                <select x-model="roleFilter" aria-label="Filter role" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">All roles</option><option value="Owner">Owner</option><option value="Cashier">Cashier</option></select>
+                <select x-model="statusFilter" aria-label="Filter status" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">All status</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
                     Add User
                 </button>
-                <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Sort</button>
-                <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Filter</button>
-            </div>
+                            </div>
         </div>
 
         {{-- Tabel user --}}
@@ -176,10 +176,10 @@
 
     <script>
         document.addEventListener('alpine:init',()=>{Alpine.data('usersLogic',()=>({
-            searchQuery:'',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
+            searchQuery:'',roleFilter:'all',statusFilter:'all',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
             form:{name:'',email:'',password:'',role:'Cashier',status:'Active'},
             users: @json($users),
-            filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return q?this.users.filter(u=>(u.name+' '+u.email+' '+u.role).toLowerCase().includes(q)):this.users;},
+            filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return this.users.filter(u=>(!q||(u.name+' '+u.email+' '+u.role).toLowerCase().includes(q))&&(this.roleFilter==='all'||u.role===this.roleFilter)&&(this.statusFilter==='all'||u.status===this.statusFilter));},
             initials(name){return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();},
             ownerCount(){return this.users.filter(u=>u.role==='Owner').length;},
             isLastOwner(user){return user.role==='Owner'&&this.ownerCount()===1;},
@@ -189,14 +189,14 @@
             openEditModal(user){this.editingUser=user;this.form={name:user.name,email:user.email,password:'',role:user.role,status:user.status};this.showModal=true;},
             closeModal(){this.showModal=false;},
             async saveUser(){
-                if(!this.form.name.trim()||!this.form.email.trim()||(!this.editingUser&&!this.form.password.trim()))return;
+                if(!this.form.name.trim()){showToast('Nama wajib diisi.','warning');return;}if(!this.form.email.trim()){showToast('Email wajib diisi.','warning');return;}if(!this.editingUser&&!this.form.password.trim()){showToast('Password wajib diisi.','warning');return;}
                 const editing=this.editingUser,url=editing?'{{ url('/user') }}/'+editing.id:'{{ route('user.store') }}';
                 const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
-                const data=await response.json();if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Unable to save user');return;}
+                const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'User gagal disimpan.','error');return;}
                 const normalized={id:data.id,name:data.name,email:data.email,role:data.role,status:data.status};
-                if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();
+                if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();showToast(editing?'User berhasil diperbarui.':'User berhasil ditambahkan.');
             },
-            async deleteUser(user){if(!this.canDelete(user)||!confirm('Delete '+user.name+'?'))return;const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){alert(data.message||'Unable to delete user');return;}this.users=this.users.filter(u=>u.id!==user.id);}
+            async deleteUser(user){if(!this.canDelete(user)||!confirmAction('Hapus user '+user.name+'? Tindakan ini tidak dapat dibatalkan.'))return;const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'User gagal dihapus.','error');return;}this.users=this.users.filter(u=>u.id!==user.id);showToast('User berhasil dihapus.');}
         }))})
     </script>    <style>
         [x-cloak] { display: none !important; }
