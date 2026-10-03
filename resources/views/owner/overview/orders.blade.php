@@ -112,10 +112,11 @@
         let cart = [];
 
         function formatRupiah(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
+        function escapeHtml(value){return String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);}
         function addToCart(el){
             const productId=Number(el.dataset.productId), stock=Number(el.dataset.productStock);
             const existing=cart.find(i=>i.product_id===productId);
-            if(existing){if(existing.qty>=stock){alert('Stok tidak mencukupi.');return;}existing.qty++;}
+            if(stock <= 0){showToast('Produk sedang habis.','warning');return;} if(existing){if(existing.qty>=stock){showToast('Jumlah melebihi stok yang tersedia.','warning');return;}existing.qty++;}
             else cart.push({product_id:productId,name:el.dataset.productName,price:Number(el.dataset.productPrice),qty:1,initials:el.dataset.productInitials,slug:el.dataset.productSlug,stock});
             renderCart();
         }
@@ -131,7 +132,7 @@
             else{empty.classList.add('hidden');list.innerHTML=cart.map((item,index)=>`
                 <div class="flex items-center gap-3 bg-white rounded-2xl p-3">
                     <div class="w-14 h-14 rounded-xl bg-[#1F4D3D]/8 flex items-center justify-center shrink-0"><span class="font-['Space_Grotesk'] font-semibold text-[#1F4D3D]/70">${item.initials}</span></div>
-                    <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-gray-900 truncate">${item.name}</p><p class="text-sm text-gray-500">${formatRupiah(item.price)}</p></div>
+                    <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-gray-900 truncate">${escapeHtml(item.name)}</p><p class="text-sm text-gray-500">${formatRupiah(item.price)}</p></div>
                     <div class="flex items-center gap-1 bg-gray-100 rounded-full p-1 shrink-0">
                         <button type="button" onclick="changeQty(${index},-1)" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white text-gray-600 font-medium">-</button>
                         <span class="w-6 text-center text-sm font-semibold text-gray-900">${item.qty}</span>
@@ -146,12 +147,13 @@
         }
         function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productSlug);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
         async function placeOrder(){
-            if(!cart.length)return;
+            if(!cart.length){showToast('Tambahkan minimal satu produk ke pesanan.','warning');return;}
+            const btn=document.getElementById('placeOrderBtn'); const originalText=btn.textContent; btn.disabled=true; btn.textContent='Processing...';
             const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:document.getElementById('paymentMethod').value,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
             const data=await response.json();
-            if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Transaksi gagal.');return;}
-            alert('Transaksi berhasil. Invoice: '+data.invoice_number);
-            cart=[]; renderCart(); document.getElementById('orderNumber').textContent='Invoice: '+data.invoice_number;
+            if(!response.ok){btn.disabled=false;btn.textContent=originalText;showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Transaksi gagal.','error');return;}
+            showToast('Transaksi berhasil. Invoice: '+data.invoice_number,'success',5000);
+            cart=[]; renderCart(); document.getElementById('orderNumber').textContent='Invoice: '+data.invoice_number; btn.disabled=true; btn.textContent=originalText;
         }
         function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);}
         function updateClock(){const now=new Date();document.getElementById('liveDate').textContent=new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveTime').textContent=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
