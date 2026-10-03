@@ -29,7 +29,7 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $data=$request->validate(['name'=>'required|string|max:255','category_id'=>'required|exists:categories,id','unit'=>'required|string|max:50','price'=>'required|numeric|min:0','stock'=>'required|integer|min:0','min_stock'=>'required|integer|min:0','is_active'=>'required|boolean']);
+        $data=$request->validate(['name'=>'required|string|max:255','category_id'=>['required','exists:categories,id',Rule::exists('categories','id')->where(fn($query) => $query->where('is_active', true))],'unit'=>'required|string|max:50','price'=>'required|numeric|min:0','stock'=>'required|integer|min:0','min_stock'=>'required|integer|min:0','is_active'=>'required|boolean']);
         DB::transaction(function() use($data,$product,$request){
             $before=$product->stock; $product->update($data);
             if($before!==$product->stock) StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>$product->stock>$before?'IN':'OUT','quantity'=>$product->stock-$before,'stock_before'=>$before,'stock_after'=>$product->stock,'reference_type'=>'adjustment','note'=>'Manual stock adjustment']);
