@@ -176,10 +176,10 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('productsLogic', () => ({
                 searchQuery: '', showModal: false, editingProduct: null,
-                categoryOptions: @json($categories->map(fn($c) => ['id'=>$c->id,'name'=>$c->name])->values()),
+                categoryOptions: @json($categories->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])->values()),
                 unitOptions: ['Tablet','Strip','Box','Tube','Sachet','Capsule','Pcs'],
                 form: { name:'', category_id:'', unit:'', price:null, stock:null, min_stock:null, is_active:true },
-                products: @json($products->map(fn($p) => ['id'=>$p->id,'name'=>$p->name,'category_id'=>$p->category_id,'category_name'=>$p->category?->name,'price'=>(float)$p->price,'stock'=>$p->stock,'min_stock'=>$p->min_stock,'unit'=>$p->unit,'is_active'=>$p->is_active])->values()),
+                products: @json($productData),
                 filteredProducts() { const q=this.searchQuery.trim().toLowerCase(); return q ? this.products.filter(p=>(p.name+' '+(p.category_name||'')).toLowerCase().includes(q)) : this.products; },
                 formatRupiah(n) { return 'Rp '+Number(n||0).toLocaleString('id-ID'); },
                 openAddModal(){this.editingProduct=null;this.form={name:'',category_id:'',unit:'',price:null,stock:null,min_stock:null,is_active:true};this.showModal=true;},
