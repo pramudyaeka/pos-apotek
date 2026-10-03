@@ -161,7 +161,7 @@
                     finally { if(saveButton) saveButton.disabled=false; }
                 },
                 async deleteKategori(id){
-                    if(!confirmAction('Hapus kategori ini? Tindakan ini tidak dapat dibatalkan.'))return;
+                    if(!await confirmAction('Hapus kategori ini? Tindakan ini tidak dapat dibatalkan.', {title:'Hapus kategori?', confirmButtonText:'Ya, hapus'}))return;
                     try { const response=await fetch('{{ url('/category') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}}); const data=await response.json();if(!response.ok){showToast(data.message||'Kategori gagal dihapus.','error');return;}this.categories=this.categories.filter(c=>c.id!==id);showToast('Kategori berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
                 }
             }))
