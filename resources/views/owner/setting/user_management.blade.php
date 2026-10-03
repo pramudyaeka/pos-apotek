@@ -14,7 +14,7 @@
             <p class="text-gray-500 mt-1">Kelola akun pengguna dan hak akses apotek.</p>
         </div>
 
-        {{-- Search + Add User + Sort + Filter --}}
+        {{-- Search + Tambah Pengguna + Sort + Filter --}}
         <div class="flex flex-wrap lg:flex-nowrap items-center gap-3 mb-5">
             <div class="relative flex-1 w-full min-w-[200px]">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -25,12 +25,12 @@
             </div>
 
             <div class="flex flex-wrap gap-2 shrink-0">
-                <select x-model="roleFilter" aria-label="Filter role" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">All roles</option><option value="Owner">Owner</option><option value="Cashier">Cashier</option></select>
-                <select x-model="statusFilter" aria-label="Filter status" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">All status</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
+                <select x-model="roleFilter" aria-label="Filter role" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">Semua peran</option><option value="Owner">Owner</option><option value="Kasir">Kasir</option></select>
+                <select x-model="statusFilter" aria-label="Filter status" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl"><option value="all">Semua status</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
-                    Add User
+                    Tambah Pengguna
                 </button>
                             </div>
         </div>
@@ -94,14 +94,14 @@
 
                     <tr x-show="filteredUsers().length === 0">
                         <td colspan="5" class="px-6 py-14 text-center text-sm text-gray-400">
-                            No users found.
+                            Pengguna tidak ditemukan.
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        {{-- Modal Tambah/Edit User --}}
+        {{-- Modal Tambah/Ubah Pengguna --}}
         <div x-show="showModal" x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center p-4"
             style="background: rgba(0,0,0,0.45)">
@@ -113,7 +113,7 @@
                 class="bg-white rounded-2xl w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto">
 
                 <div class="flex items-start justify-between mb-1">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingUser ? 'Edit User' : 'Add New User'"></h2>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingUser ? 'Ubah Pengguna' : 'Add New User'"></h2>
                     <button @click="closeModal()" aria-label="Close" class="text-gray-400 hover:text-gray-600 shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
                     </button>
@@ -122,7 +122,7 @@
 
                 <div class="space-y-4 mb-5">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
                         <input type="text" x-model="form.name" placeholder="e.g. Jenny Wilson"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
@@ -144,7 +144,7 @@
                         <select x-model="form.role" :disabled="editingUser && isLastOwner(editingUser)"
                             class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition disabled:bg-gray-50 disabled:text-gray-400">
                             <option value="Owner">Owner</option>
-                            <option value="Cashier">Cashier</option>
+                            <option value="Kasir">Kasir</option>
                         </select>
                         <p x-show="editingUser && isLastOwner(editingUser)" class="text-xs text-[#B8632E] mt-1.5">
                             This is the last Owner account — role can't be changed until another Owner is added.
@@ -153,7 +153,7 @@
                 </div>
 
                 <div class="flex items-center justify-between mb-7">
-                    <span class="text-sm font-medium text-gray-700">Active Status</span>
+                    <span class="text-sm font-medium text-gray-700">Status Aktif</span>
                     <button type="button" @click="form.status = form.status === 'Active' ? 'Inactive' : 'Active'"
                         :disabled="editingUser && editingUser.id === currentUserId"
                         class="w-11 h-6 rounded-full transition relative shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
@@ -167,8 +167,8 @@
                 </p>
 
                 <div class="flex gap-3">
-                    <button @click="closeModal()" class="flex-1 py-3 rounded-xl font-medium text-sm text-gray-700 border border-gray-200 hover:bg-gray-50 transition">Cancel</button>
-                    <button @click="saveUser()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition" x-text="editingUser ? 'Save' : 'Add User'"></button>
+                    <button @click="closeModal()" class="flex-1 py-3 rounded-xl font-medium text-sm text-gray-700 border border-gray-200 hover:bg-gray-50 transition">Batal</button>
+                    <button @click="saveUser()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition" x-text="editingUser ? 'Simpan' : 'Tambah Pengguna'"></button>
                 </div>
             </div>
         </div>
@@ -177,7 +177,7 @@
     <script>
         document.addEventListener('alpine:init',()=>{Alpine.data('usersLogic',()=>({
             searchQuery:'',roleFilter:'all',statusFilter:'all',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
-            form:{name:'',email:'',password:'',role:'Cashier',status:'Active'},
+            form:{name:'',email:'',password:'',role:'Kasir',status:'Active'},
             users: @json($users),
             filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return this.users.filter(u=>(!q||(u.name+' '+u.email+' '+u.role).toLowerCase().includes(q))&&(this.roleFilter==='all'||u.role===this.roleFilter)&&(this.statusFilter==='all'||u.status===this.statusFilter));},
             initials(name){return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();},
@@ -185,7 +185,7 @@
             isLastOwner(user){return user.role==='Owner'&&this.ownerCount()===1;},
             canDelete(user){return user.id!==this.currentUserId&&!this.isLastOwner(user);},
             deleteBlockedReason(user){if(user.id===this.currentUserId)return "You can't delete your own account";if(this.isLastOwner(user))return "Can't delete the last Owner account";return '';},
-            openAddModal(){this.editingUser=null;this.form={name:'',email:'',password:'',role:'Cashier',status:'Active'};this.showModal=true;},
+            openAddModal(){this.editingUser=null;this.form={name:'',email:'',password:'',role:'Kasir',status:'Active'};this.showModal=true;},
             openEditModal(user){this.editingUser=user;this.form={name:user.name,email:user.email,password:'',role:user.role,status:user.status};this.showModal=true;},
             closeModal(){this.showModal=false;},
             async saveUser(){
