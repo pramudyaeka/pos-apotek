@@ -38,8 +38,9 @@
     <div class="grid grid-cols-1 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_360px] gap-5 md:gap-4 lg:gap-6 items-start">
 
         {{-- Grid produk --}}
-        <div class="mb-3 flex items-center justify-between col-span-full md:col-span-1"><p id="productResultCount" class="text-xs text-gray-400"></p><button type="button" onclick="clearCart()" class="text-xs font-semibold text-gray-500 hover:text-red-600 transition">Clear cart</button></div>
-        <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
+        <div class="min-w-0">
+            <div class="mb-3 flex items-center justify-between"><p id="productResultCount" class="text-xs text-gray-400"></p><button type="button" onclick="clearCart()" class="text-xs font-semibold text-gray-500 hover:text-red-600 transition">Clear cart</button></div>
+            <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
             @foreach ($products as $p)
                 @php $slug = \Illuminate\Support\Str::slug($p->name); $initials = strtoupper(substr($p->name, 0, 2)); @endphp
                 <button type="button" data-product-id="{{ $p->id }}" data-product-name="{{ $p->name }}" data-product-price="{{ $p->price }}"
@@ -62,6 +63,7 @@
             <p id="noResults" class="hidden col-span-full text-center text-sm text-gray-400 py-10">
                 No products match your search.
             </p>
+            </div>
         </div>
 
         {{-- Ringkasan order --}}
