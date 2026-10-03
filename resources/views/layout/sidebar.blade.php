@@ -164,15 +164,13 @@
 
     </div>
 
-    {{-- Global toast notification --}}
+    {{-- Global SweetAlert notification --}}
     @if(session('success'))
         <script>document.addEventListener('DOMContentLoaded',()=>showToast(@json(session('success')),'success'));</script>
     @endif
     @if(session('error'))
         <script>document.addEventListener('DOMContentLoaded',()=>showToast(@json(session('error')),'error'));</script>
     @endif
-
-    <div id="toastContainer" class="fixed top-4 right-4 z-[100] w-[min(92vw,380px)] space-y-2 pointer-events-none" aria-live="polite" aria-atomic="true"></div>
 
     <style>
         .nav-link {
