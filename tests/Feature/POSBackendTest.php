@@ -82,3 +82,29 @@ it('serves reporting and receipt pages for an owner', function () {
     $saleId=$response->json('id');
     $this->actingAs($owner)->get(route('transaction.receipt',$saleId))->assertOk();
 });
+
+
+it('aggregates duplicate product lines before checking stock', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Digestive', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Antacid',
+        'unit' => 'Tablet',
+        'price' => 3000,
+        'stock' => 3,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($owner)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'items' => [
+            ['product_id' => $product->id, 'quantity' => 2],
+            ['product_id' => $product->id, 'quantity' => 2],
+        ],
+    ])->assertStatus(422);
+
+    expect($product->fresh()->stock)->toBe(3);
+    $this->assertDatabaseCount('sales', 0);
+});
