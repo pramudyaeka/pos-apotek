@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'Sign In')
+@section('title', 'Masuk')
 @section('content')
 
     <section class="min-h-screen flex items-center justify-center bg-[#EEF2EF] p-4">
@@ -28,7 +28,7 @@
                 {{-- baris data ala label kemasan obat --}}
                 <div class="relative font-['IBM_Plex_Mono'] text-[11px] text-emerald-100/50 space-y-1.5 leading-relaxed">
                     <p>SIMPAN DI TEMPAT SEJUK &amp; KERING</p>
-                    <p>BRANCH — 01 · SINGLE STORE</p>
+                    <p>CABANG — 01 · SATU TOKO</p>
                     <p>AKSES TERBATAS UNTUK STAF TERDAFTAR</p>
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <div class="w-full md:w-[58%] px-8 py-10 md:px-12 flex flex-col justify-center">
                 <div class="w-full max-w-sm mx-auto">
                     <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Masuk</h2>
-                    <p class="text-sm text-gray-500 mt-1 mb-7">Enter your credentials to open the till.</p>
+                    <p class="text-sm text-gray-500 mt-1 mb-7">Masukkan surel dan kata sandi untuk masuk ke sistem.</p>
 
                     <form action="{{ route('login.store') }}" method="POST" class="flex flex-col">
                         @csrf
@@ -63,12 +63,12 @@
                             <label for="remember" class="inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="remember" name="remember"
                                     class="rounded h-4 w-4 text-[#1F4D3D] focus:ring-[#1F4D3D] border-gray-300">
-                                <span class="ml-2 text-sm text-gray-600">Keep me signed in</span>
+                                <span class="ml-2 text-sm text-gray-600">Ingat sesi saya</span>
                             </label>
-                            <a href="#" class="text-sm text-[#B8632E] hover:text-[#96502A] font-medium">Forgot password?</a>
+                            <a href="#" class="text-sm text-[#B8632E] hover:text-[#96502A] font-medium">Lupa kata sandi?</a>
                         </div>
                         <button type="submit" class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition flex items-center justify-center">
-                            Sign In
+                            Masuk
                         </button>
 
                     @if ($errors->any())<p class="text-sm text-red-600 mt-4">{{ $errors->first() }}</p>@endif
