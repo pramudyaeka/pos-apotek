@@ -26,7 +26,7 @@
                 </select>
                 <select name="action" class="px-3 py-2 rounded-xl border border-gray-200 text-sm">
                     <option value="all">Semua aksi</option>
-                    @foreach(['create'=>'Create','update'=>'Update','delete'=>'Hapus','sale'=>'Sale','login'=>'Login','logout'=>'Logout'] as $value => $label)
+                    @foreach(['create'=>'Tambah','update'=>'Perbarui','delete'=>'Hapus','sale'=>'Sale','login'=>'Masuk','logout'=>'Keluar'] as $value => $label)
                         <option value="{{ $value }}" @selected(request('action') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -70,7 +70,7 @@
             </table>
         </div>
 
-        @if($activities->hasPages())
+        @if($activities->hasHalamans())
             <div class="mt-4">{{ $activities->links() }}</div>
         @endif
     </section>
@@ -84,7 +84,7 @@
             <p class="text-xs text-gray-400">{{ $activities->total() }} aktivitas tercatat</p>
             <div class="flex gap-2">
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'all'])) }}"
-                class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type', 'all') === 'all' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">All</a>
+                class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type', 'all') === 'all' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">Semua</a>
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'IN'])) }}"
                 class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type') === 'IN' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">IN</a>
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'OUT'])) }}"
@@ -115,7 +115,7 @@
                 </tbody>
             </table>
         </div>
-        @if($stockMovements->hasPages())
+        @if($stockMovements->hasHalamans())
             <div class="mt-4">{{ $stockMovements->links() }}</div>
         @endif
     </section>
