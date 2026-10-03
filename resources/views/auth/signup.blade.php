@@ -58,7 +58,7 @@
                         </div>
 
                         <div class="mb-6">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1.5">Confirm password</label>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1.5">Konfirmasi kata sandi</label>
                             <input type="password" id="password_confirmation" name="password_confirmation" autocomplete="new-password"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                         </div>
