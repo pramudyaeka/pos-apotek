@@ -21,6 +21,8 @@ class DashboardController extends Controller
             'totalOrders'=>Sale::count(),
             'recentSales'=>Sale::with('items')->latest()->limit(5)->get(),
             'hourlySales'=>$hourly,
+            'chartLabels'=>$hourly->keys()->map(fn($h) => str_pad($h,2,'0',STR_PAD_LEFT).':00')->values(),
+            'chartData'=>$hourly->values()->map(fn($v) => (float)$v)->values(),
         ]);
     }
 }
