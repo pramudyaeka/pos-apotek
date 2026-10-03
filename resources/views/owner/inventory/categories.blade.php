@@ -24,15 +24,19 @@
                     class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
             </div>
 
-            <div class="flex gap-3 shrink-0">
+            <div class="flex flex-wrap gap-2 shrink-0">
+                <select x-model="sortBy" aria-label="Sort categories" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                    <option value="name">Name A-Z</option><option value="items-high">Most items</option><option value="items-low">Fewest items</option>
+                </select>
+                <select x-model="statusFilter" aria-label="Filter category status" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                    <option value="all">All status</option><option value="active">Active</option><option value="inactive">Inactive</option>
+                </select>
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
                     Add Category
                 </button>
-                <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Sort</button>
-                <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Filter</button>
-            </div>
+                            </div>
         </div>
 
         {{-- Tabel kategori --}}
@@ -132,10 +136,10 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('categoriesLogic', () => ({
-                searchQuery:'', showModal:false, editingCategory:null,
+                searchQuery:'', sortBy:'name', statusFilter:'all', showModal:false, editingCategory:null,
                 form:{name:'',is_active:true},
                 categories: @json($categoryData),
-                filteredCategories(){const q=this.searchQuery.trim().toLowerCase();return q?this.categories.filter(c=>c.name.toLowerCase().includes(q)):this.categories;},
+                filteredCategories(){const q=this.searchQuery.trim().toLowerCase();let rows=this.categories.filter(c=>(!q||c.name.toLowerCase().includes(q))&&(this.statusFilter==='all'||(this.statusFilter==='active'&&c.is_active)||(this.statusFilter==='inactive'&&!c.is_active)));return [...rows].sort((a,b)=>{if(this.sortBy==='items-high')return b.products_count-a.products_count;if(this.sortBy==='items-low')return a.products_count-b.products_count;return a.name.localeCompare(b.name);});},
                 openAddModal(){this.editingCategory=null;this.form={name:'',is_active:true};this.showModal=true;},
                 openEditModal(cat){this.editingCategory=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;},
                 closeModal(){this.showModal=false;},
