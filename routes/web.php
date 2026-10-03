@@ -19,14 +19,9 @@ Route::post('/logout', [AuthController::class,'logout'])->name('logout');
 
 Route::middleware(['auth','role:Owner'])->group(function () {
     Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
-    Route::get('/category',[CategoryController::class,'index'])->name('category');
-    Route::post('/category',[CategoryController::class,'store'])->name('category.store');
-    Route::put('/category/{category}',[CategoryController::class,'update'])->name('category.update');
+
     Route::delete('/category/{category}',[CategoryController::class,'destroy'])->name('category.destroy');
 
-    Route::get('/product',[ProductController::class,'index'])->name('product');
-    Route::post('/product',[ProductController::class,'store'])->name('product.store');
-    Route::put('/product/{product}',[ProductController::class,'update'])->name('product.update');
     Route::delete('/product/{product}',[ProductController::class,'destroy'])->name('product.destroy');
 
     Route::get('/user',[UserController::class,'index'])->name('user-management');
@@ -44,4 +39,12 @@ Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
     Route::get('/cashier', fn() => redirect()->route('orders'))->name('cashier');
     Route::get('/orders',[OrderController::class,'index'])->name('orders');
     Route::post('/sales',[SaleController::class,'store'])->name('sales.store');
+
+    Route::get('/category',[CategoryController::class,'index'])->name('category');
+    Route::post('/category',[CategoryController::class,'store'])->name('category.store');
+    Route::put('/category/{category}',[CategoryController::class,'update'])->name('category.update');
+
+    Route::get('/product',[ProductController::class,'index'])->name('product');
+    Route::post('/product',[ProductController::class,'store'])->name('product.store');
+    Route::put('/product/{product}',[ProductController::class,'update'])->name('product.update');
 });
