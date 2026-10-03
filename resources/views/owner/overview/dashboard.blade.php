@@ -76,7 +76,7 @@
                 <div class="w-9 h-9 rounded-lg bg-[#B8632E]/10 flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#B8632E" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4 2.5 20h19L12 4Z"/><path stroke-linecap="round" d="M12 10.5v4M12 17h.01"/></svg>
                 </div>
-                <span class="text-sm font-medium text-gray-500">Running Menipis</span>
+                <span class="text-sm font-medium text-gray-500">Stok Menipis</span>
             </div>
             <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ $lowStockProducts }} Produk</p>
             <p class="text-xs text-[#B8632E] mt-1 font-medium">Please restock your items</p>
