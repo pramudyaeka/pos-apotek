@@ -12,7 +12,7 @@
     <section class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
             <div>
-                <h2 class="font-['Space_Grotesk'] font-semibold text-lg">Activity Riwayat</h2>
+                <h2 class="font-['Space_Grotesk'] font-semibold text-lg">Riwayat Aktivitas</h2>
                 <p class="text-xs text-gray-400 mt-1">Catatan perubahan data dan aktivitas sistem.</p>
             </div>
             <form method="GET" action="{{ route('history') }}" class="flex flex-col sm:flex-row gap-2">
