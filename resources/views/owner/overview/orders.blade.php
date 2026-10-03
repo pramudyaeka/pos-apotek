@@ -9,7 +9,7 @@
 
     <div class="mb-6">
         <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Penjualan</h1>
-        <p class="text-gray-500 mt-1">Manage and monitoring your sales in one page</p>
+        <p class="text-gray-500 mt-1">Kelola dan pantau penjualan dalam satu halaman</p>
     </div>
 
     {{-- Cari + live date/time --}}
@@ -18,7 +18,7 @@
             <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4.5 h-4.5"><circle cx="11" cy="11" r="6.5"/><path stroke-linecap="round" d="m20 20-3.2-3.2"/></svg>
             </span>
-            <input type="text" id="productCari" placeholder="Cari products..." autocomplete="off" oninput="filterProducts(this.value)"
+            <input type="text" id="productCari" placeholder="Cari produk..." autocomplete="off" oninput="filterProducts(this.value)"
                 class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
         </div>
 
@@ -62,7 +62,7 @@
             @endforeach
 
             <p id="noResults" class="hidden col-span-full text-center text-sm text-gray-400 py-10">
-                No products match your search.
+                Tidak ada produk yang sesuai dengan pencarian.
             </p>
             </div>
         </div>
@@ -71,7 +71,7 @@
         <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-6 flex flex-col min-h-0 max-h-[calc(100vh-160px)]">
 
             <div class="text-center px-6 pt-6 pb-4 shrink-0">
-                <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Summary Order</h2>
+                <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Ringkasan Penjualan</h2>
                 <p id="orderNumber" class="text-sm text-gray-400 mt-1">New Order</p>
             </div>
 
@@ -150,7 +150,7 @@
             document.getElementById('cartSubtotal').textContent=formatRupiah(subtotal);
             document.getElementById('cartTax').textContent=formatRupiah(0);
             document.getElementById('cartTotal').textContent=formatRupiah(subtotal);
-            const count=cart.reduce((sum,i)=>sum+i.qty,0); document.getElementById('productResultCount').textContent=count ? count+' produk dalam keranjang' : 'Select a product to begin';
+            const count=cart.reduce((sum,i)=>sum+i.qty,0); document.getElementById('productResultCount').textContent=count ? count+' produk dalam keranjang' : 'Pilih produk untuk memulai';
             btn.disabled=!cart.length || orderSubmitting; updateProductBadges();
         }
         function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productSlug);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
