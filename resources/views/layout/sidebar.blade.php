@@ -111,14 +111,13 @@
                         class="flex items-center gap-3 md:justify-center lg:justify-start px-2.5 py-2.5 rounded-xl hover:bg-gray-50 transition">
                         <div class="w-9 h-9 rounded-lg bg-[#1F4D3D]/10 flex items-center justify-center shrink-0">
                             <span class="text-[#1F4D3D] text-xs font-['Space_Grotesk'] font-semibold">
-                                {{ substr(auth()->user()->name ?? 'Pranata Eka Pramudya', 0, 1) }}
+                                {{ substr(auth()->user()->name, 0, 1) }}
                             </span>
                         </div>
                         <div class="flex-1 min-w-0 md:hidden lg:block">
-                            <p class="text-sm font-medium truncate">{{ auth()->user()->name ?? 'Pranata Eka Pramudya' }}
+                            <p class="text-sm font-medium truncate">{{ auth()->user()->name }}
                             </p>
-                            <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email ??
-                                'pranata.dyo@gmail.com' }}</p>
+                            <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email }}</p>
                         </div>
                         <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmAction('Keluar dari sistem sekarang?')">
                             @csrf
