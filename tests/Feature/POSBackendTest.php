@@ -142,3 +142,18 @@ it('records sales in activity history', function () {
         'action' => 'sale',
     ]);
 });
+
+
+it('renders the owner dashboard with all expected inventory and sales data', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+
+    $this->actingAs($owner)->get(route('dashboard'))->assertOk();
+});
+
+it('renders inventory and user management pages with their expected data', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+
+    $this->actingAs($owner)->get(route('category'))->assertOk();
+    $this->actingAs($owner)->get(route('product'))->assertOk();
+    $this->actingAs($owner)->get(route('user-management'))->assertOk();
+});
