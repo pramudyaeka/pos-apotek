@@ -81,8 +81,8 @@
                                     </svg>
                                     <span class="md:text-[10px] md:leading-tight lg:text-sm">Overview</span>
                                 </a>
-                            </li
-                            @endif>
+                            </li>
+                             @endif
                             <li>
                                 <a href="{{ route('orders') }}"
                                     class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
@@ -111,8 +111,8 @@
                                     </svg>
                                     <span class="md:text-[10px] md:leading-tight lg:text-sm">Transaction</span>
                                 </a>
-                            </li
-                            @endif>
+                            </li>
+                             @endif
                         </ul>
                     </div>
 
