@@ -37,7 +37,23 @@ class SaleController extends Controller
 
     public function index()
     {
-        return view('owner.overview.transaction',['transactions'=>Sale::with('items','user')->latest()->paginate(20)]);
+        $transactions = Sale::with('items', 'user')->latest()->paginate(20);
+        $transactionData = $transactions->getCollection()->map(fn ($sale) => [
+            'id' => $sale->id,
+            'date' => $sale->created_at->format('d F Y'),
+            'invoice' => $sale->invoice_number,
+            'method' => $sale->payment_method,
+            'amount' => (float) $sale->total,
+            'status' => $sale->status,
+            'time' => $sale->created_at->format('H:i, D, d F Y'),
+            'items' => $sale->items->map(fn ($item) => [
+                'name' => $item->quantity . 'x ' . $item->product_name,
+                'price' => (float) $item->subtotal,
+            ])->values(),
+            'receipt_url' => route('transaction.receipt', $sale),
+        ])->values();
+
+        return view('owner.overview.transaction', compact('transactions', 'transactionData'));
     }
 
     public function receipt(Sale $sale)
