@@ -58,30 +58,6 @@
                 </button>
             @endforeach
 
-            @foreach ($products as $p)
-                @php
-                    $slug = \Illuminate\Support\Str::slug($p['name']);
-                    $initials = strtoupper(substr($p['name'], 0, 2));
-                @endphp
-                <button type="button" data-product-name="{{ $p['name'] }}" data-product-price="{{ $p['price'] }}"
-                    data-product-initials="{{ $initials }}" data-product-slug="{{ $slug }}"
-                    data-search="{{ strtolower($p['name'].' '.$p['category']) }}"
-                    onclick="addToCart(this)"
-                    class="product-card text-left bg-white rounded-2xl border border-gray-100 p-3 hover:border-[#1F4D3D]/30 hover:shadow-md active:scale-[0.97] transition">
-
-                    <div class="relative aspect-square rounded-xl bg-[#1F4D3D]/8 flex items-center justify-center mb-3">
-                        <span class="font-['Space_Grotesk'] font-semibold text-2xl text-[#1F4D3D]/70">{{ $initials }}</span>
-                        <span id="badge-{{ $slug }}" class="hidden absolute top-2 right-2 min-w-[24px] h-6 px-1.5 rounded-full bg-[#1F4D3D] text-white text-[12px] font-semibold items-center justify-center">0</span>
-                    </div>
-
-                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $p['name'] }}</p>
-                    <div class="flex items-center justify-between gap-1.5 mt-2">
-                        <span class="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full truncate">{{ $p['category'] }}</span>
-                        <span class="text-sm font-semibold text-gray-900 shrink-0">Rp{{ number_format($p['price'], 0, ',', '.') }}</span>
-                    </div>
-                </button>
-            @endforeach
-
             <p id="noResults" class="hidden col-span-full text-center text-sm text-gray-400 py-10">
                 No products match your search.
             </p>
@@ -92,7 +68,7 @@
 
             <div class="text-center px-6 pt-6 pb-4 shrink-0">
                 <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Summary Order</h2>
-                <p class="text-sm text-gray-400 mt-1">Order Number : #021</p>
+                <p id="orderNumber" class="text-sm text-gray-400 mt-1">New Order</p>
             </div>
 
             <div id="cartList" class="flex-1 min-h-0 overflow-y-auto px-4 space-y-3 pb-2"></div>
@@ -109,6 +85,14 @@
                 <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
                     <span>Tax</span>
                     <span id="cartTax">Rp 0</span>
+                </div>
+                <div class="mb-4">
+                    <label for="paymentMethod" class="block text-xs font-medium text-gray-500 mb-1.5">Payment Method</label>
+                    <select id="paymentMethod" class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]">
+                        <option value="Cash">Cash</option>
+                        <option value="Debit">Debit</option>
+                        <option value="QRIS">QRIS</option>
+                    </select>
                 </div>
                 <div class="border-t border-dashed border-gray-300 pt-3 flex items-center justify-between mb-5">
                     <span class="font-['Space_Grotesk'] font-semibold text-gray-900">TOTAL</span>
@@ -163,11 +147,11 @@
         function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productSlug);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
         async function placeOrder(){
             if(!cart.length)return;
-            const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:'Cash',items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
+            const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:document.getElementById('paymentMethod').value,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
             const data=await response.json();
             if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Transaksi gagal.');return;}
             alert('Transaksi berhasil. Invoice: '+data.invoice_number);
-            cart=[]; renderCart(); window.location.reload();
+            cart=[]; renderCart(); document.getElementById('orderNumber').textContent='Invoice: '+data.invoice_number;
         }
         function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);}
         function updateClock(){const now=new Date();document.getElementById('liveDate').textContent=new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveTime').textContent=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
