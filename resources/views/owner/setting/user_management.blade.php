@@ -175,100 +175,30 @@
     </div>
 
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('usersLogic', () => ({
-                searchQuery: '',
-                showModal: false,
-                editingUser: null,
-                // Simulasi user yang sedang login. Nanti ganti dengan
-                // {{ auth()->id() }} dari Laravel.
-                currentUserId: 1,
-                form: { name: '', email: '', password: '', role: 'Cashier', status: 'Active' },
-
-                users: [
-                    { id: 1, name: 'Robert Fox',        email: 'robert@apotek.com',   role: 'Owner',   status: 'Active' },
-                    { id: 2, name: 'Leslie Alexander',  email: 'leslie@apotek.com',   role: 'Cashier', status: 'Active' },
-                    { id: 3, name: 'Guy Hawkins',       email: 'guy@apotek.com',      role: 'Cashier', status: 'Active' },
-                    { id: 4, name: 'Jenny Wilson',      email: 'jenny@apotek.com',    role: 'Cashier', status: 'Active' },
-                    { id: 5, name: 'Brooklyn Simmons',  email: 'brooklyn@apotek.com', role: 'Cashier', status: 'Inactive' },
-                ],
-
-                filteredUsers() {
-                    const q = this.searchQuery.trim().toLowerCase();
-                    if (!q) return this.users;
-                    return this.users.filter(u =>
-                        u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.role.toLowerCase().includes(q)
-                    );
-                },
-
-                initials(name) {
-                    return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-                },
-
-                ownerCount() {
-                    return this.users.filter(u => u.role === 'Owner').length;
-                },
-
-                isLastOwner(user) {
-                    return user.role === 'Owner' && this.ownerCount() === 1;
-                },
-
-                canDelete(user) {
-                    if (user.id === this.currentUserId) return false;
-                    if (this.isLastOwner(user)) return false;
-                    return true;
-                },
-
-                deleteBlockedReason(user) {
-                    if (user.id === this.currentUserId) return "You can't delete your own account";
-                    if (this.isLastOwner(user)) return "Can't delete the last Owner account";
-                    return '';
-                },
-
-                openAddModal() {
-                    this.editingUser = null;
-                    this.form = { name: '', email: '', password: '', role: 'Cashier', status: 'Active' };
-                    this.showModal = true;
-                },
-
-                openEditModal(user) {
-                    this.editingUser = user;
-                    this.form = { name: user.name, email: user.email, password: '', role: user.role, status: user.status };
-                    this.showModal = true;
-                },
-
-                closeModal() {
-                    this.showModal = false;
-                },
-
-                saveUser() {
-                    if (!this.form.name.trim() || !this.form.email.trim()) return;
-                    if (!this.editingUser && !this.form.password.trim()) return;
-
-                    if (this.editingUser) {
-                        this.editingUser.name = this.form.name;
-                        this.editingUser.email = this.form.email;
-                        this.editingUser.role = this.isLastOwner(this.editingUser) ? 'Owner' : this.form.role;
-                        this.editingUser.status = this.editingUser.id === this.currentUserId ? 'Active' : this.form.status;
-                        // this.form.password diabaikan jika kosong — hanya
-                        // dikirim ke backend kalau diisi (update password).
-                    } else {
-                        const newId = this.users.length ? Math.max(...this.users.map(u => u.id)) + 1 : 1;
-                        this.users.push({ id: newId, name: this.form.name, email: this.form.email, role: this.form.role, status: this.form.status });
-                    }
-                    this.closeModal();
-                },
-
-                deleteUser(user) {
-                    if (!this.canDelete(user)) return;
-                    if (!confirm(`Delete ${user.name}?`)) return;
-                    this.users = this.users.filter(u => u.id !== user.id);
-                }
-            }))
-        })
-    </script>
-
-    <style>
+        document.addEventListener('alpine:init',()=>{Alpine.data('usersLogic',()=>({
+            searchQuery:'',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
+            form:{name:'',email:'',password:'',role:'Cashier',status:'Active'},
+            users:@json($users->map(fn($u)=>['id'=>$u->id,'name'=>$u->name,'email'=>$u->email,'role'=>$u->role,'status'=>$u->status])->values()),
+            filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return q?this.users.filter(u=>(u.name+' '+u.email+' '+u.role).toLowerCase().includes(q)):this.users;},
+            initials(name){return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();},
+            ownerCount(){return this.users.filter(u=>u.role==='Owner').length;},
+            isLastOwner(user){return user.role==='Owner'&&this.ownerCount()===1;},
+            canDelete(user){return user.id!==this.currentUserId&&!this.isLastOwner(user);},
+            deleteBlockedReason(user){if(user.id===this.currentUserId)return "You can't delete your own account";if(this.isLastOwner(user))return "Can't delete the last Owner account";return '';},
+            openAddModal(){this.editingUser=null;this.form={name:'',email:'',password:'',role:'Cashier',status:'Active'};this.showModal=true;},
+            openEditModal(user){this.editingUser=user;this.form={name:user.name,email:user.email,password:'',role:user.role,status:user.status};this.showModal=true;},
+            closeModal(){this.showModal=false;},
+            async saveUser(){
+                if(!this.form.name.trim()||!this.form.email.trim()||(!this.editingUser&&!this.form.password.trim()))return;
+                const editing=this.editingUser,url=editing?'{{ url('/user') }}/'+editing.id:'{{ route('user.store') }}';
+                const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
+                const data=await response.json();if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Unable to save user');return;}
+                const normalized={id:data.id,name:data.name,email:data.email,role:data.role,status:data.status};
+                if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();
+            },
+            async deleteUser(user){if(!this.canDelete(user)||!confirm('Delete '+user.name+'?'))return;const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){alert(data.message||'Unable to delete user');return;}this.users=this.users.filter(u=>u.id!==user.id);}
+        }))})
+    </script>    <style>
         [x-cloak] { display: none !important; }
     </style>
 
