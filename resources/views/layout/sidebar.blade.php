@@ -212,15 +212,20 @@
                             <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email ??
                                 'pranata.dyo@gmail.com' }}</p>
                         </div>
-                        <button aria-label="Settings"
-                            class="text-gray-400 hover:text-gray-600 shrink-0 md:hidden lg:block">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                class="w-4.5 h-4.5">
-                                <circle cx="12" cy="12" r="3" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19.4 13.5a7.6 7.6 0 0 0 0-3l1.8-1.4-2-3.4-2.1.7a7.6 7.6 0 0 0-2.6-1.5L14 2h-4l-.5 2.2a7.6 7.6 0 0 0-2.6 1.5l-2.1-.7-2 3.4L4.6 10a7.6 7.6 0 0 0 0 3l-1.8 1.5 2 3.4 2.1-.7c.8.7 1.7 1.2 2.6 1.5L10 22h4l.5-2.2c.9-.3 1.8-.8 2.6-1.5l2.1.7 2-3.4-1.8-1.5Z" />
-                            </svg>
-                        </button>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" aria-label="Logout"
+                                class="text-gray-400 hover:text-red-500 transition shrink-0 md:hidden lg:block"
+                                title="Logout">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    class="w-4.5 h-4.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M14 8l4 4-4 4M18 12H9" />
+                                </svg>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </aside>
