@@ -108,7 +108,7 @@
         <div class="bg-white rounded-2xl border border-gray-100 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900">Transaction History</h3>
-                <a href="#" class="text-sm text-[#1F4D3D] font-medium hover:underline">View all</a>
+                <a href="{{ route('transaction') }}" class="text-sm text-[#1F4D3D] font-medium hover:underline">View all</a>
             </div>
 
             <ul class="divide-y divide-gray-100">
@@ -118,7 +118,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 12.5 2.3 2.3 4.7-5"/></svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900">Payment via Cash</p>
+                            <p class="text-sm font-medium text-gray-900">Payment via {{ $trx->payment_method }}</p>
                             <p class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 mt-0.5">{{ $trx->created_at->format('d M Y, H:i') }}</p>
                         </div>
                         <div class="text-right shrink-0">
