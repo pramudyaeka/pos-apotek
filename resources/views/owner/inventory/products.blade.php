@@ -121,7 +121,7 @@
                 </div>
                 <p class="text-sm text-gray-400 mb-6">Isi informasi produk di bawah.</p>
 
-                <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Produk info</p>
+                <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Informasi Produk</p>
                 <div class="space-y-4 mb-6">
                     <div>
                         <label for="productName" class="block text-sm font-medium text-gray-700 mb-1.5">Nama Produk</label>
