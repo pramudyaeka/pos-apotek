@@ -25,10 +25,10 @@
             </div>
 
             <div class="flex flex-wrap gap-2 shrink-0">
-                <select x-model="sortBy" aria-label="Urutkan categories" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                <select x-model="sortBy" aria-label="Urutkan kategori" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                     <option value="name">Nama A-Z</option><option value="items-high">Produk terbanyak</option><option value="items-low">Produk tersedikit</option>
                 </select>
-                <select x-model="statusFilter" aria-label="Filter category status" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                <select x-model="statusFilter" aria-label="Filter status kategori" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                     <option value="all">Semua status</option><option value="active">Aktif</option><option value="inactive">Tidak Aktif</option>
                 </select>
                 <button @click="openAddModal()"
@@ -103,7 +103,7 @@
                 class="bg-white rounded-2xl w-full max-w-sm p-6">
 
                 <div class="flex items-start justify-between mb-1">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingKategori ? 'Ubah Kategori' : 'Add New Kategori'"></h2>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingKategori ? 'Ubah Kategori' : 'Tambah Kategori'"></h2>
                     <button @click="closeModal()" aria-label="Tutup" class="text-gray-400 hover:text-gray-600 shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
                     </button>
@@ -140,7 +140,7 @@
                 searchQuery:'', sortBy:'name', statusFilter:'all', showModal:false, editingKategori:null,
                 form:{name:'',is_active:true},
                 categories: @json($categoryData),
-                filteredKategori(){const q=this.searchQuery.trim().toMenipiserCase();let rows=this.categories.filter(c=>(!q||c.name.toMenipiserCase().includes(q))&&(this.statusFilter==='all'||(this.statusFilter==='active'&&c.is_active)||(this.statusFilter==='inactive'&&!c.is_active)));return [...rows].sort((a,b)=>{if(this.sortBy==='items-high')return b.products_count-a.products_count;if(this.sortBy==='items-low')return a.products_count-b.products_count;return a.name.localeCompare(b.name);});},
+                filteredKategori(){const q=this.searchQuery.trim().toLowerCase();let rows=this.categories.filter(c=>(!q||c.name.toLowerCase().includes(q))&&(this.statusFilter==='all'||(this.statusFilter==='active'&&c.is_active)||(this.statusFilter==='inactive'&&!c.is_active)));return [...rows].sort((a,b)=>{if(this.sortBy==='items-high')return b.products_count-a.products_count;if(this.sortBy==='items-low')return a.products_count-b.products_count;return a.name.localeCompare(b.name);});},
                 openAddModal(){this.editingKategori=null;this.form={name:'',is_active:true};this.showModal=true;},
                 openUbahModal(cat){this.editingKategori=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;},
                 closeModal(){this.showModal=false;},
