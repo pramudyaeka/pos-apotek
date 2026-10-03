@@ -54,7 +54,7 @@
                 <div class="w-9 h-9 rounded-lg bg-[#1F4D3D]/10 flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><circle cx="12" cy="12" r="8.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5v9M14.5 9.7c0-1-1-1.7-2.5-1.7s-2.5.8-2.5 1.8c0 2.6 5 1.3 5 3.9 0 1-1 1.8-2.5 1.8s-2.5-.7-2.5-1.7"/></svg>
                 </div>
-                <span class="text-sm font-medium text-gray-500">Hari ini Penjualan</span>
+                <span class="text-sm font-medium text-gray-500">Penjualan Hari Ini</span>
             </div>
             <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">Rp {{ number_format($todaySales, 0, ",", ".") }}</p>
             <p class="text-xs text-gray-400 mt-1">Total penjualan hari ini</p>
