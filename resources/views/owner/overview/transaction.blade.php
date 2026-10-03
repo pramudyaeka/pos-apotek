@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="flex flex-wrap gap-2 shrink-0">
-                        <select x-model="sortBy" aria-label="Urutkan transactions" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                        <select x-model="sortBy" aria-label="Urutkan transaksi" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                             <option value="latest">Terbaru</option>
                             <option value="oldest">Terlama</option>
                             <option value="highest">Nominal terbesar</option>
@@ -44,7 +44,7 @@
                         </select>
                         <select x-model="methodFilter" aria-label="Filter metode pembayaran" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                             <option value="all">Semua metode</option>
-                            <option value="Tunai">Tunai</option>
+                            <option value="Cash">Tunai</option>
                             <option value="Debit">Debit</option>
                             <option value="QRIS">QRIS</option>
                         </select>
@@ -65,7 +65,7 @@
                             <tr>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2.5' : 'px-6 py-4'">#</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2.5' : 'px-6 py-4'">Tanggal</th>
-                                <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2.5' : 'px-6 py-4'">No. Nomor Faktur</th>
+                                <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2.5' : 'px-6 py-4'">Nomor Faktur</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2.5' : 'px-6 py-4'">Metode</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2.5' : 'px-6 py-4'">Nominal</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2.5' : 'px-6 py-4'">Aksi</th>
@@ -83,7 +83,7 @@
                                     <td class="whitespace-nowrap font-semibold text-gray-900" :class="selectedTransaksi ? 'px-3 py-2' : 'px-6 py-4'" x-text="formatRupiah(trx.amount)"></td>
                                     <td class="whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2' : 'px-6 py-4'">
                                         <button @click.stop="selectedTransaksi = trx" class="font-semibold text-[#1F4D3D] hover:underline">
-                                            View Details
+                                            Lihat Detail
                                         </button>
                                     </td>
                                 </tr>
@@ -111,7 +111,7 @@
                     <div class="flex flex-col h-full overflow-y-auto">
                         <div class="px-6 pt-6 pb-2">
                             <div class="flex justify-between items-center mb-6">
-                                <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Transaksi Detail</h2>
+                                <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Detail Transaksi</h2>
                                 <button @click="selectedTransaksi = null" aria-label="Tutup" class="text-gray-400 hover:text-gray-600 shrink-0">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
                                 </button>
@@ -121,7 +121,7 @@
                                 <div class="w-10 h-10 rounded-full bg-[#1F4D3D]/10 flex items-center justify-center shrink-0">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 0 0-8 0v4M5 9h14l1 12H4L5 9Z"/></svg>
                                 </div>
-                                <span class="text-gray-500 text-sm">Purchase</span>
+                                <span class="text-gray-500 text-sm">Penjualan</span>
                             </div>
 
                             <p class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900 mb-6" x-text="'+ ' + formatRupiah(selectedTransaksi.amount)"></p>
