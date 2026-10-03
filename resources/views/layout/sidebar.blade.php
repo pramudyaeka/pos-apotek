@@ -65,26 +65,26 @@
                         <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Operasional</p>
                         <ul class="space-y-1">
                             @if(auth()->user()->isOwner())
-                            <li><a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span>⌂</span><span>Dasbor</span></a></li>
+                            <li><a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span><span>Dasbor</span></a></li>
                             @endif
-                            <li><a href="{{ route('orders') }}" class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}"><span>🛒</span><span>Penjualan</span></a></li>
+                            <li><a href="{{ route('orders') }}" class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 1.9-1.4L22 8H7M10 20a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg></span><span>Penjualan</span></a></li>
                         </ul>
                     </div>
 
                     <div>
                         <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Persediaan</p>
                         <ul class="space-y-1">
-                            <li><a href="{{ route('product') }}" class="nav-link {{ request()->routeIs('product') ? 'active' : '' }}"><span>▣</span><span>Produk</span></a></li>
-                            <li><a href="{{ route('category') }}" class="nav-link {{ request()->routeIs('category') ? 'active' : '' }}"><span>▦</span><span>Kategori</span></a></li>
+                            <li><a href="{{ route('product') }}" class="nav-link {{ request()->routeIs('product') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg></span><span>Produk</span></a></li>
+                            <li><a href="{{ route('category') }}" class="nav-link {{ request()->routeIs('category') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6v6H4zM14 5h6v6h-6zM4 15h6v4H4zM14 15h6v4h-6z"/></svg></span><span>Kategori</span></a></li>
                         </ul>
                     </div>
 
                     <div>
                         <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Pemantauan</p>
                         <ul class="space-y-1">
-                            <li><a href="{{ route('history') }}" class="nav-link {{ request()->routeIs('history') ? 'active' : '' }}"><span>◷</span><span>Aktivitas Sistem</span></a></li>
+                            <li><a href="{{ route('history') }}" class="nav-link {{ request()->routeIs('history') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span><span>Aktivitas Sistem</span></a></li>
                             @if(auth()->user()->isOwner())
-                            <li><a href="{{ route('transaction') }}" class="nav-link {{ request()->routeIs('transaction') ? 'active' : '' }}"><span>↔</span><span>Riwayat Penjualan</span></a></li>
+                            <li><a href="{{ route('transaction') }}" class="nav-link {{ request()->routeIs('transaction') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3M18 7l-3-3M6 17l3 3"/></svg></span><span>Riwayat Penjualan</span></a></li>
                             @endif
                         </ul>
                     </div>
@@ -93,14 +93,14 @@
                     <div>
                         <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Analisis</p>
                         <ul class="space-y-1">
-                            <li><a href="{{ route('reporting') }}" class="nav-link {{ request()->routeIs('reporting') ? 'active' : '' }}"><span>▤</span><span>Laporan</span></a></li>
+                            <li><a href="{{ route('reporting') }}" class="nav-link {{ request()->routeIs('reporting') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></span><span>Laporan</span></a></li>
                         </ul>
                     </div>
 
                     <div>
                         <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Administrasi</p>
                         <ul class="space-y-1">
-                            <li><a href="{{ route('user-management') }}" class="nav-link {{ request()->routeIs('user-management') ? 'active' : '' }}"><span>♙</span><span>Pengguna</span></a></li>
+                            <li><a href="{{ route('user-management') }}" class="nav-link {{ request()->routeIs('user-management') ? 'active' : '' }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span><span>Pengguna</span></a></li>
                         </ul>
                     </div>
                     @endif
@@ -172,6 +172,84 @@
     @endif
 
     <div id="toastContainer" class="fixed top-4 right-4 z-[100] w-[min(92vw,380px)] space-y-2 pointer-events-none" aria-live="polite" aria-atomic="true"></div>
+
+    <style>
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            min-height: 42px;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.75rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.25rem;
+            transition: background-color 150ms ease, color 150ms ease;
+        }
+
+        .nav-link:hover {
+            color: #1F4D3D;
+            background: #f7f9f8;
+        }
+
+        .nav-link.active {
+            color: #1F4D3D;
+            background: #1F4D3D0D;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 1.25rem;
+        }
+
+        .nav-icon svg {
+            width: 1.125rem;
+            height: 1.125rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .nav-link {
+                min-height: 62px;
+                padding: 0.5rem 0.25rem;
+                flex-direction: column;
+                justify-content: center;
+                gap: 0.25rem;
+                font-size: 0.625rem;
+                line-height: 0.875rem;
+                text-align: center;
+            }
+
+            .nav-icon {
+                width: 1.5rem;
+                height: 1.5rem;
+                flex-basis: 1.5rem;
+            }
+
+            .nav-icon svg {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .nav-link {
+                min-height: 44px;
+                padding: 0.7rem 0.75rem;
+            }
+        }
+    </style>
 
     <script>
         window.showToast = function(message, type = 'success', duration = 3500) {
