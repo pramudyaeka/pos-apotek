@@ -14,7 +14,7 @@
             <p class="text-gray-500 mt-1">Kelola kategori produk apotek.</p>
         </div>
 
-        {{-- Cari + Add Kategori + Urutkan + Filter --}}
+        {{-- Cari + Tambah Kategori + Urutkan + Filter --}}
         <div class="flex flex-wrap lg:flex-nowrap items-center gap-3 mb-5">
             <div class="relative flex-1 w-full min-w-[200px]">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -45,7 +45,7 @@
                 <thead class="font-['IBM_Plex_Mono'] text-[11px] tracking-widest text-gray-400 uppercase bg-gray-50/70 border-b border-gray-100">
                     <tr>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap w-16">#</th>
-                        <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Kategori Nama</th>
+                        <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Nama Kategori</th>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Status</th>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Jumlah Produk</th>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap text-right">Aksi</th>
@@ -112,13 +112,15 @@
 
                 <div class="mb-5">
                     <label for="categoryNama" class="block text-sm font-medium text-gray-700 mb-1.5">Kategori Nama</label>
-                    <input type="text" id="categoryNama" x-model="form.name" placeholder="e.g. Pain Relief"
+                    <input type="text" id="categoryNama" x-model="form.name" placeholder="Contoh: Obat Flu"
                         class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                 </div>
 
                 <div class="flex items-center justify-between mb-7">
-                    <span class="text-sm font-medium text-gray-700">Aktif Status</span>
+                    <span class="text-sm font-medium text-gray-700">Status Aktif</span>
                     <button type="button" @click="form.is_active = !form.is_active"
+                        :aria-pressed="form.is_active"
+                        aria-label="Ubah status kategori"
                         class="w-11 h-6 rounded-full transition relative shrink-0"
                         :class="form.is_active ? 'bg-[#1F4D3D]' : 'bg-gray-300'">
                         <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all"
@@ -158,7 +160,7 @@
                     finally { if(saveButton) saveButton.disabled=false; }
                 },
                 async deleteKategori(id){
-                    if(!confirmAksi('Hapus kategori ini? Tindakan ini tidak dapat dibatalkan.'))return;
+                    if(!confirmAction('Hapus kategori ini? Tindakan ini tidak dapat dibatalkan.'))return;
                     try { const response=await fetch('{{ url('/category') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}}); const data=await response.json();if(!response.ok){showToast(data.message||'Kategori gagal dihapus.','error');return;}this.categories=this.categories.filter(c=>c.id!==id);showToast('Kategori berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
                 }
             }))
