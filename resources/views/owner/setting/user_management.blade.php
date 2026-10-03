@@ -177,15 +177,15 @@
     <script>
         document.addEventListener('alpine:init',()=>{Alpine.data('usersLogic',()=>({
             searchQuery:'',roleFilter:'all',statusFilter:'all',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
-            form:{name:'',email:'',password:'',role:'Kasir',status:'Active'},
+            form:{name:'',email:'',password:'',role:'Cashier',status:'Active'},
             users: @json($users),
             filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return this.users.filter(u=>(!q||(u.name+' '+u.email+' '+u.role).toLowerCase().includes(q))&&(this.roleFilter==='all'||u.role===this.roleFilter)&&(this.statusFilter==='all'||u.status===this.statusFilter));},
             initials(name){return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();},
             ownerCount(){return this.users.filter(u=>u.role==='Owner').length;},
             isLastOwner(user){return user.role==='Owner'&&this.ownerCount()===1;},
             canDelete(user){return user.id!==this.currentUserId&&!this.isLastOwner(user);},
-            deleteBlockedReason(user){if(user.id===this.currentUserId)return "Anda can't delete your own account";if(this.isLastOwner(user))return "Can't delete the last Owner account";return '';},
-            openAddModal(){this.editingUser=null;this.form={name:'',email:'',password:'',role:'Kasir',status:'Active'};this.showModal=true;},
+            deleteBlockedReason(user){if(user.id===this.currentUserId)return "Anda tidak dapat menghapus akun sendiri";if(this.isLastOwner(user))return "Tidak dapat menghapus akun Owner terakhir";return '';},
+            openAddModal(){this.editingUser=null;this.form={name:'',email:'',password:'',role:'Cashier',status:'Active'};this.showModal=true;},
             openEditModal(user){this.editingUser=user;this.form={name:user.name,email:user.email,password:'',role:user.role,status:user.status};this.showModal=true;},
             closeModal(){this.showModal=false;},
             async saveUser(){
@@ -194,9 +194,9 @@
                 const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
                 const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'User gagal disimpan.','error');return;}
                 const normalized={id:data.id,name:data.name,email:data.email,role:data.role,status:data.status};
-                if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();showToast(editing?'User berhasil diperbarui.':'User berhasil ditambahkan.');
+                if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();showToast(editing?'Pengguna berhasil diperbarui.':'Pengguna berhasil ditambahkan.');
             },
-            async deleteUser(user){if(!this.canDelete(user)||!confirmAksi('Hapus user '+user.name+'? Tindakan ini tidak dapat dibatalkan.'))return;const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'User gagal dihapus.','error');return;}this.users=this.users.filter(u=>u.id!==user.id);showToast('User berhasil dihapus.');}
+            async deleteUser(user){if(!this.canDelete(user)||!confirmAksi('Hapus pengguna '+user.name+'? Tindakan ini tidak dapat dibatalkan.'))return;const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Pengguna gagal dihapus.','error');return;}this.users=this.users.filter(u=>u.id!==user.id);showToast('User berhasil dihapus.');}
         }))})
     </script>    <style>
         [x-cloak] { display: none !important; }
