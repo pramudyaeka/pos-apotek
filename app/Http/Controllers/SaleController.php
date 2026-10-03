@@ -16,12 +16,24 @@ class SaleController extends Controller
         $data=$request->validate(['items'=>'required|array|min:1','items.*.product_id'=>'required|integer|exists:products,id','items.*.quantity'=>'required|integer|min:1','payment_method'=>['required',Rule::in(['Cash','Debit','QRIS'])]]);
         $sale=DB::transaction(function() use($data,$request){
             $subtotal=0; $rows=[];
-            foreach($data['items'] as $item){
-                $product=Product::lockForUpdate()->findOrFail($item['product_id']);
-                if(!$product->is_active) abort(422,'Product tidak aktif: '.$product->name);
-                if($product->stock<$item['quantity']) abort(422,'Stok tidak cukup untuk '.$product->name.'. Tersedia '.$product->stock.'.');
-                $line=(float)$product->price*$item['quantity']; $subtotal+=$line;
-                $rows[]=['product'=>$product,'quantity'=>$item['quantity'],'subtotal'=>$line];
+            $quantities = [];
+            foreach ($data['items'] as $item) {
+                $productId = (int) $item['product_id'];
+                $quantities[$productId] = ($quantities[$productId] ?? 0) + (int) $item['quantity'];
+            }
+
+            foreach ($quantities as $productId => $quantity) {
+                $product = Product::lockForUpdate()->findOrFail($productId);
+                if (!$product->is_active) {
+                    abort(422, 'Product tidak aktif: '.$product->name);
+                }
+                if ($product->stock < $quantity) {
+                    abort(422, 'Stok tidak cukup untuk '.$product->name.'. Tersedia '.$product->stock.'.');
+                }
+
+                $line = (float) $product->price * $quantity;
+                $subtotal += $line;
+                $rows[] = ['product' => $product, 'quantity' => $quantity, 'subtotal' => $line];
             }
             $sale=Sale::create(['invoice_number'=>'TMP-'.bin2hex(random_bytes(8)),'user_id'=>$request->user()->id,'subtotal'=>$subtotal,'tax'=>0,'total'=>$subtotal,'payment_method'=>$data['payment_method'],'status'=>'Success']);
             $sale->update(['invoice_number' => '#'.str_pad((string)$sale->id, 4, '0', STR_PAD_LEFT)]);
