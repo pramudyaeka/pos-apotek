@@ -148,7 +148,7 @@
                             <div>
                                 <p class="text-sm text-gray-500 mb-3">Ringkasan Transaksi</p>
                                 <div class="space-y-2.5">
-                                    <template x-for="item in selectedTransaksi.items" :key="item.name">
+                                    <template x-for="(item, itemIndex) in selectedTransaksi.items" :key="item.product_id + '-' + itemIndex">
                                         <div class="flex justify-between items-center gap-2 bg-white rounded-xl px-3.5 py-2.5">
                                             <span class="text-sm font-medium text-gray-900 truncate" x-text="item.name"></span>
                                             <span class="text-sm text-gray-500 whitespace-nowrap" x-text="formatRupiah(item.price)"></span>
