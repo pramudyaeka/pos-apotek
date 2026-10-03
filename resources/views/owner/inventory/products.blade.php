@@ -24,15 +24,19 @@
                     class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
             </div>
 
-            <div class="flex gap-3 shrink-0">
+            <div class="flex flex-wrap gap-2 shrink-0">
+                <select x-model="sortBy" aria-label="Sort products" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                    <option value="name">Name A-Z</option><option value="stock-low">Stock low-high</option><option value="stock-high">Stock high-low</option><option value="price-low">Price low-high</option><option value="price-high">Price high-low</option>
+                </select>
+                <select x-model="stockFilter" aria-label="Filter stock" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                    <option value="all">All stock</option><option value="low">Low stock</option><option value="out">Out of stock</option><option value="healthy">Healthy stock</option>
+                </select>
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
                     Add Items
                 </button>
-                <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Sort</button>
-                <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Filter</button>
-            </div>
+                            </div>
         </div>
 
         {{-- Tabel produk --}}
@@ -175,12 +179,12 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('productsLogic', () => ({
-                searchQuery: '', showModal: false, editingProduct: null,
+                searchQuery: '', sortBy:'name', stockFilter:'all', showModal: false, editingProduct: null,
                 categoryOptions: @json($categoryData),
                 unitOptions: ['Tablet','Strip','Box','Tube','Sachet','Capsule','Pcs'],
                 form: { name:'', category_id:'', unit:'', price:null, stock:null, min_stock:null, is_active:true },
                 products: @json($productData),
-                filteredProducts() { const q=this.searchQuery.trim().toLowerCase(); return q ? this.products.filter(p=>(p.name+' '+(p.category_name||'')).toLowerCase().includes(q)) : this.products; },
+                filteredProducts() { const q=this.searchQuery.trim().toLowerCase(); let rows=this.products.filter(p=>(!q || (p.name+' '+(p.category_name||'')).toLowerCase().includes(q)) && (this.stockFilter==='all' || (this.stockFilter==='out' && Number(p.stock)===0) || (this.stockFilter==='low' && Number(p.stock)>0 && Number(p.stock)<=Number(p.min_stock)) || (this.stockFilter==='healthy' && Number(p.stock)>Number(p.min_stock)))); return [...rows].sort((a,b)=>{if(this.sortBy==='stock-low')return a.stock-b.stock;if(this.sortBy==='stock-high')return b.stock-a.stock;if(this.sortBy==='price-low')return Number(a.price)-Number(b.price);if(this.sortBy==='price-high')return Number(b.price)-Number(a.price);return a.name.localeCompare(b.name);}); },
                 formatRupiah(n) { return 'Rp '+Number(n||0).toLocaleString('id-ID'); },
                 openAddModal(){this.editingProduct=null;this.form={name:'',category_id:'',unit:'',price:null,stock:null,min_stock:null,is_active:true};this.showModal=true;},
                 openEditModal(item){this.editingProduct=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;},
