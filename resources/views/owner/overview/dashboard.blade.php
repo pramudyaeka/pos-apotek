@@ -147,10 +147,10 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: @json($hourlySales->keys()->map(fn($h) => str_pad($h,2,'0',STR_PAD_LEFT).':00')->values()),
+                labels: @json($chartLabels),
                 datasets: [{
                     label: 'Transaction',
-                    data: @json($hourlySales->values()->map(fn($v) => (float)$v)->values()),
+                    data: @json($chartData),
                     borderColor: '#1F4D3D',
                     backgroundColor: 'rgba(31, 77, 61, 0.08)',
                     tension: 0.35,
