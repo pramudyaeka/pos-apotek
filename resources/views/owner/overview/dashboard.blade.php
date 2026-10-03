@@ -15,17 +15,12 @@
         </div>
 
         <div class="flex items-center gap-3">
-            <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4.5 h-4.5"><circle cx="11" cy="11" r="6.5"/><path stroke-linecap="round" d="m20 20-3.2-3.2"/></svg>
-                </span>
-                <input type="text" placeholder="Cari..."
-                    class="pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm w-full sm:w-64 bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
-            </div>
-            <button type="button" onclick="document.getElementById('inventoryAlert')?.scrollIntoView({behavior:'smooth',block:'center'})" aria-label="Notifikasi" class="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 relative shrink-0 bg-white transition">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-gray-600"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9a6 6 0 1 1 12 0v4.5l1.5 3H4.5L6 13.5V9Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg>
-                <span class="absolute top-2.5 right-3 w-2 h-2 rounded-full bg-[#B8632E] ring-2 ring-white"></span>
-            </button>
+            @if($lowStockProducts > 0 || $outOfStockProducts > 0)
+                <button type="button" onclick="document.getElementById('inventoryAlert')?.scrollIntoView({behavior:'smooth',block:'center'})" aria-label="Lihat notifikasi persediaan" class="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 relative shrink-0 bg-white transition">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5 text-gray-600"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9a6 6 0 1 1 12 0v4.5l1.5 3H4.5L6 13.5V9Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg>
+                    <span class="absolute top-2.5 right-3 w-2 h-2 rounded-full bg-[#B8632E] ring-2 ring-white"></span>
+                </button>
+            @endif
         </div>
     </div>
 
@@ -104,7 +99,13 @@
                 <span class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 tracking-wider uppercase">Live</span>
             </div>
             <div class="relative h-[230px]">
-                <canvas id="transactionChart"></canvas>
+                @if($chartData->isEmpty())
+                    <div class="h-full flex items-center justify-center text-sm text-gray-400">
+                        Belum ada transaksi hari ini.
+                    </div>
+                @else
+                    <canvas id="transactionChart" aria-label="Grafik transaksi hari ini" role="img"></canvas>
+                @endif
             </div>
         </div>
 
@@ -121,7 +122,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 12.5 2.3 2.3 4.7-5"/></svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900">Pembayaran: {{ $trx->payment_method }}</p>
+                            <p class="text-sm font-medium text-gray-900">Pembayaran: {{ $trx->payment_method === 'Cash' ? 'Tunai' : $trx->payment_method }}</p>
                             <p class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 mt-0.5">{{ $trx->created_at->format('d M Y, H:i') }}</p>
                         </div>
                         <div class="text-right shrink-0">
@@ -139,7 +140,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const ctx = document.getElementById('transactionChart');
-
+        if (!ctx) {
+            // Tidak ada transaksi hari ini, jadi chart digantikan empty state.
+        } else {
         // Jaga-jaga: hapus instance chart lama kalau script ini sempat
         // ter-load dua kali (misal karena hot-reload), supaya tidak dobel render.
         const existingChart = Chart.getChart(ctx);
@@ -177,6 +180,7 @@
                 }
             }
         });
+        }
     </script>
 
 @endsection
