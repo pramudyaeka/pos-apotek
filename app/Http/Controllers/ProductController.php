@@ -26,8 +26,12 @@ class ProductController extends Controller
             'unit' => $p->unit,
             'is_active' => (bool) $p->is_active,
         ])->values();
+        $categoryData = $categories->map(fn ($category) => [
+            'id' => $category->id,
+            'name' => $category->name,
+        ])->values();
 
-        return view('owner.inventory.products', compact('products', 'categories', 'productData'));
+        return view('owner.inventory.products', compact('products', 'categories', 'productData', 'categoryData'));
     }
 
     public function store(Request $request)
