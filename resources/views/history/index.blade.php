@@ -6,7 +6,7 @@
 <div class="space-y-6">
     <div>
         <h1 class="text-2xl font-['Space_Grotesk'] font-semibold">Riwayat</h1>
-        <p class="text-sm text-gray-500 mt-1">Monitor aktivitas pengguna dan perubahan stok pada sistem.</p>
+        <p class="text-sm text-gray-500 mt-1">Pantau aktivitas pengguna dan perubahan stok pada sistem.</p>
     </div>
 
     <section class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
@@ -26,7 +26,7 @@
                 </select>
                 <select name="action" class="px-3 py-2 rounded-xl border border-gray-200 text-sm">
                     <option value="all">Semua aksi</option>
-                    @foreach(['create'=>'Tambah','update'=>'Perbarui','delete'=>'Hapus','sale'=>'Sale','login'=>'Masuk','logout'=>'Keluar'] as $value => $label)
+                    @foreach(['create'=>'Tambah','update'=>'Perbarui','delete'=>'Hapus','sale'=>'Penjualan','login'=>'Masuk','logout'=>'Keluar'] as $value => $label)
                         <option value="{{ $value }}" @selected(request('action') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
