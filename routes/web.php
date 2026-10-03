@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\UserController;
@@ -33,7 +34,7 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::delete('/user/{user}',[UserController::class,'destroy'])->name('user.destroy');
 
     Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
-    Route::get('/reporting', fn() => redirect()->route('dashboard'))->name('reporting');
+    Route::get('/reporting', [ReportingController::class, 'index'])->name('reporting');
 });
 
 Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
