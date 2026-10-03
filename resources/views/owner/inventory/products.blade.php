@@ -26,7 +26,7 @@
 
             <div class="flex flex-wrap gap-2 shrink-0">
                 <select x-model="sortBy" aria-label="Urutkan produk" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
-                    <option value="name">Nama A-Z</option><option value="stock-low">Stok low-high</option><option value="stock-high">Stok high-low</option><option value="price-low">Harga low-high</option><option value="price-high">Harga high-low</option>
+                    <option value="name">Nama A-Z</option><option value="stock-low">Stok terendah</option><option value="stock-high">Stok tertinggi</option><option value="price-low">Harga terendah</option><option value="price-high">Harga tertinggi</option>
                 </select>
                 <select x-model="stockFilter" aria-label="Filter stok" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                     <option value="all">Semua stok</option><option value="low">Stok menipis</option><option value="out">Habis</option><option value="healthy">Stok aman</option>
@@ -45,7 +45,7 @@
                 <thead class="font-['IBM_Plex_Mono'] text-[11px] tracking-widest text-gray-400 uppercase bg-gray-50/70 border-b border-gray-100">
                     <tr>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap w-16">#</th>
-                        <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Item Nama</th>
+                        <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Nama Produk</th>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Kategori</th>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Harga</th>
                         <th scope="col" class="px-6 py-4 font-medium whitespace-nowrap">Stok</th>
@@ -70,7 +70,7 @@
                                     <span x-text="item.stock" :class="item.stock <= item.min_stock ? 'text-[#B8632E] font-semibold' : 'text-gray-900'"></span>
                                     <span x-show="item.stock <= item.min_stock"
                                         class="text-[10px] font-semibold text-[#B8632E] bg-[#B8632E]/10 px-2 py-0.5 rounded-full whitespace-nowrap">
-                                        Menipis Stok
+                                        Stok Menipis
                                     </span>
                                 </div>
                             </td>
@@ -123,14 +123,14 @@
                 <div class="space-y-4 mb-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Item Nama</label>
-                        <input type="text" x-model="form.name" placeholder="e.g. Nexium 20mg"
+                        <input type="text" id="productName" x-model="form.name" placeholder="Contoh: Paracetamol 500mg"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Kategori</label>
                             <select x-model="form.category_id" class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
-                                <option value="">Select</option>
+                                <option value="">Pilih</option>
                                 <template x-for="c in categoryOptions" :key="c.id">
                                     <option :value="c.id" x-text="c.name"></option>
                                 </template>
@@ -148,7 +148,7 @@
                     </div>
                 </div>
 
-                <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Harga and stock</p>
+                <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Harga dan Stok</p>
                 <div class="space-y-4 mb-7">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Harga</label>
@@ -196,7 +196,7 @@
                     const saveButton=document.querySelector('[data-product-save]'); if(saveButton) saveButton.disabled=true;
                     try { const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)}); const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Produk gagal disimpan.','error');return;} const normalized={id:data.id,name:data.name,category_id:data.category_id,category_name:data.category?.name,price:Number(data.price),stock:data.stock,min_stock:data.min_stock,unit:data.unit,is_active:data.is_active}; if(editing) Object.assign(editing,normalized); else this.products.push(normalized); this.closeModal();showToast(editing?'Produk berhasil diperbarui.':'Produk berhasil ditambahkan.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); } finally { if(saveButton) saveButton.disabled=false; }
                 },
-                async deleteProduk(id){if(!confirmAksi('Hapus produk ini? Tindakan ini tidak dapat dibatalkan.'))return;try { const response=await fetch('{{ url('/product') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Produk gagal dihapus.','error');return;}this.products=this.products.filter(p=>p.id!==id);showToast('Produk berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }}
+                async deleteProduk(id){if(!confirmAction('Hapus produk ini? Tindakan ini tidak dapat dibatalkan.'))return;try { const response=await fetch('{{ url('/product') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Produk gagal dihapus.','error');return;}this.products=this.products.filter(p=>p.id!==id);showToast('Produk berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }}
             }))
         })
     </script>
