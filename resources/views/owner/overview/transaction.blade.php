@@ -143,8 +143,8 @@
                         </div>
 
                         <div class="mt-auto px-6 pt-4 pb-6">
-                            <button class="w-full py-3.5 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition">
-                                Download Receipt
+                            <button @click="window.open(selectedTransaction.receipt_url, '_blank')" class="w-full py-3.5 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition">
+                                Print Receipt
                             </button>
                         </div>
                     </div>
@@ -160,7 +160,8 @@
             transactions:@json($transactions->getCollection()->map(fn($trx)=>[
                 'id'=>$trx->id,'date'=>$trx->created_at->format('d F Y'),'invoice'=>$trx->invoice_number,'method'=>$trx->payment_method,
                 'amount'=>(float)$trx->total,'status'=>$trx->status,'time'=>$trx->created_at->format('H:i, D, d F Y'),
-                'items'=>$trx->items->map(fn($i)=>['name'=>$i->quantity.'x '.$i->product_name,'price'=>(float)$i->subtotal])->values()
+                'items'=>$trx->items->map(fn($i)=>['name'=>$i->quantity.'x '.$i->product_name,'price'=>(float)$i->subtotal])->values(),
+                'receipt_url'=>route('transaction.receipt',$trx)
             ])->values()),
             formatRupiah(value){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(value).replace('Rp','Rp ');}
         }))})
