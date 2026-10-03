@@ -39,22 +39,24 @@
 
         {{-- Grid produk --}}
         <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
-            @php
-                $products = [
-                    ['name' => 'Somitril', 'category' => 'Pain Relief', 'price' => 5000],
-                    ['name' => 'Tropiprazole', 'category' => 'Digestive', 'price' => 20000],
-                    ['name' => 'Tropbove', 'category' => 'Cold & Flu', 'price' => 12000],
-                    ['name' => 'Somikalim', 'category' => 'Vitamin', 'price' => 17000],
-                    ['name' => 'Virafibatide', 'category' => 'Antiviral', 'price' => 15000],
-                    ['name' => 'Pegamostim', 'category' => 'Pain Relief', 'price' => 10000],
-                    ['name' => 'Preditirelin', 'category' => 'Digestive', 'price' => 21000],
-                    ['name' => 'Nablutril', 'category' => 'Cold & Flu', 'price' => 25000],
-                    ['name' => 'Bolipristin', 'category' => 'Vitamin', 'price' => 25000],
-                    ['name' => 'Klorfenamin', 'category' => 'Cold & Flu', 'price' => 7000],
-                    ['name' => 'Dexaven', 'category' => 'Pain Relief', 'price' => 13000],
-                    ['name' => 'Metildopa', 'category' => 'Antiviral', 'price' => 18000],
-                ];
-            @endphp
+            @foreach ($products as $p)
+                @php $slug = \Illuminate\Support\Str::slug($p->name); $initials = strtoupper(substr($p->name, 0, 2)); @endphp
+                <button type="button" data-product-id="{{ $p->id }}" data-product-name="{{ $p->name }}" data-product-price="{{ $p->price }}"
+                    data-product-stock="{{ $p->stock }}" data-product-initials="{{ $initials }}" data-product-slug="{{ $slug }}"
+                    data-search="{{ strtolower($p->name.' '.($p->category?->name ?? '')) }}"
+                    onclick="addToCart(this)"
+                    class="product-card text-left bg-white rounded-2xl border border-gray-100 p-3 hover:border-[#1F4D3D]/30 hover:shadow-md active:scale-[0.97] transition">
+                    <div class="relative aspect-square rounded-xl bg-[#1F4D3D]/8 flex items-center justify-center mb-3">
+                        <span class="font-['Space_Grotesk'] font-semibold text-2xl text-[#1F4D3D]/70">{{ $initials }}</span>
+                        <span id="badge-{{ $slug }}" class="hidden absolute top-2 right-2 min-w-[24px] h-6 px-1.5 rounded-full bg-[#1F4D3D] text-white text-[12px] font-semibold items-center justify-center">0</span>
+                    </div>
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $p->name }}</p>
+                    <div class="flex items-center justify-between gap-1.5 mt-2">
+                        <span class="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full truncate">{{ $p->category?->name }}</span>
+                        <span class="text-sm font-semibold text-gray-900 shrink-0">Rp{{ number_format($p->price, 0, ',', '.') }}</span>
+                    </div>
+                </button>
+            @endforeach
 
             @foreach ($products as $p)
                 @php
@@ -123,142 +125,51 @@
     </div>
 
     <script>
-        // ---------- Keranjang (state disimpan di memory browser) ----------
-        // Diisi awal sesuai contoh pada wireframe. Hapus 3 baris ini kalau
-        // ingin keranjang mulai kosong secara default.
-        let cart = [
-            { name: 'Predprofen', price: 15000, qty: 1, initials: 'PR', slug: 'predprofen' },
-            { name: 'Nabbufen',   price: 15000, qty: 1, initials: 'NA', slug: 'nabbufen' },
-            { name: 'Bolipafant', price: 15000, qty: 1, initials: 'BO', slug: 'bolipafant' },
-        ];
+        let cart = [];
 
-        function formatRupiah(n) {
-            return 'Rp ' + n.toLocaleString('id-ID');
-        }
-
-        function addToCart(el) {
-            const name = el.dataset.productName;
-            const price = parseInt(el.dataset.productPrice, 10);
-            const initials = el.dataset.productInitials;
-            const slug = el.dataset.productSlug;
-
-            const existing = cart.find(i => i.slug === slug);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({ name, price, qty: 1, initials, slug });
-            }
+        function formatRupiah(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
+        function addToCart(el){
+            const productId=Number(el.dataset.productId), stock=Number(el.dataset.productStock);
+            const existing=cart.find(i=>i.product_id===productId);
+            if(existing){if(existing.qty>=stock){alert('Stok tidak mencukupi.');return;}existing.qty++;}
+            else cart.push({product_id:productId,name:el.dataset.productName,price:Number(el.dataset.productPrice),qty:1,initials:el.dataset.productInitials,slug:el.dataset.productSlug,stock});
             renderCart();
         }
-
-        function changeQty(index, delta) {
-            cart[index].qty += delta;
-            if (cart[index].qty <= 0) {
-                cart.splice(index, 1);
-            }
+        function changeQty(index,delta){
+            const item=cart[index]; item.qty+=delta;
+            if(item.qty<=0)cart.splice(index,1);
+            if(item&&item.qty>item.stock)item.qty=item.stock;
             renderCart();
         }
-
-        function renderCart() {
-            const list = document.getElementById('cartList');
-            const emptyState = document.getElementById('cartEmpty');
-            const placeOrderBtn = document.getElementById('placeOrderBtn');
-
-            if (cart.length === 0) {
-                list.innerHTML = '';
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-                list.innerHTML = cart.map((item, index) => `
-                    <div class="flex items-center gap-3 bg-white rounded-2xl p-3">
-                        <div class="w-14 h-14 rounded-xl bg-[#1F4D3D]/8 flex items-center justify-center shrink-0">
-                            <span class="font-['Space_Grotesk'] font-semibold text-[#1F4D3D]/70">${item.initials}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-gray-900 truncate">${item.name}</p>
-                            <p class="text-sm text-gray-500">${formatRupiah(item.price)}</p>
-                        </div>
-                        <div class="flex items-center gap-1 bg-gray-100 rounded-full p-1 shrink-0">
-                            <button type="button" onclick="changeQty(${index}, -1)" aria-label="Kurangi"
-                                class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white active:scale-90 transition text-gray-600 font-medium">-</button>
-                            <span class="w-6 text-center text-sm font-semibold text-gray-900">${item.qty}</span>
-                            <button type="button" onclick="changeQty(${index}, 1)" aria-label="Tambah"
-                                class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white active:scale-90 transition text-gray-600 font-medium">+</button>
-                        </div>
+        function renderCart(){
+            const list=document.getElementById('cartList'), empty=document.getElementById('cartEmpty'), btn=document.getElementById('placeOrderBtn');
+            if(!cart.length){list.innerHTML='';empty.classList.remove('hidden');}
+            else{empty.classList.add('hidden');list.innerHTML=cart.map((item,index)=>`
+                <div class="flex items-center gap-3 bg-white rounded-2xl p-3">
+                    <div class="w-14 h-14 rounded-xl bg-[#1F4D3D]/8 flex items-center justify-center shrink-0"><span class="font-['Space_Grotesk'] font-semibold text-[#1F4D3D]/70">${item.initials}</span></div>
+                    <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-gray-900 truncate">${item.name}</p><p class="text-sm text-gray-500">${formatRupiah(item.price)}</p></div>
+                    <div class="flex items-center gap-1 bg-gray-100 rounded-full p-1 shrink-0">
+                        <button type="button" onclick="changeQty(${index},-1)" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white text-gray-600 font-medium">-</button>
+                        <span class="w-6 text-center text-sm font-semibold text-gray-900">${item.qty}</span>
+                        <button type="button" onclick="changeQty(${index},1)" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white text-gray-600 font-medium">+</button>
                     </div>
-                `).join('');
-            }
-
-            const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-            const tax = 0;
-            const total = subtotal + tax;
-
-            document.getElementById('cartSubtotal').textContent = formatRupiah(subtotal);
-            document.getElementById('cartTax').textContent = formatRupiah(tax);
-            document.getElementById('cartTotal').textContent = formatRupiah(total);
-            placeOrderBtn.disabled = cart.length === 0;
-
-            updateProductBadges();
+                </div>`).join('');}
+            const subtotal=cart.reduce((sum,i)=>sum+i.price*i.qty,0);
+            document.getElementById('cartSubtotal').textContent=formatRupiah(subtotal);
+            document.getElementById('cartTax').textContent=formatRupiah(0);
+            document.getElementById('cartTotal').textContent=formatRupiah(subtotal);
+            btn.disabled=!cart.length; updateProductBadges();
         }
-
-        // Menampilkan badge jumlah di kartu produk kiri, sesuai isi keranjang
-        function updateProductBadges() {
-            document.querySelectorAll('[data-product-slug]').forEach(card => {
-                const slug = card.dataset.productSlug;
-                const badge = document.getElementById('badge-' + slug);
-                const item = cart.find(i => i.slug === slug);
-
-                if (item) {
-                    badge.textContent = item.qty;
-                    badge.classList.remove('hidden');
-                    badge.classList.add('flex');
-                } else {
-                    badge.classList.add('hidden');
-                    badge.classList.remove('flex');
-                }
-            });
+        function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productSlug);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
+        async function placeOrder(){
+            if(!cart.length)return;
+            const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:'Cash',items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
+            const data=await response.json();
+            if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Transaksi gagal.');return;}
+            alert('Transaksi berhasil. Invoice: '+data.invoice_number);
+            cart=[]; renderCart(); window.location.reload();
         }
-
-        function placeOrder() {
-            if (cart.length === 0) return;
-            // TODO: ganti dengan submit ke backend (route POST transaksi)
-            alert('Order placed! (integrasi backend menyusul)');
-            cart = [];
-            renderCart();
-        }
-
-        // ---------- Pencarian produk ----------
-        function filterProducts(keyword) {
-            keyword = keyword.trim().toLowerCase();
-            const cards = document.querySelectorAll('.product-card');
-            let visibleCount = 0;
-
-            cards.forEach(card => {
-                const match = card.dataset.search.includes(keyword);
-                card.classList.toggle('hidden', !match);
-                if (match) visibleCount++;
-            });
-
-            document.getElementById('noResults').classList.toggle('hidden', visibleCount !== 0);
-        }
-
-        // ---------- Jam & tanggal live (dikunci ke WITA) ----------
-        function updateClock() {
-            const now = new Date();
-            const dateFmt = new Intl.DateTimeFormat('en-GB', {
-                weekday: 'short', day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Makassar'
-            }).format(now);
-            const timeFmt = new Intl.DateTimeFormat('en-GB', {
-                hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar'
-            }).format(now);
-
-            document.getElementById('liveDate').textContent = dateFmt;
-            document.getElementById('liveTime').textContent = timeFmt + ' WITA';
-        }
-
-        updateClock();
-        setInterval(updateClock, 1000);
-        renderCart();
-    </script>
-
-@endsection
+        function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);}
+        function updateClock(){const now=new Date();document.getElementById('liveDate').textContent=new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveTime').textContent=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
+        updateClock();setInterval(updateClock,1000);renderCart();
+    </script>@endsection

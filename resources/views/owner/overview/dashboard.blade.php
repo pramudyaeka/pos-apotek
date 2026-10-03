@@ -34,7 +34,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6 shrink-0 text-emerald-200 mt-0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4 2.5 20h19L12 4Z"/><path stroke-linecap="round" d="M12 10.5v4M12 17h.01"/></svg>
         <div class="flex-1">
             <p class="text-sm text-emerald-50/90">
-                Your product stock with name <strong class="text-white font-semibold">Paracetamol</strong> is running low, already below 10 pcs.
+                Your product stock with name <strong class="text-white font-semibold">{{ optional($recentSales->first()?->items->first())->product_name ?? "No product" }}</strong> has low stock items that need attention.
             </p>
             <p class="text-sm font-semibold mt-0.5">Please request a new shipment</p>
         </div>
@@ -51,10 +51,10 @@
                 <div class="w-9 h-9 rounded-lg bg-[#1F4D3D]/10 flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><circle cx="12" cy="12" r="8.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5v9M14.5 9.7c0-1-1-1.7-2.5-1.7s-2.5.8-2.5 1.8c0 2.6 5 1.3 5 3.9 0 1-1 1.8-2.5 1.8s-2.5-.7-2.5-1.7"/></svg>
                 </div>
-                <span class="text-sm font-medium text-gray-500">Total Profit</span>
+                <span class="text-sm font-medium text-gray-500">Today Sales</span>
             </div>
-            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">Rp 50.000.000</p>
-            <p class="text-xs text-gray-400 mt-1">Grow 5% past month</p>
+            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">Rp {{ number_format($todaySales, 0, ",", ".") }}</p>
+            <p class="text-xs text-gray-400 mt-1">Sales recorded today</p>
         </div>
 
         <div class="bg-white rounded-2xl border border-gray-100 p-5">
@@ -64,8 +64,8 @@
                 </div>
                 <span class="text-sm font-medium text-gray-500">Total Order</span>
             </div>
-            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">200 Orders</p>
-            <p class="text-xs text-gray-400 mt-1">Grow 0.2% past month</p>
+            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ number_format($totalOrders) }} Orders</p>
+            <p class="text-xs text-gray-400 mt-1">All recorded transactions</p>
         </div>
 
         <div class="bg-white rounded-2xl border border-gray-100 p-5">
@@ -75,7 +75,7 @@
                 </div>
                 <span class="text-sm font-medium text-gray-500">Running Low</span>
             </div>
-            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">2 Items</p>
+            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ $lowStockProducts }} Items</p>
             <p class="text-xs text-[#B8632E] mt-1 font-medium">Please restock your items</p>
         </div>
 
@@ -86,7 +86,7 @@
                 </div>
                 <span class="text-sm font-medium text-gray-500">Out of Stocks</span>
             </div>
-            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">0 Items</p>
+            <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ $outOfStockProducts }} Items</p>
             <p class="text-xs text-gray-400 mt-1">All items in stock</p>
         </div>
 
@@ -112,30 +112,22 @@
             </div>
 
             <ul class="divide-y divide-gray-100">
-                @php
-                    $transactions = [
-                        ['time' => 'Today, 13.30 WITA', 'amount' => 'Rp 30.000'],
-                        ['time' => 'Today, 13.30 WITA', 'amount' => 'Rp 30.000'],
-                        ['time' => 'Today, 13.30 WITA', 'amount' => 'Rp 30.000'],
-                        ['time' => 'Today, 13.30 WITA', 'amount' => 'Rp 30.000'],
-                    ];
-                @endphp
-
-                @foreach ($transactions as $trx)
+                @foreach ($recentSales as $trx)
                     <li class="flex items-center gap-4 py-3.5 first:pt-0 last:pb-0">
                         <div class="w-10 h-10 rounded-full bg-[#1F4D3D]/10 flex items-center justify-center shrink-0">
                             <svg viewBox="0 0 24 24" fill="none" stroke="#1F4D3D" stroke-width="1.5" class="w-5 h-5"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 12.5 2.3 2.3 4.7-5"/></svg>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-900">Payment via Cash</p>
-                            <p class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 mt-0.5">{{ $trx['time'] }}</p>
+                            <p class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 mt-0.5">{{ $trx->created_at->format('d M Y, H:i') }}</p>
                         </div>
                         <div class="text-right shrink-0">
-                            <p class="text-sm font-semibold text-gray-900">+ {{ $trx['amount'] }}</p>
+                            <p class="text-sm font-semibold text-gray-900">+ Rp {{ number_format($trx->total, 0, ',', '.') }}</p>
                             <span class="inline-block mt-1 text-[11px] font-medium text-[#1F4D3D] bg-[#1F4D3D]/10 px-2 py-0.5 rounded-full">Success</span>
                         </div>
                     </li>
                 @endforeach
+                @if ($recentSales->isEmpty())<li class="py-8 text-center text-sm text-gray-400">No transactions yet.</li>@endif
             </ul>
         </div>
 
@@ -155,10 +147,10 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['12:00', '15:00', '19:00'],
+                labels: @json($hourlySales->keys()->map(fn($h) => str_pad($h,2,'0',STR_PAD_LEFT).':00')->values()),
                 datasets: [{
                     label: 'Transaction',
-                    data: [29, 56, 77],
+                    data: @json($hourlySales->values()->map(fn($v) => (float)$v)->values()),
                     borderColor: '#1F4D3D',
                     backgroundColor: 'rgba(31, 77, 61, 0.08)',
                     tension: 0.35,

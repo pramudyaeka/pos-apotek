@@ -155,50 +155,16 @@
     </div>
 
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('transactionLogic', () => ({
-                selectedTransaction: null,
-
-                transactions: [
-                    {
-                        id: 1,
-                        date: '12 August 2026',
-                        invoice: '#2078',
-                        method: 'Cash',
-                        amount: 29000,
-                        status: 'Success',
-                        time: '13:15, Wed, 12 August 2026',
-                        items: [
-                            { name: '1x Paracetamol', price: 23000 },
-                            { name: '3x Vitacimin', price: 6000 }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        date: '12 August 2026',
-                        invoice: '#2079',
-                        method: 'QRIS',
-                        amount: 24000,
-                        status: 'Success',
-                        time: '14:20, Wed, 12 August 2026',
-                        items: [
-                            { name: '1x Obat Flu', price: 24000 }
-                        ]
-                    }
-                ],
-
-                formatRupiah(value) {
-                    return new Intl.NumberFormat('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                        minimumFractionDigits: 0
-                    }).format(value).replace('Rp', 'Rp ');
-                }
-            }))
-        })
-    </script>
-
-    <style>
+        document.addEventListener('alpine:init',()=>{Alpine.data('transactionLogic',()=>({
+            selectedTransaction:null,
+            transactions:@json($transactions->getCollection()->map(fn($trx)=>[
+                'id'=>$trx->id,'date'=>$trx->created_at->format('d F Y'),'invoice'=>$trx->invoice_number,'method'=>$trx->payment_method,
+                'amount'=>(float)$trx->total,'status'=>$trx->status,'time'=>$trx->created_at->format('H:i, D, d F Y'),
+                'items'=>$trx->items->map(fn($i)=>['name'=>$i->quantity.'x '.$i->product_name,'price'=>(float)$i->subtotal])->values()
+            ])->values()),
+            formatRupiah(value){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(value).replace('Rp','Rp ');}
+        }))})
+    </script>    <style>
         [x-cloak] { display: none !important; }
     </style>
 

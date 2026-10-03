@@ -57,14 +57,14 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
                                     <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                                    <span x-text="item.category"></span>
+                                    <span x-text="item.category_name"></span>
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900" x-text="formatRupiah(item.price)"></td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-2">
-                                    <span x-text="item.stock" :class="item.stock <= item.minStock ? 'text-[#B8632E] font-semibold' : 'text-gray-900'"></span>
-                                    <span x-show="item.stock <= item.minStock"
+                                    <span x-text="item.stock" :class="item.stock <= item.min_stock ? 'text-[#B8632E] font-semibold' : 'text-gray-900'"></span>
+                                    <span x-show="item.stock <= item.min_stock"
                                         class="text-[10px] font-semibold text-[#B8632E] bg-[#B8632E]/10 px-2 py-0.5 rounded-full whitespace-nowrap">
                                         Low Stock
                                     </span>
@@ -124,10 +124,10 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
-                            <select x-model="form.category" class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
+                            <select x-model="form.category_id" class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                                 <option value="">Select</option>
-                                <template x-for="c in categoryOptions" :key="c">
-                                    <option :value="c" x-text="c"></option>
+                                <template x-for="c in categoryOptions" :key="c.id">
+                                    <option :value="c.id" x-text="c.name"></option>
                                 </template>
                             </select>
                         </div>
@@ -175,79 +175,28 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('productsLogic', () => ({
-                searchQuery: '',
-                showModal: false,
-                editingProduct: null,
-                categoryOptions: ['Vitamin', 'Antibiotic', 'Allergy', 'Cold & Flu', 'Digestive', 'Antiviral', 'Pain Relief'],
-                unitOptions: ['Tablet', 'Strip', 'Box', 'Tube', 'Sachet', 'Capsule', 'Pcs'],
-                form: { name: '', category: '', unit: '', price: null, stock: null, minStock: null },
-
-                products: [
-                    { id: 1,  name: 'Nexium',     category: 'Vitamin',    price: 12000, stock: 15, minStock: 5,  unit: 'Tablet' },
-                    { id: 2,  name: 'Lyrica',      category: 'Antibiotic', price: 17000, stock: 11, minStock: 5,  unit: 'Strip' },
-                    { id: 3,  name: 'Humira',      category: 'Allergy',    price: 15000, stock: 2,  minStock: 5,  unit: 'Box' },
-                    { id: 4,  name: 'Xanax',       category: 'Cold & Flu', price: 20000, stock: 4,  minStock: 5,  unit: 'Tube' },
-                    { id: 5,  name: 'Cymbalta',    category: 'Digestive',  price: 15000, stock: 1,  minStock: 5,  unit: 'Sachet' },
-                    { id: 6,  name: 'Lyrica',      category: 'Vitamin',    price: 25000, stock: 8,  minStock: 5,  unit: 'Capsule' },
-                    { id: 7,  name: 'Lyrica',      category: 'Antibiotic', price: 12000, stock: 16, minStock: 10, unit: 'Pcs' },
-                    { id: 8,  name: 'Norvasc',     category: 'Allergy',    price: 5000,  stock: 5,  minStock: 5,  unit: 'Strip' },
-                    { id: 9,  name: 'Levoxyl',     category: 'Cold & Flu', price: 21000, stock: 3,  minStock: 5,  unit: 'Box' },
-                    { id: 10, name: 'Zithromax',   category: 'Digestive',  price: 10000, stock: 14, minStock: 5,  unit: 'Tube' },
-                ],
-
-                filteredProducts() {
-                    const q = this.searchQuery.trim().toLowerCase();
-                    if (!q) return this.products;
-                    return this.products.filter(p =>
-                        p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
-                    );
+                searchQuery: '', showModal: false, editingProduct: null,
+                categoryOptions: @json($categories->map(fn($c) => ['id'=>$c->id,'name'=>$c->name])->values()),
+                unitOptions: ['Tablet','Strip','Box','Tube','Sachet','Capsule','Pcs'],
+                form: { name:'', category_id:'', unit:'', price:null, stock:null, min_stock:null, is_active:true },
+                products: @json($products->map(fn($p) => ['id'=>$p->id,'name'=>$p->name,'category_id'=>$p->category_id,'category_name'=>$p->category?->name,'price'=>(float)$p->price,'stock'=>$p->stock,'min_stock'=>$p->min_stock,'unit'=>$p->unit,'is_active'=>$p->is_active])->values()),
+                filteredProducts() { const q=this.searchQuery.trim().toLowerCase(); return q ? this.products.filter(p=>(p.name+' '+(p.category_name||'')).toLowerCase().includes(q)) : this.products; },
+                formatRupiah(n) { return 'Rp '+Number(n||0).toLocaleString('id-ID'); },
+                openAddModal(){this.editingProduct=null;this.form={name:'',category_id:'',unit:'',price:null,stock:null,min_stock:null,is_active:true};this.showModal=true;},
+                openEditModal(item){this.editingProduct=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;},
+                closeModal(){this.showModal=false;},
+                async saveProduct(){
+                    if(!this.form.name.trim()||!this.form.category_id||!this.form.unit) return;
+                    const editing=this.editingProduct; const url=editing?'{{ url('/product') }}/'+editing.id:'{{ route('product.store') }}';
+                    const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
+                    const data=await response.json(); if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Unable to save product');return;}
+                    const normalized={id:data.id,name:data.name,category_id:data.category_id,category_name:data.category?.name,price:Number(data.price),stock:data.stock,min_stock:data.min_stock,unit:data.unit,is_active:data.is_active};
+                    if(editing) Object.assign(editing,normalized); else this.products.push(normalized); this.closeModal();
                 },
-
-                formatRupiah(n) {
-                    return 'Rp ' + n.toLocaleString('id-ID');
-                },
-
-                openAddModal() {
-                    this.editingProduct = null;
-                    this.form = { name: '', category: '', unit: '', price: null, stock: null, minStock: null };
-                    this.showModal = true;
-                },
-
-                openEditModal(item) {
-                    this.editingProduct = item;
-                    this.form = {
-                        name: item.name, category: item.category, unit: item.unit,
-                        price: item.price, stock: item.stock, minStock: item.minStock
-                    };
-                    this.showModal = true;
-                },
-
-                closeModal() {
-                    this.showModal = false;
-                },
-
-                saveProduct() {
-                    if (!this.form.name.trim()) return;
-
-                    if (this.editingProduct) {
-                        Object.assign(this.editingProduct, this.form);
-                    } else {
-                        const newId = this.products.length
-                            ? Math.max(...this.products.map(p => p.id)) + 1
-                            : 1;
-                        this.products.push({ id: newId, ...this.form });
-                    }
-                    this.closeModal();
-                },
-
-                deleteProduct(id) {
-                    if (!confirm('Delete this product?')) return;
-                    this.products = this.products.filter(p => p.id !== id);
-                }
+                async deleteProduct(id){if(!confirm('Delete this product?'))return;const response=await fetch('{{ url('/product') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){alert(data.message||'Unable to delete product');return;}this.products=this.products.filter(p=>p.id!==id);}
             }))
         })
     </script>
-
     <style>
         [x-cloak] { display: none !important; }
     </style>

@@ -54,8 +54,8 @@
                             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900" x-text="cat.name"></td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
-                                    :class="cat.status === 'Active' ? 'bg-[#1F4D3D]/10 text-[#1F4D3D]' : 'bg-gray-100 text-gray-500'">
-                                    <span class="w-1.5 h-1.5 rounded-full" :class="cat.status === 'Active' ? 'bg-[#1F4D3D]' : 'bg-gray-400'"></span>
+                                    :class="cat.is_active ? 'bg-[#1F4D3D]/10 text-[#1F4D3D]' : 'bg-gray-100 text-gray-500'">
+                                    <span class="w-1.5 h-1.5 rounded-full" :class="cat.is_active ? 'bg-[#1F4D3D]' : 'bg-gray-400'"></span>
                                     <span x-text="cat.status"></span>
                                 </span>
                             </td>
@@ -113,11 +113,11 @@
 
                 <div class="flex items-center justify-between mb-7">
                     <span class="text-sm font-medium text-gray-700">Active Status</span>
-                    <button type="button" @click="form.status = form.status === 'Active' ? 'Inactive' : 'Active'"
+                    <button type="button" @click="form.is_active = !form.is_active"
                         class="w-11 h-6 rounded-full transition relative shrink-0"
-                        :class="form.status === 'Active' ? 'bg-[#1F4D3D]' : 'bg-gray-300'">
+                        :class="form.is_active ? 'bg-[#1F4D3D]' : 'bg-gray-300'">
                         <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all"
-                            :class="form.status === 'Active' ? 'left-[22px]' : 'left-0.5'"></span>
+                            :class="form.is_active ? 'left-[22px]' : 'left-0.5'"></span>
                     </button>
                 </div>
 
@@ -132,64 +132,29 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('categoriesLogic', () => ({
-                searchQuery: '',
-                showModal: false,
-                editingCategory: null,
-                form: { name: '', status: 'Active' },
-
-                categories: [
-                    { id: 1, name: 'Vitamin', status: 'Active', totalItems: 9 },
-                    { id: 2, name: 'Pain Relief', status: 'Active', totalItems: 39 },
-                    { id: 3, name: 'Digestive', status: 'Active', totalItems: 31 },
-                    { id: 4, name: 'Cold & Flu', status: 'Inactive', totalItems: 12 },
-                    { id: 5, name: 'Antiviral', status: 'Active', totalItems: 6 },
-                ],
-
-                filteredCategories() {
-                    const q = this.searchQuery.trim().toLowerCase();
-                    if (!q) return this.categories;
-                    return this.categories.filter(c => c.name.toLowerCase().includes(q));
+                searchQuery:'', showModal:false, editingCategory:null,
+                form:{name:'',is_active:true},
+                categories:@json($categories->map(fn($c)=>['id'=>$c->id,'name'=>$c->name,'status'=>$c->is_active?'Active':'Inactive','totalItems'=>$c->products_count,'is_active'=>$c->is_active])->values()),
+                filteredCategories(){const q=this.searchQuery.trim().toLowerCase();return q?this.categories.filter(c=>c.name.toLowerCase().includes(q)):this.categories;},
+                openAddModal(){this.editingCategory=null;this.form={name:'',is_active:true};this.showModal=true;},
+                openEditModal(cat){this.editingCategory=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;},
+                closeModal(){this.showModal=false;},
+                async saveCategory(){
+                    if(!this.form.name.trim())return;
+                    const editing=this.editingCategory;const url=editing?'{{ url('/category') }}/'+editing.id:'{{ route('category.store') }}';
+                    const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
+                    const data=await response.json();if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Unable to save category');return;}
+                    const normalized={id:data.id,name:data.name,status:data.is_active?'Active':'Inactive',totalItems:data.products_count??editing?.totalItems??0,is_active:data.is_active};
+                    if(editing)Object.assign(editing,normalized);else this.categories.push(normalized);this.closeModal();
                 },
-
-                openAddModal() {
-                    this.editingCategory = null;
-                    this.form = { name: '', status: 'Active' };
-                    this.showModal = true;
-                },
-
-                openEditModal(cat) {
-                    this.editingCategory = cat;
-                    this.form = { name: cat.name, status: cat.status };
-                    this.showModal = true;
-                },
-
-                closeModal() {
-                    this.showModal = false;
-                },
-
-                saveCategory() {
-                    if (!this.form.name.trim()) return;
-
-                    if (this.editingCategory) {
-                        this.editingCategory.name = this.form.name;
-                        this.editingCategory.status = this.form.status;
-                    } else {
-                        const newId = this.categories.length
-                            ? Math.max(...this.categories.map(c => c.id)) + 1
-                            : 1;
-                        this.categories.push({ id: newId, name: this.form.name, status: this.form.status, totalItems: 0 });
-                    }
-                    this.closeModal();
-                },
-
-                deleteCategory(id) {
-                    if (!confirm('Delete this category?')) return;
-                    this.categories = this.categories.filter(c => c.id !== id);
+                async deleteCategory(id){
+                    if(!confirm('Delete this category?'))return;
+                    const response=await fetch('{{ url('/category') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});
+                    const data=await response.json();if(!response.ok){alert(data.message||'Unable to delete category');return;}this.categories=this.categories.filter(c=>c.id!==id);
                 }
             }))
         })
     </script>
-
     <style>
         [x-cloak] { display: none !important; }
     </style>
