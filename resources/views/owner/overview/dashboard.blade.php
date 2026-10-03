@@ -4,7 +4,7 @@
 
     {{-- Breadcrumb --}}
     <p class="text-sm text-gray-400 mb-2">
-        Menu Utama <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Dasbor</span>
+        Operasional <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Dasbor</span>
     </p>
 
     {{-- Header row: title + search + notification --}}
@@ -111,7 +111,7 @@
         <div class="bg-white rounded-2xl border border-gray-100 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900">Transaksi Riwayat</h3>
-                <a href="{{ route('transaction') }}" class="text-sm text-[#1F4D3D] font-medium hover:underline">View all</a>
+                <a href="{{ route('transaction') }}" class="text-sm text-[#1F4D3D] font-medium hover:underline">Lihat semua</a>
             </div>
 
             <ul class="divide-y divide-gray-100">
