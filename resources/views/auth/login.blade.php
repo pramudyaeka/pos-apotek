@@ -44,7 +44,7 @@
                     <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Sign in</h2>
                     <p class="text-sm text-gray-500 mt-1 mb-7">Enter your credentials to open the till.</p>
 
-                    <form action="" method="POST" class="flex flex-col">
+                    <form action="{{ route('login.store') }}" method="POST" class="flex flex-col">
                         @csrf
 
                         <div class="mb-4">
@@ -67,10 +67,12 @@
                             </label>
                             <a href="#" class="text-sm text-[#B8632E] hover:text-[#96502A] font-medium">Forgot password?</a>
                         </div>
-                        <a href="{{ route('dashboard') }}"class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition flex items-center justify-center">
+                        <button type="submit" class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition flex items-center justify-center">
                             Sign In
-                        </a>
+                        </button>
 
+                    @if ($errors->any())<p class="text-sm text-red-600 mt-4">{{ $errors->first() }}</p>@endif
+                    @if (session('success'))<p class="text-sm text-green-700 mt-4">{{ session('success') }}</p>@endif
                     </form>
                 </div>
             </div>
