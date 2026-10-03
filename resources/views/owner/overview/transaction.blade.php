@@ -63,7 +63,6 @@
                         <thead class="font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase bg-gray-50/70 border-b border-gray-100"
                             :class="selectedTransaction ? 'text-[9px]' : 'text-[11px]'">
                             <tr>
-                                <th scope="col" colspan="1" aria-label="Row"></th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaction ? 'px-3 py-2.5' : 'px-6 py-4'">#</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaction ? 'px-3 py-2.5' : 'px-6 py-4'">Date</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaction ? 'px-3 py-2.5' : 'px-6 py-4'">No. Invoice</th>
