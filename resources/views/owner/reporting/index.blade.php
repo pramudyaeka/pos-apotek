@@ -40,7 +40,7 @@
         <div class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
             <div class="px-6 py-5 border-b border-gray-100"><h2 class="font-semibold">Sampaip Produk</h2></div>
             <div class="divide-y divide-gray-100">
-                @forelse($topProduk as $product)
+                @forelse($topProducts as $product)
                     <div class="px-6 py-4 flex items-center justify-between gap-4"><span class="text-sm font-medium truncate">{{ $product->product_name }}</span><span class="text-sm text-gray-500 whitespace-nowrap">{{ $product->quantity }} terjual · Rp {{ number_format($product->total, 0, ',', '.') }}</span></div>
                 @empty
                     <p class="px-6 py-10 text-center text-sm text-gray-400">Tidak ada penjualan produk pada periode ini.</p>
