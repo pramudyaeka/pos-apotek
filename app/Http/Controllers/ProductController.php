@@ -18,7 +18,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $data=$request->validate(['name'=>'required|string|max:255','category_id'=>'required|exists:categories,id','unit'=>'required|string|max:50','price'=>'required|numeric|min:0','stock'=>'required|integer|min:0','min_stock'=>'required|integer|min:0','is_active'=>'sometimes|boolean']);
+        $data=$request->validate(['name'=>'required|string|max:255','category_id'=>['required','exists:categories,id',Rule::exists('categories','id')->where(fn($query) => $query->where('is_active', true))],'unit'=>'required|string|max:50','price'=>'required|numeric|min:0','stock'=>'required|integer|min:0','min_stock'=>'required|integer|min:0','is_active'=>'sometimes|boolean']);
         $product=DB::transaction(function() use($data,$request){
             $product=Product::create($data+['is_active'=>true]);
             if($product->stock>0) StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>'IN','quantity'=>$product->stock,'stock_before'=>0,'stock_after'=>$product->stock,'reference_type'=>'initial','note'=>'Initial stock']);
