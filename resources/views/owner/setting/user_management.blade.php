@@ -1,17 +1,17 @@
 @extends('layout.sidebar')
-@section('title', 'User Management')
+@section('title', 'Manajemen Pengguna')
 @section('content')
 
     <div x-data="usersLogic()">
 
         {{-- Breadcrumb --}}
         <p class="text-sm text-gray-400 mb-2">
-            Main Menu <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">User Management</span>
+            Main Menu <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Manajemen Pengguna</span>
         </p>
 
         <div class="mb-6">
-            <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">User Management</h1>
-            <p class="text-gray-500 mt-1">Manage staff accounts and access for this pharmacy</p>
+            <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Manajemen Pengguna</h1>
+            <p class="text-gray-500 mt-1">Kelola akun pengguna dan hak akses apotek.</p>
         </div>
 
         {{-- Search + Add User + Sort + Filter --}}
@@ -20,7 +20,7 @@
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4.5 h-4.5"><circle cx="11" cy="11" r="6.5"/><path stroke-linecap="round" d="m20 20-3.2-3.2"/></svg>
                 </span>
-                <input type="text" x-model="searchQuery" placeholder="Search..."
+                <input type="text" x-model="searchQuery" placeholder="Cari..."
                     class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
             </div>
 
