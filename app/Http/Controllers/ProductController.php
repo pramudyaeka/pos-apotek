@@ -40,7 +40,7 @@ class ProductController extends Controller
         $data=$request->validate(['name'=>'required|string|max:255','category_id'=>['required','exists:categories,id',Rule::exists('categories','id')->where(fn($query) => $query->where('is_active', true))],'unit'=>'required|string|max:50','price'=>'required|numeric|min:0','stock'=>'required|integer|min:0','min_stock'=>'required|integer|min:0','is_active'=>'sometimes|boolean']);
         $product=DB::transaction(function() use($data,$request){
             $product=Product::create($data+['is_active'=>true]);
-            if($product->stock>0) StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>'IN','quantity'=>$product->stock,'stock_before'=>0,'stock_after'=>$product->stock,'reference_type'=>'initial','note'=>'Initial stock']);
+            if($product->stock>0) StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>'IN','quantity'=>$product->stock,'stock_before'=>0,'stock_after'=>$product->stock,'reference_type'=>'initial','note'=>'Stok awal']);
             ActivityLog::record($request->user(), 'Product', 'create', 'Membuat produk "'.$product->name.'" dengan stok awal '.$product->stock.'.', Product::class, $product->id);
             return $product;
         });
@@ -52,7 +52,7 @@ class ProductController extends Controller
         $data=$request->validate(['name'=>'required|string|max:255','category_id'=>['required','exists:categories,id',Rule::exists('categories','id')->where(fn($query) => $query->where('is_active', true))],'unit'=>'required|string|max:50','price'=>'required|numeric|min:0','stock'=>'required|integer|min:0','min_stock'=>'required|integer|min:0','is_active'=>'required|boolean']);
         DB::transaction(function() use($data,$product,$request){
             $before=$product->stock; $product->update($data);
-            if($before!==$product->stock) StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>$product->stock>$before?'IN':'OUT','quantity'=>$product->stock-$before,'stock_before'=>$before,'stock_after'=>$product->stock,'reference_type'=>'adjustment','note'=>'Manual stock adjustment']);
+            if($before!==$product->stock) StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>$product->stock>$before?'IN':'OUT','quantity'=>$product->stock-$before,'stock_before'=>$before,'stock_after'=>$product->stock,'reference_type'=>'adjustment','note'=>'Penyesuaian stok manual']);
             ActivityLog::record($request->user(), 'Product', 'update', 'Memperbarui produk "'.$product->name.'".' . ($before !== $product->stock ? ' Stok berubah dari '.$before.' menjadi '.$product->stock.'.' : ''), Product::class, $product->id);
         });
         return response()->json($product->fresh()->load('category'));
@@ -60,11 +60,11 @@ class ProductController extends Controller
 
     public function destroy(Request $request, Product $product)
     {
-        if($product->saleItems()->exists()) return response()->json(['message'=>'Product sudah memiliki transaksi dan tidak dapat dihapus. Nonaktifkan produk sebagai gantinya.'],422);
+        if($product->saleItems()->exists()) return response()->json(['message'=>'Produk sudah memiliki transaksi dan tidak dapat dihapus. Nonaktifkan produk sebagai gantinya.'],422);
         $name = $product->name;
         $id = $product->id;
         $product->delete();
         ActivityLog::record($request->user(), 'Product', 'delete', 'Menghapus produk "'.$name.'".', Product::class, $id);
-        return response()->json(['message'=>'Product deleted.']);
+        return response()->json(['message'=>'Produk berhasil dihapus.']);
     }
 }
