@@ -81,6 +81,12 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if ($transactions->hasPages())
+                    <div class="mt-4 flex justify-center">
+                        {{ $transactions->links() }}
+                    </div>
+                @endif
             </div>
 
             {{-- Kolom kanan: panel detail transaksi --}}
