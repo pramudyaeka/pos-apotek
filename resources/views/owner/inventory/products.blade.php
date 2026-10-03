@@ -166,7 +166,7 @@
 
                 <div class="flex gap-3">
                     <button @click="closeModal()" class="flex-1 py-3 rounded-xl font-medium text-sm text-gray-700 border border-gray-200 hover:bg-gray-50 transition">Cancel</button>
-                    <button @click="saveProduct()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition" x-text="editingProduct ? 'Save' : 'Add Item'"></button>
+                    <button data-product-save @click="saveProduct()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition" x-text="editingProduct ? 'Save' : 'Add Item'"></button>
                 </div>
             </div>
         </div>
@@ -186,14 +186,14 @@
                 openEditModal(item){this.editingProduct=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;},
                 closeModal(){this.showModal=false;},
                 async saveProduct(){
-                    if(!this.form.name.trim()||!this.form.category_id||!this.form.unit) return;
+                    if(!this.form.name.trim()){showToast('Nama produk wajib diisi.','warning');return;} if(!this.form.category_id){showToast('Pilih kategori produk.','warning');return;} if(!this.form.unit){showToast('Pilih satuan produk.','warning');return;}
                     const editing=this.editingProduct; const url=editing?'{{ url('/product') }}/'+editing.id:'{{ route('product.store') }}';
-                    const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
-                    const data=await response.json(); if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Unable to save product');return;}
+                    const saveButton=document.querySelector('[data-product-save]'); if(saveButton) saveButton.disabled=true; const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
+                    const data=await response.json();if(!response.ok){if(saveButton) saveButton.disabled=false;showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Produk gagal disimpan.','error');return;}
                     const normalized={id:data.id,name:data.name,category_id:data.category_id,category_name:data.category?.name,price:Number(data.price),stock:data.stock,min_stock:data.min_stock,unit:data.unit,is_active:data.is_active};
-                    if(editing) Object.assign(editing,normalized); else this.products.push(normalized); this.closeModal();
+                    if(editing) Object.assign(editing,normalized); else this.products.push(normalized); this.closeModal();if(saveButton) saveButton.disabled=false;showToast(editing?'Produk berhasil diperbarui.':'Produk berhasil ditambahkan.');
                 },
-                async deleteProduct(id){if(!confirm('Delete this product?'))return;const response=await fetch('{{ url('/product') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){alert(data.message||'Unable to delete product');return;}this.products=this.products.filter(p=>p.id!==id);}
+                async deleteProduct(id){if(!confirmAction('Hapus produk ini? Tindakan ini tidak dapat dibatalkan.'))return;const response=await fetch('{{ url('/product') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Produk gagal dihapus.','error');return;}this.products=this.products.filter(p=>p.id!==id);showToast('Produk berhasil dihapus.');}
             }))
         })
     </script>
