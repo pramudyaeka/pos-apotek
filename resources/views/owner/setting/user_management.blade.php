@@ -178,7 +178,7 @@
         document.addEventListener('alpine:init',()=>{Alpine.data('usersLogic',()=>({
             searchQuery:'',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
             form:{name:'',email:'',password:'',role:'Cashier',status:'Active'},
-            users:@json($users->map(fn($u)=>['id'=>$u->id,'name'=>$u->name,'email'=>$u->email,'role'=>$u->role,'status'=>$u->status])->values()),
+            users: @json($users),
             filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return q?this.users.filter(u=>(u.name+' '+u.email+' '+u.role).toLowerCase().includes(q)):this.users;},
             initials(name){return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();},
             ownerCount(){return this.users.filter(u=>u.role==='Owner').length;},
