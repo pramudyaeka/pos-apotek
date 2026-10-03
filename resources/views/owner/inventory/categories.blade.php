@@ -134,7 +134,7 @@
             Alpine.data('categoriesLogic', () => ({
                 searchQuery:'', showModal:false, editingCategory:null,
                 form:{name:'',is_active:true},
-                categories: @json($categories),
+                categories: @json($categoryData),
                 filteredCategories(){const q=this.searchQuery.trim().toLowerCase();return q?this.categories.filter(c=>c.name.toLowerCase().includes(q)):this.categories;},
                 openAddModal(){this.editingCategory=null;this.form={name:'',is_active:true};this.showModal=true;},
                 openEditModal(cat){this.editingCategory=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;},
