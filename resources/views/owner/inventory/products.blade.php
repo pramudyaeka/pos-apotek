@@ -11,10 +11,10 @@
 
         <div class="mb-6">
             <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Produk</h1>
-            <p class="text-gray-500 mt-1">Manage and monitoring your product inventory</p>
+            <p class="text-gray-500 mt-1">Kelola dan pantau persediaan produk</p>
         </div>
 
-        {{-- Cari + Add Produk + Urutkan + Filter --}}
+        {{-- Cari + Tambah Produk + Urutkan + Filter --}}
         <div class="flex flex-wrap lg:flex-nowrap items-center gap-3 mb-5">
             <div class="relative flex-1 w-full min-w-[200px]">
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -25,16 +25,16 @@
             </div>
 
             <div class="flex flex-wrap gap-2 shrink-0">
-                <select x-model="sortBy" aria-label="Urutkan products" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                <select x-model="sortBy" aria-label="Urutkan produk" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                     <option value="name">Nama A-Z</option><option value="stock-low">Stok low-high</option><option value="stock-high">Stok high-low</option><option value="price-low">Harga low-high</option><option value="price-high">Harga high-low</option>
                 </select>
-                <select x-model="stockFilter" aria-label="Filter stock" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                <select x-model="stockFilter" aria-label="Filter stok" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                     <option value="all">Semua stok</option><option value="low">Stok menipis</option><option value="out">Habis</option><option value="healthy">Stok aman</option>
                 </select>
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
-                    Add Produk
+                    Tambah Produk
                 </button>
                             </div>
         </div>
@@ -112,7 +112,7 @@
                 class="bg-white rounded-2xl w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto">
 
                 <div class="flex items-start justify-between mb-1">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingProduk ? 'Ubah Item' : 'Add New Item'"></h2>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingProduk ? 'Ubah Item' : 'Tambah Produk'"></h2>
                     <button @click="closeModal()" aria-label="Tutup" class="text-gray-400 hover:text-gray-600 shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
                     </button>
@@ -185,7 +185,7 @@
                 unitOptions: ['Tablet','Strip','Box','Tube','Sachet','Capsule','Pcs'],
                 form: { name:'', category_id:'', unit:'', price:null, stock:null, min_stock:null, is_active:true },
                 products: @json($productData),
-                filteredProduk() { const q=this.searchQuery.trim().toMenipiserCase(); let rows=this.products.filter(p=>(!q || (p.name+' '+(p.category_name||'')).toMenipiserCase().includes(q)) && (this.stockFilter==='all' || (this.stockFilter==='out' && Number(p.stock)===0) || (this.stockFilter==='low' && Number(p.stock)>0 && Number(p.stock)<=Number(p.min_stock)) || (this.stockFilter==='healthy' && Number(p.stock)>Number(p.min_stock)))); return [...rows].sort((a,b)=>{if(this.sortBy==='stock-low')return a.stock-b.stock;if(this.sortBy==='stock-high')return b.stock-a.stock;if(this.sortBy==='price-low')return Number(a.price)-Number(b.price);if(this.sortBy==='price-high')return Number(b.price)-Number(a.price);return a.name.localeCompare(b.name);}); },
+                filteredProduk() { const q=this.searchQuery.trim().toLowerCase(); let rows=this.products.filter(p=>(!q || (p.name+' '+(p.category_name||'')).toLowerCase().includes(q)) && (this.stockFilter==='all' || (this.stockFilter==='out' && Number(p.stock)===0) || (this.stockFilter==='low' && Number(p.stock)>0 && Number(p.stock)<=Number(p.min_stock)) || (this.stockFilter==='healthy' && Number(p.stock)>Number(p.min_stock)))); return [...rows].sort((a,b)=>{if(this.sortBy==='stock-low')return a.stock-b.stock;if(this.sortBy==='stock-high')return b.stock-a.stock;if(this.sortBy==='price-low')return Number(a.price)-Number(b.price);if(this.sortBy==='price-high')return Number(b.price)-Number(a.price);return a.name.localeCompare(b.name);}); },
                 formatRupiah(n) { return 'Rp '+Number(n||0).toLocaleString('id-ID'); },
                 openAddModal(){this.editingProduk=null;this.form={name:'',category_id:'',unit:'',price:null,stock:null,min_stock:null,is_active:true};this.showModal=true;},
                 openUbahModal(item){this.editingProduk=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;},
