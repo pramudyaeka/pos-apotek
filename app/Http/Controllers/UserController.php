@@ -15,7 +15,7 @@ class UserController extends Controller
         return response()->json(User::create($data),201);
     }
     public function update(Request $request, User $user){
-        $data=$request->validate(['name'=>'required|string|max:255','email'=>['required','email','max:255',Rule::unique('users','email')->ignore($user->id)],'password'=>'nullable|string|min:8','role'=>[Rule::in(['Owner','Cashier'])],'status'=>[Rule::in(['Active','Inactive'])]]);
+        $data=$request->validate(['name'=>'required|string|max:255','email'=>['required','email','max:255',Rule::unique('users','email')->ignore($user->id)],'password'=>'nullable|string|min:8','role'=>['required',Rule::in(['Owner','Cashier'])],'status'=>['required',Rule::in(['Active','Inactive'])]]);
         if($user->id===$request->user()->id && $data['status']!=='Active') abort(422,'Anda tidak dapat menonaktifkan akun sendiri.');
         if($user->role==='Owner' && $data['role']!=='Owner' && User::where('role','Owner')->count()<=1) abort(422,'Minimal harus ada satu Owner.');
         if($user->role==='Owner' && $data['status']!=='Active' && User::where('role','Owner')->where('status','Active')->count()<=1) abort(422,'Minimal harus ada satu Owner aktif.');
