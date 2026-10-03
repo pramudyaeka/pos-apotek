@@ -58,7 +58,7 @@ class ProductController extends Controller
         return response()->json($product->fresh()->load('category'));
     }
 
-    public function destroy(Product $product)
+    public function destroy(Request $request, Product $product)
     {
         if($product->saleItems()->exists()) return response()->json(['message'=>'Product sudah memiliki transaksi dan tidak dapat dihapus. Nonaktifkan produk sebagai gantinya.'],422);
         $name = $product->name;
