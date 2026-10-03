@@ -116,7 +116,7 @@
     <script>
         let cart = [];
         let orderSubmitting = false;
-        function clearCart(){if(!cart.length){showToast('Keranjang sudah kosong.','info');return;}if(!window.confirmAction('Kosongkan semua item dalam pesanan?'))return;cart=[];document.getElementById('orderNumber').textContent='Pesanan Baru';renderCart();showToast('Keranjang dikosongkan.','info');}
+        async function clearCart(){if(!cart.length){showToast('Keranjang sudah kosong.','info');return;}if(!await window.confirmAction('Kosongkan semua item dalam pesanan?', {title:'Kosongkan pesanan?', confirmButtonText:'Ya, kosongkan'}))return;cart=[];document.getElementById('orderNumber').textContent='Pesanan Baru';renderCart();showToast('Keranjang dikosongkan.','info');}
 
         function formatRupiah(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
         function escapeHtml(value){return String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);}
