@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -52,7 +52,7 @@
                     </div>
 
                     {{-- Tombol tutup, hanya tampil di mode drawer mobile --}}
-                    <button onclick="closeMobileSidebar()" aria-label="Close menu"
+                    <button onclick="closeMobileSidebar()" aria-label="Tutup menu"
                         class="md:hidden text-gray-400 hover:text-gray-600 shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18" />
@@ -61,165 +61,50 @@
                 </div>
 
                 <nav class="flex-1 overflow-y-auto px-4 md:px-2 lg:px-4 py-6 space-y-7">
-
                     <div>
-                        <p
-                            class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
-                            Main menu</p>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Menu utama</p>
                         <ul class="space-y-1">
                             @if(auth()->user()->isOwner())
-                            <li>
-                                <a href="{{ route('dashboard') }}"
-                                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5
-                                {{ request()->routeIs('dashboard') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5Z" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">Overview</span>
-                                </a>
-                            </li>
-                             @endif
-                            <li>
-                                <a href="{{ route('orders') }}"
-                                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5
-                                {{ request()->routeIs('orders') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3 4h2l1.5 9.5a2 2 0 0 0 2 1.7h7a2 2 0 0 0 2-1.6L19 8H6" />
-                                        <circle cx="9" cy="19" r="1" />
-                                        <circle cx="17" cy="19" r="1" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">Orders</span>
-                                </a>
-                            </li>
+                            <li><a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span>⌂</span><span>Dasbor</span></a></li>
+                            @endif
+                            <li><a href="{{ route('orders') }}" class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}"><span>🛒</span><span>Penjualan</span></a></li>
                             @if(auth()->user()->isOwner())
-                            @if(auth()->user()->isOwner())
-                            <li>
-                                <a href="{{ route('transaction') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('transaction') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M4 7h13m0 0-3-3m3 3-3 3M20 17H7m0 0 3 3m-3-3 3-3" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">Transaction</span>
-                                </a>
-                            </li>
-                             @endif
-                             @endif
+                            <li><a href="{{ route('transaction') }}" class="nav-link {{ request()->routeIs('transaction') ? 'active' : '' }}"><span>↔</span><span>Transaksi</span></a></li>
+                            @endif
                         </ul>
                     </div>
 
                     <div>
-                        <p
-                            class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
-                            Monitoring</p>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Pemantauan</p>
                         <ul class="space-y-1">
-                            <li>
-                                <a href="{{ route('history') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('history') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 2" />
-                                        <circle cx="12" cy="12" r="8.5" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">History</span>
-                                </a>
-                            </li>
+                            <li><a href="{{ route('history') }}" class="nav-link {{ request()->routeIs('history') ? 'active' : '' }}"><span>◷</span><span>Riwayat Aktivitas</span></a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Persediaan</p>
+                        <ul class="space-y-1">
+                            <li><a href="{{ route('category') }}" class="nav-link {{ request()->routeIs('category') ? 'active' : '' }}"><span>▦</span><span>Kategori</span></a></li>
+                            <li><a href="{{ route('product') }}" class="nav-link {{ request()->routeIs('product') ? 'active' : '' }}"><span>▣</span><span>Produk</span></a></li>
                         </ul>
                     </div>
 
                     @if(auth()->user()->isOwner())
                     <div>
-                        <p
-                            class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
-                            Inventory</p>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Laporan</p>
                         <ul class="space-y-1">
-                            <li>
-                                <a href="{{ route('category') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('category') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">Categories</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('product') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('product') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="m3.5 7.5 8.5-4 8.5 4v9l-8.5 4-8.5-4v-9Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3.5 7.5 12 11.5m0 0 8.5-4M12 11.5V20" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">Products</span>
-                                </a>
-                            </li>
+                            <li><a href="{{ route('reporting') }}" class="nav-link {{ request()->routeIs('reporting') ? 'active' : '' }}"><span>▤</span><span>Laporan</span></a></li>
                         </ul>
                     </div>
 
                     <div>
-                        <p
-                            class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
-                            Report</p>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Pengaturan</p>
                         <ul class="space-y-1">
-                            <li>
-                                <a href="{{ route('reporting') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('reporting') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9 4h6a1 1 0 0 1 1 1v1h1a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1V5a1 1 0 0 1 1-1Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 11h6M9 15h6" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">Reporting</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </di
-                    @endifv>
-                    @endif
-
-                    @if(auth()->user()->isOwner())
-                    <div>
-                        <p
-                            class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
-                            Settings</p>
-                        <ul class="space-y-1">
-                            <li>
-                                <a href="{{ route('user-management') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition
-                                md:flex-col md:gap-1 md:px-1 md:py-3 md:text-center
-                                lg:flex-row lg:gap-3 lg:px-3 lg:py-2.5 {{ request()->routeIs('user-management') ? 'bg-[#1F4D3D] text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                        class="w-5 h-5 md:w-6 md:h-6 lg:w-5 lg:h-5 shrink-0">
-                                        <circle cx="12" cy="8" r="3.2" />
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" />
-                                    </svg>
-                                    <span class="md:text-[10px] md:leading-tight lg:text-sm">User Management</span>
-                                </a>
-                            </li>
+                            <li><a href="{{ route('user-management') }}" class="nav-link {{ request()->routeIs('user-management') ? 'active' : '' }}"><span>♙</span><span>Pengguna</span></a></li>
                         </ul>
                     </div>
                     @endif
-
-                </nav>
+                </nav>          </nav>
 
                 <div class="p-3 border-t border-gray-100 shrink-0">
                     <div
