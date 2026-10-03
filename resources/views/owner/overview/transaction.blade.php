@@ -31,7 +31,7 @@
                         <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4.5 h-4.5"><circle cx="11" cy="11" r="6.5"/><path stroke-linecap="round" d="m20 20-3.2-3.2"/></svg>
                         </span>
-                        <input type="text" placeholder="Search..."
+                        <input type="text" x-model="searchQuery" placeholder="Search..."
                             class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
 
@@ -62,7 +62,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <template x-for="(trx, index) in transactions" :key="trx.id">
+                            <template x-for="(trx, index) in filteredTransactions()" :key="trx.id">
                                 <tr @click="selectedTransaction = trx"
                                     :class="selectedTransaction && selectedTransaction.id === trx.id ? 'bg-[#1F4D3D]/5' : 'hover:bg-gray-50'"
                                     class="transition-colors cursor-pointer">
@@ -156,7 +156,8 @@
 
     <script>
         document.addEventListener('alpine:init',()=>{Alpine.data('transactionLogic',()=>({
-            selectedTransaction:null,
+            selectedTransaction:null, searchQuery:'',
+            filteredTransactions(){const q=this.searchQuery.trim().toLowerCase(); return q ? this.transactions.filter(t=>(t.invoice+' '+t.method+' '+t.date).toLowerCase().includes(q)) : this.transactions;},
             transactions:@json($transactions->getCollection()->map(fn($trx)=>[
                 'id'=>$trx->id,'date'=>$trx->created_at->format('d F Y'),'invoice'=>$trx->invoice_number,'method'=>$trx->payment_method,
                 'amount'=>(float)$trx->total,'status'=>$trx->status,'time'=>$trx->created_at->format('H:i, D, d F Y'),
