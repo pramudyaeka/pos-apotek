@@ -6,7 +6,7 @@
 
         {{-- Breadcrumb --}}
         <p class="text-sm text-gray-400 mb-2">
-            Main Menu <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Manajemen Pengguna</span>
+            Administrasi <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Manajemen Pengguna</span>
         </p>
 
         <div class="mb-6">
@@ -143,11 +143,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Peran</label>
                         <select x-model="form.role" :disabled="editingUser && isLastOwner(editingUser)"
                             class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition disabled:bg-gray-50 disabled:text-gray-400">
-                            <option value="Owner">Owner</option>
-                            <option value="Kasir">Kasir</option>
+                            <option value="Owner">Pemilik</option>
+                            <option value="Cashier">Kasir</option>
                         </select>
                         <p x-show="editingUser && isLastOwner(editingUser)" class="text-xs text-[#B8632E] mt-1.5">
-                            This is the last Owner account — role can't be changed until another Owner is added.
+                            Akun ini adalah satu-satunya Pemilik — peran tidak dapat diubah sebelum Pemilik lain ditambahkan.
                         </p>
                     </div>
                 </div>
