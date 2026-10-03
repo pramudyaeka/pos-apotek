@@ -40,6 +40,12 @@ class SaleController extends Controller
         return view('owner.overview.transaction',['transactions'=>Sale::with('items','user')->latest()->paginate(20)]);
     }
 
+    public function receipt(Sale $sale)
+    {
+        $sale->load('items', 'user');
+        return view('owner.overview.receipt', compact('sale'));
+    }
+
     private function nextInvoiceNumber(): string
     {
         return '#'.str_pad((string)((int)Sale::max('id')+1),4,'0',STR_PAD_LEFT);
