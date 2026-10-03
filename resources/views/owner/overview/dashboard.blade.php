@@ -87,7 +87,7 @@
                 <div class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m3.5 7.5 8.5-4 8.5 4-8.5 4-8.5-4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.5 7.5v9l8.5 4 8.5-4v-9"/></svg>
                 </div>
-                <span class="text-sm font-medium text-gray-500">Habis of Stoks</span>
+                <span class="text-sm font-medium text-gray-500">Stok Habis</span>
             </div>
             <p class="font-['Space_Grotesk'] font-bold text-2xl text-gray-900">{{ $outOfStockProducts }} Produk</p>
             <p class="text-xs text-gray-400 mt-1">Seluruh produk aktif</p>
