@@ -120,7 +120,7 @@
                             </p>
                             <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email }}</p>
                         </div>
-                        <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmAction('Keluar dari sistem sekarang?')">
+                        <form method="POST" action="{{ route('logout') }}" onsubmit="handleLogout(event, this)">
                             @csrf
                             <button type="submit" aria-label="Keluar"
                                 class="text-gray-400 hover:text-red-500 transition shrink-0 md:hidden lg:block"
