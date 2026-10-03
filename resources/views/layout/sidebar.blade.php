@@ -170,9 +170,8 @@
                                 </a>
                             </li>
                         </ul>
-                    
-                    @endif
                     </div>
+                    @endif
 
                     @if(auth()->user()->isOwner())
                     <div>
@@ -194,9 +193,8 @@
                                 </a>
                             </li>
                         </ul>
-                    
-                    @endif
                     </div>
+                    @endif
 
                 </nav>
 
