@@ -36,7 +36,7 @@ Route::middleware(['auth','role:Owner'])->group(function () {
 
 Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
     Route::get('/cashier', fn() => view('cashier.overview.dashboard'))->name('cashier');
-    Route::get('/orders',[ProductController::class,'index'])->name('orders');
+    Route::get('/orders',[OrderController::class,'index'])->name('orders');
     Route::post('/sales',[SaleController::class,'store'])->name('sales.store');
 });
 
