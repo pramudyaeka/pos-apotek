@@ -8,7 +8,20 @@ use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
-    public function index() { return view('owner.inventory.categories',['categories'=>Category::withCount('products')->orderBy('name')->get()]); }
+    public function index()
+    {
+        $categories = Category::withCount('products')->orderBy('name')->get();
+        $categoryData = $categories->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'is_active' => (bool) $category->is_active,
+                'products_count' => $category->products_count,
+            ];
+        })->values();
+
+        return view('owner.inventory.categories', compact('categories', 'categoryData'));
+    }
 
     public function store(Request $request)
     {
