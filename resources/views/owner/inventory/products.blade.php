@@ -114,7 +114,7 @@
                 class="bg-white rounded-2xl w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto">
 
                 <div class="flex items-start justify-between mb-1">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingProduk ? 'Ubah Item' : 'Tambah Produk'"></h2>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingProduk ? 'Ubah Produk' : 'Tambah Produk'"></h2>
                     <button @click="closeModal()" aria-label="Tutup" class="text-gray-400 hover:text-gray-600 shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
                     </button>
