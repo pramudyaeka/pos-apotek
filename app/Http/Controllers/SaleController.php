@@ -22,7 +22,8 @@ class SaleController extends Controller
                 $line=(float)$product->price*$item['quantity']; $subtotal+=$line;
                 $rows[]=['product'=>$product,'quantity'=>$item['quantity'],'subtotal'=>$line];
             }
-            $sale=Sale::create(['invoice_number'=>$this->nextInvoiceNumber(),'user_id'=>$request->user()->id,'subtotal'=>$subtotal,'tax'=>0,'total'=>$subtotal,'payment_method'=>$data['payment_method'],'status'=>'Success']);
+            $sale=Sale::create(['invoice_number'=>'TMP-'.bin2hex(random_bytes(8)),'user_id'=>$request->user()->id,'subtotal'=>$subtotal,'tax'=>0,'total'=>$subtotal,'payment_method'=>$data['payment_method'],'status'=>'Success']);
+            $sale->update(['invoice_number' => '#'.str_pad((string)$sale->id, 4, '0', STR_PAD_LEFT)]);
             foreach($rows as $row){
                 $product=$row['product']; $before=$product->stock; $product->decrement('stock',$row['quantity']);
                 $sale->items()->create(['product_id'=>$product->id,'product_name'=>$product->name,'unit'=>$product->unit,'quantity'=>$row['quantity'],'unit_price'=>$product->price,'subtotal'=>$row['subtotal']]);
