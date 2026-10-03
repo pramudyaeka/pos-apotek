@@ -40,13 +40,13 @@ class CategoryController extends Controller
         return response()->json($category->loadCount('products'));
     }
 
-    public function destroy(Category $category)
+    public function destroy(Request $request, Category $category)
     {
-        if($category->products()->exists()) return response()->json(['message'=>'Category masih digunakan oleh produk.'],422);
+        if($category->products()->exists()) return response()->json(['message'=>'Kategori masih digunakan oleh produk.'],422);
         $name = $category->name;
         $id = $category->id;
         $category->delete();
         ActivityLog::record($request->user(), 'Category', 'delete', 'Menghapus kategori "'.$name.'".', Category::class, $id);
-        return response()->json(['message'=>'Category deleted.']);
+        return response()->json(['message'=>'Kategori berhasil dihapus.']);
     }
 }
