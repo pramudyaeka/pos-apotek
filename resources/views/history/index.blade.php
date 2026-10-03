@@ -30,7 +30,7 @@
                         <option value="{{ $value }}" @selected(request('action') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
-                <button class="px-4 py-2 rounded-xl bg-[#1F4D3D] text-white text-sm font-medium hover:opacity-90 transition">Filter</button>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-[#1F4D3D] text-white text-sm font-medium hover:opacity-90 transition">Filter</button>
                 @if(request()->hasAny(['search','module','action']))<a href="{{ route('history', ['stock_type'=>request('stock_type','all')]) }}" class="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition">Hapus filter</a>@endif
             </form>
         </div>
@@ -58,7 +58,7 @@
                             </td>
                             <td class="py-3 pr-4">
                                 <span class="px-2.5 py-1 rounded-full bg-[#1F4D3D]/10 text-[#1F4D3D] text-xs font-medium">
-                                    {{ ucfirst($activity->action) }}
+                                    {{ ['create' => 'Tambah', 'update' => 'Perbarui', 'delete' => 'Hapus', 'sale' => 'Penjualan', 'login' => 'Masuk', 'logout' => 'Keluar'][$activity->action] ?? ucfirst($activity->action) }}
                                 </span>
                             </td>
                             <td class="py-3 text-gray-600">{{ $activity->description }}</td>
@@ -81,7 +81,7 @@
             <p class="text-xs text-gray-400 mt-1">Riwayat barang masuk, keluar, dan penyesuaian stok.</p>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-            <p class="text-xs text-gray-400">{{ $activities->total() }} aktivitas tercatat</p>
+            <p class="text-xs text-gray-400">{{ $stockMovements->total() }} pergerakan stok tercatat</p>
             <div class="flex gap-2">
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'all'])) }}"
                 class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type', 'all') === 'all' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">Semua</a>
@@ -105,8 +105,8 @@
                             <td class="py-3 pr-4 whitespace-nowrap text-gray-500">{{ $movement->created_at->format('d M Y H:i') }}</td>
                             <td class="py-3 pr-4 font-medium">{{ $movement->product?->name ?? 'Produk sudah dihapus' }}</td>
                             <td class="py-3 pr-4">{{ $movement->user?->name ?? 'System' }}</td>
-                            <td class="py-3 pr-4"><span class="px-2.5 py-1 rounded-full {{ $movement->type === 'IN' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600' }} text-xs">{{ $movement->type }}</span></td>
-                            <td class="py-3 pr-4">{{ $movement->quantity }}</td>
+                            <td class="py-3 pr-4"><span class="px-2.5 py-1 rounded-full {{ $movement->type === 'IN' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600' }} text-xs">{{ $movement->type === 'IN' ? 'Masuk' : 'Keluar' }}</span></td>
+                            <td class="py-3 pr-4">{{ $movement->quantity > 0 ? '+' : '' }}{{ $movement->quantity }}</td>
                             <td class="py-3">{{ $movement->stock_before }} → {{ $movement->stock_after }}</td>
                         </tr>
                     @empty
