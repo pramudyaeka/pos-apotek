@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ActivityLog;
 use App\Models\Sale;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ class SaleController extends Controller
                 $sale->items()->create(['product_id'=>$product->id,'product_name'=>$product->name,'unit'=>$product->unit,'quantity'=>$row['quantity'],'unit_price'=>$product->price,'subtotal'=>$row['subtotal']]);
                 StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>'OUT','quantity'=>-$row['quantity'],'stock_before'=>$before,'stock_after'=>$before-$row['quantity'],'reference_type'=>'sale','reference_id'=>$sale->id,'note'=>'Sale '.$sale->invoice_number]);
             }
+            ActivityLog::record($request->user(), 'Sale', 'sale', 'Membuat transaksi '.$sale->invoice_number.' sebesar Rp '.number_format($sale->total, 0, ',', '.').'.', Sale::class, $sale->id, ['payment_method' => $sale->payment_method]);
             return $sale->load('items','user');
         });
         return response()->json($sale,201);
