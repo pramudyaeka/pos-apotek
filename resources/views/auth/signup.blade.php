@@ -11,7 +11,7 @@
                      style="background-image: radial-gradient(circle, white 2.5px, transparent 2.5px); background-size: 22px 22px;"></div>
 
                 <div class="relative">
-                    <p class="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.25em] text-emerald-200/60 uppercase mb-6">Rx // Pos System</p>
+                    <p class="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.25em] text-emerald-200/60 uppercase mb-6">Sistem Kasir Apotek</p>
                     <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center mb-5">
                         <span class="text-white text-xl font-['Space_Grotesk'] leading-none">+</span>
                     </div>
@@ -22,7 +22,7 @@
 
                 <div class="relative font-['IBM_Plex_Mono'] text-[11px] text-emerald-100/50 space-y-1.5 leading-relaxed">
                     <p>SIMPAN DI TEMPAT SEJUK &amp; KERING</p>
-                    <p>BRANCH — 01 · SINGLE STORE</p>
+                    <p>CABANG — 01 · SATU TOKO</p>
                     <p>AKUN DIBUAT OLEH ADMIN APOTEK</p>
                 </div>
             </div>
@@ -33,14 +33,14 @@
             {{-- Panel kanan: form --}}
             <div class="w-full md:w-[58%] px-8 py-10 md:px-12 flex flex-col justify-center max-h-[92vh] overflow-y-auto">
                 <div class="w-full max-w-sm mx-auto">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Tambah account</h2>
-                    <p class="text-sm text-gray-500 mt-1 mb-7">Set up a new staff account for this pharmacy.</p>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Tambah Pengguna</h2>
+                    <p class="text-sm text-gray-500 mt-1 mb-7">Buat akun pengguna baru untuk apotek ini.</p>
 
                     <form action="{{ route('signup.store') }}" method="POST" class="flex flex-col">
                         @csrf
 
                         <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Full name</label>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
                             <input type="text" id="name" name="name" autocomplete="name"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                         </div>
@@ -65,7 +65,7 @@
 
                         <button type="submit"
                             class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition">
-                            Tambah account
+                            Tambah Pengguna
                         </button>
                     </form>
 
