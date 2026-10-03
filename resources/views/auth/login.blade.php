@@ -65,7 +65,7 @@
                                     class="rounded h-4 w-4 text-[#1F4D3D] focus:ring-[#1F4D3D] border-gray-300">
                                 <span class="ml-2 text-sm text-gray-600">Ingat sesi saya</span>
                             </label>
-                            <a href="#" class="text-sm text-[#B8632E] hover:text-[#96502A] font-medium">Lupa kata sandi?</a>
+                            <span class="text-sm text-gray-400">Lupa kata sandi? Hubungi Pemilik.</span>
                         </div>
                         <button type="submit" class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition flex items-center justify-center">
                             Masuk
