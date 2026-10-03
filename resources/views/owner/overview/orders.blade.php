@@ -55,6 +55,7 @@
                     <p class="text-sm font-semibold text-gray-900 truncate">{{ $p->name }}</p>
                     <div class="flex items-center justify-between gap-1.5 mt-2">
                         <span class="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full truncate">{{ $p->category?->name }}</span>
+                        @if($p->stock <= 0)<span class="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">Out</span>@elseif($p->stock <= $p->min_stock)<span class="text-[10px] font-semibold text-[#B8632E] bg-[#B8632E]/10 px-2 py-1 rounded-full">Low</span>@endif
                         <span class="text-sm font-semibold text-gray-900 shrink-0">Rp{{ number_format($p->price, 0, ',', '.') }}</span>
                     </div>
                 </button>
@@ -164,5 +165,10 @@
         }
         function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);document.getElementById('productResultCount').textContent=count+' product(s) found';}
         function updateClock(){const now=new Date();document.getElementById('liveDate').textContent=new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveTime').textContent=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
+        document.addEventListener('keydown', e => {
+            if(e.key==='/' && document.activeElement?.tagName!=='INPUT' && document.activeElement?.tagName!=='SELECT'){e.preventDefault();document.getElementById('productSearch')?.focus();}
+            if(e.key==='Escape' && document.activeElement?.id==='productSearch'){document.getElementById('productSearch').value='';filterProducts('');document.getElementById('productSearch').blur();}
+            if((e.ctrlKey||e.metaKey) && e.key==='Enter'){e.preventDefault();placeOrder();}
+        });
         updateClock();setInterval(updateClock,1000);renderCart();
     </script>@endsection
