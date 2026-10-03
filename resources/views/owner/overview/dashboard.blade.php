@@ -100,7 +100,7 @@
 
         <div class="bg-white rounded-2xl border border-gray-100 p-6">
             <div class="flex items-center justify-between mb-5">
-                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900">Hari ini Transaksi</h3>
+                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900">Transaksi Hari Ini</h3>
                 <span class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 tracking-wider uppercase">Live</span>
             </div>
             <div class="relative h-[230px]">
