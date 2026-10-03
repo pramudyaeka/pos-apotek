@@ -30,7 +30,8 @@
                         <option value="{{ $value }}" @selected(request('action') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
-                <button class="px-4 py-2 rounded-xl bg-[#1F4D3D] text-white text-sm font-medium hover:opacity-90">Filter</button>
+                <button class="px-4 py-2 rounded-xl bg-[#1F4D3D] text-white text-sm font-medium hover:opacity-90 transition">Filter</button>
+                @if(request()->hasAny(['search','module','action']))<a href="{{ route('history', ['stock_type'=>request('stock_type','all')]) }}" class="px-4 py-2 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition">Clear</a>@endif
             </form>
         </div>
 
@@ -79,13 +80,16 @@
             <h2 class="font-['Space_Grotesk'] font-semibold text-lg">Stock Movement History</h2>
             <p class="text-xs text-gray-400 mt-1">Riwayat barang masuk, keluar, dan penyesuaian stok.</p>
         </div>
-        <div class="flex gap-2 mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <p class="text-xs text-gray-400">{{ $activities->total() }} aktivitas tercatat</p>
+            <div class="flex gap-2">
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'all'])) }}"
                 class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type', 'all') === 'all' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">All</a>
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'IN'])) }}"
                 class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type') === 'IN' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">IN</a>
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'OUT'])) }}"
                 class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type') === 'OUT' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">OUT</a>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
