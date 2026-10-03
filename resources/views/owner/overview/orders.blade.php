@@ -106,7 +106,7 @@
 
                 <button id="placeOrderBtn" onclick="placeOrder()" disabled
                     class="w-full py-4 rounded-xl font-['Space_Grotesk'] font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] disabled:bg-gray-300 disabled:cursor-not-allowed transition">
-                    Place Order
+                    Buat Pesanan
                 </button>
             </div>
         </div>
@@ -163,8 +163,8 @@
             showToast('Transaksi berhasil. Nomor Faktur: '+data.invoice_number,'success',5000);
             cart=[]; document.getElementById('orderNumber').textContent='Nomor Faktur: '+data.invoice_number; orderSubmitting=false; renderCart(); btn.disabled=true; btn.textContent=originalText;
         }
-        function filterProducts(keyword){keyword=keyword.trim().toMenipiserCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);document.getElementById('productResultCount').textContent=count+' produk ditemukan';}
-        function updateClock(){const now=new Tanggal();document.getElementById('liveTanggal').textContent=new Intl.TanggalWaktuFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveWaktu').textContent=new Intl.TanggalWaktuFormat('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
+        function filterProducts(keyword){keyword=keyword.trim().toLowerCase();let count=0;document.querySelectorAll('.product-card').forEach(card=>{const match=card.dataset.search.includes(keyword);card.classList.toggle('hidden',!match);if(match)count++;});document.getElementById('noResults').classList.toggle('hidden',count!==0);document.getElementById('productResultCount').textContent=count+' produk ditemukan';}
+        function updateClock(){const now=new Date();document.getElementById('liveTanggal').textContent=new Intl.DateTimeFormat('id-ID',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Makassar'}).format(now);document.getElementById('liveWaktu').textContent=new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Makassar'}).format(now)+' WITA';}
         document.addEventListener('keydown', e => {
             if(e.key==='/' && document.activeElement?.tagName!=='INPUT' && document.activeElement?.tagName!=='SELECT'){e.preventDefault();document.getElementById('productCari')?.focus();}
             if(e.key==='Escape' && document.activeElement?.id==='productCari'){document.getElementById('productCari').value='';filterProducts('');document.getElementById('productCari').blur();}
