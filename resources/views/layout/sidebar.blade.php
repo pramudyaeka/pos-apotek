@@ -251,27 +251,54 @@
     </style>
 
     <script>
+        const sweetToast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'rounded-2xl'
+            }
+        });
+
         window.showToast = function(message, type = 'success', duration = 3500) {
-            const container = document.getElementById('toastContainer');
-            if (!container) return;
-            const styles = {
-                success: { icon: '✓', tone: 'border-[#1F4D3D]/15 bg-white text-gray-800', iconTone: 'bg-[#1F4D3D]/10 text-[#1F4D3D]' },
-                error: { icon: '!', tone: 'border-red-100 bg-white text-gray-800', iconTone: 'bg-red-50 text-red-600' },
-                warning: { icon: '!', tone: 'border-amber-100 bg-white text-gray-800', iconTone: 'bg-amber-50 text-amber-600' },
-                info: { icon: 'i', tone: 'border-blue-100 bg-white text-gray-800', iconTone: 'bg-blue-50 text-blue-600' }
-            }[type] || { icon: 'i', tone: 'border-gray-100 bg-white text-gray-800', iconTone: 'bg-gray-50 text-gray-600' };
-            const toast = document.createElement('div');
-            toast.className = 'pointer-events-auto flex items-start gap-3 rounded-2xl border px-4 py-3.5 shadow-lg shadow-black/5 translate-x-4 opacity-0 transition-all duration-200 ' + styles.tone;
-            toast.innerHTML = '<span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ' + styles.iconTone + '">' + styles.icon + '</span><p class="min-w-0 flex-1 text-sm leading-5">' + String(message).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]; }) + '</p><button type="button" class="shrink-0 text-gray-400 hover:text-gray-700" aria-label="Tutup">×</button>';
-            const remove = () => { toast.classList.add('opacity-0','translate-x-4'); setTimeout(() => toast.remove(), 220); };
-            toast.querySelector('button').addEventListener('click', remove);
-            container.appendChild(toast);
-            requestAnimationFrame(() => toast.classList.remove('opacity-0','translate-x-4'));
-            setTimeout(remove, duration);
+            sweetToast.fire({
+                icon: type,
+                title: message,
+                timer: duration
+            });
         };
 
-        window.confirmAction = function(message) {
-            return window.confirm(message);
+        window.confirmAction = async function(message, options = {}) {
+            const result = await Swal.fire({
+                icon: options.icon || 'warning',
+                title: options.title || 'Konfirmasi',
+                text: message,
+                showCancelButton: true,
+                confirmButtonText: options.confirmButtonText || 'Ya, lanjutkan',
+                cancelButtonText: options.cancelButtonText || 'Batal',
+                reverseButtons: true,
+                focusCancel: true,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1',
+                    cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1'
+                }
+            });
+            return result.isConfirmed;
+        };
+
+        window.handleLogout = async function(event, form) {
+            event.preventDefault();
+            if (await confirmAction('Keluar dari sistem sekarang?', {
+                title: 'Keluar dari sistem?',
+                confirmButtonText: 'Ya, keluar',
+                icon: 'question'
+            })) {
+                form.submit();
+            }
         };
 
         function openMobileSidebar() {
