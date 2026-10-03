@@ -1,5 +1,5 @@
 @extends('layout.sidebar')
-@section('title', 'Reporting')
+@section('title', 'Laporan')
 @section('content')
 
     {{--
@@ -13,13 +13,13 @@
 
         {{-- Breadcrumb --}}
         <p class="text-sm text-gray-400 mb-2">
-            Main Menu <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Reporting</span>
+            Menu Utama <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Laporan</span>
         </p>
 
         {{-- Header + period picker --}}
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-5">
             <div>
-                <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Reporting</h1>
+                <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Laporan</h1>
                 <p class="text-gray-500 mt-1">Manage and monitoring your sales in one page</p>
             </div>
 
@@ -41,14 +41,14 @@
         --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 
-            {{-- Total Sales — kartu hero, solid warna --}}
+            {{-- Total Penjualan — kartu hero, solid warna --}}
             <div class="bg-[#1F4D3D] rounded-2xl p-4 relative overflow-hidden shadow-sm">
                 <div class="absolute -right-4 -bottom-4 w-24 h-24 rounded-full bg-white/5"></div>
                 <div class="flex items-center gap-2.5 mb-3 relative">
                     <div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" class="w-4.5 h-4.5"><circle cx="12" cy="12" r="8.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5v9M14.5 9.7c0-1-1-1.7-2.5-1.7s-2.5.8-2.5 1.8c0 2.6 5 1.3 5 3.9 0 1-1 1.8-2.5 1.8s-2.5-.7-2.5-1.7"/></svg>
                     </div>
-                    <span class="text-sm font-medium text-emerald-100">Total Sales</span>
+                    <span class="text-sm font-medium text-emerald-100">Total Penjualan</span>
                 </div>
                 <p class="font-['Space_Grotesk'] font-bold text-xl text-white relative">Rp 68.500.000</p>
                 <div class="flex items-center gap-1 mt-1.5 relative">
@@ -106,11 +106,11 @@
 
         {{--
             2. SALES CHART — prioritas kedua: tren. Diberi ruang penuh
-            (full-width), bukan lagi berbagi kolom dengan Payment Method.
+            (full-width), bukan lagi berbagi kolom dengan Metode Pembayaran.
         --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex flex-col mb-4">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 text-[15px]">Sales Chart</h3>
+                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 text-[15px]">Penjualan Chart</h3>
                 <span class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 tracking-wider uppercase">Aug 2026</span>
             </div>
             <div class="relative min-h-[260px]">
@@ -133,7 +133,7 @@
             </div>
 
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex flex-col">
-                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 mb-4 text-[15px]">Payment Method</h3>
+                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 mb-4 text-[15px]">Metode Pembayaran</h3>
                 <div class="space-y-4 flex-1">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-[#1F4D3D]/10 flex items-center justify-center shrink-0">
@@ -141,7 +141,7 @@
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center justify-between text-sm mb-1">
-                                <span class="font-medium text-gray-700">Cash</span>
+                                <span class="font-medium text-gray-700">Tunai</span>
                                 <span class="text-gray-500 font-['IBM_Plex_Mono'] text-xs">68%</span>
                             </div>
                             <div class="h-1.5 rounded-full bg-gray-100 overflow-hidden">
@@ -175,7 +175,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 mb-3 text-[15px]">Best Selling Products</h3>
+                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 mb-3 text-[15px]">Best Selling Produk</h3>
                 <ul class="divide-y divide-gray-100">
                     @php
                         $bestSelling = [
@@ -204,7 +204,7 @@
             </div>
 
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 mb-3 text-[15px]">Least Selling Products</h3>
+                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900 mb-3 text-[15px]">Least Selling Produk</h3>
                 <ul class="divide-y divide-gray-100">
                     @php
                         $leastSelling = [
@@ -232,10 +232,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // ---------- Sales Chart (dengan gradient fill) ----------
+        // ---------- Penjualan Chart (dengan gradient fill) ----------
         const salesCtx = document.getElementById('salesChart');
-        const existingSalesChart = Chart.getChart(salesCtx);
-        if (existingSalesChart) existingSalesChart.destroy();
+        const existingPenjualanChart = Chart.getChart(salesCtx);
+        if (existingPenjualanChart) existingPenjualanChart.destroy();
 
         const salesGradient = salesCtx.getContext('2d').createLinearGradient(0, 0, 0, 260);
         salesGradient.addColorStop(0, 'rgba(31, 77, 61, 0.35)');
@@ -246,7 +246,7 @@
             data: {
                 labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                 datasets: [{
-                    label: 'Sales',
+                    label: 'Penjualan',
                     data: [14500000, 16800000, 15200000, 22000000],
                     borderColor: '#1F4D3D',
                     borderWidth: 2.5,
