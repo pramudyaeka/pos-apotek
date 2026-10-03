@@ -157,3 +157,41 @@ it('renders inventory and user management pages with their expected data', funct
     $this->actingAs($owner)->get(route('product'))->assertOk();
     $this->actingAs($owner)->get(route('user-management'))->assertOk();
 });
+
+it('blocks cashier access to owner-only management and reporting pages', function () {
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+
+    $this->actingAs($cashier)->get(route('dashboard'))->assertForbidden();
+    $this->actingAs($cashier)->get(route('user-management'))->assertForbidden();
+    $this->actingAs($cashier)->get(route('reporting'))->assertForbidden();
+    $this->actingAs($cashier)->get(route('transaction'))->assertForbidden();
+});
+
+it('rejects inactive accounts during login', function () {
+    $cashier = User::factory()->create([
+        'role' => 'Cashier',
+        'status' => 'Inactive',
+        'password' => 'password',
+    ]);
+
+    $this->from(route('login'))->post(route('login.store'), [
+        'email' => $cashier->email,
+        'password' => 'password',
+    ])->assertRedirect(route('login'))
+        ->assertSessionHasErrors('email');
+
+    expect(auth()->check())->toBeFalse();
+});
+
+it('filters activity history by the stored backend module values', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+
+    \App\Models\ActivityLog::record($owner, 'Product', 'create', 'Membuat produk "Paracetamol".');
+    \App\Models\ActivityLog::record($owner, 'User', 'create', 'Membuat akun Kasir.');
+
+    $this->actingAs($owner)
+        ->get(route('history', ['module' => 'Product']))
+        ->assertOk()
+        ->assertSee('Membuat produk "Paracetamol".')
+        ->assertDontSee('Membuat akun Kasir.');
+});
