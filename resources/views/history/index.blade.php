@@ -104,7 +104,7 @@
                         <tr class="border-b border-gray-50">
                             <td class="py-3 pr-4 whitespace-nowrap text-gray-500">{{ $movement->created_at->format('d M Y H:i') }}</td>
                             <td class="py-3 pr-4 font-medium">{{ $movement->product?->name ?? 'Produk sudah dihapus' }}</td>
-                            <td class="py-3 pr-4">{{ $movement->user?->name ?? 'System' }}</td>
+                            <td class="py-3 pr-4">{{ $movement->user?->name ?? 'Sistem' }}</td>
                             <td class="py-3 pr-4"><span class="px-2.5 py-1 rounded-full {{ $movement->type === 'IN' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600' }} text-xs">{{ $movement->type === 'IN' ? 'Masuk' : 'Keluar' }}</span></td>
                             <td class="py-3 pr-4">{{ $movement->quantity > 0 ? '+' : '' }}{{ $movement->quantity }}</td>
                             <td class="py-3">{{ $movement->stock_before }} → {{ $movement->stock_after }}</td>
