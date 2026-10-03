@@ -33,6 +33,7 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::delete('/user/{user}',[UserController::class,'destroy'])->name('user.destroy');
 
     Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
+    Route::get('/reporting', fn() => redirect()->route('dashboard'))->name('reporting');
 });
 
 Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
@@ -40,5 +41,3 @@ Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
     Route::get('/orders',[OrderController::class,'index'])->name('orders');
     Route::post('/sales',[SaleController::class,'store'])->name('sales.store');
 });
-
-Route::redirect('/reporting','/dashboard');
