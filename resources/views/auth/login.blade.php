@@ -41,7 +41,7 @@
             {{-- Panel kanan: form --}}
             <div class="w-full md:w-[58%] px-8 py-10 md:px-12 flex flex-col justify-center">
                 <div class="w-full max-w-sm mx-auto">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Sign in</h2>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Masuk</h2>
                     <p class="text-sm text-gray-500 mt-1 mb-7">Enter your credentials to open the till.</p>
 
                     <form action="{{ route('login.store') }}" method="POST" class="flex flex-col">
