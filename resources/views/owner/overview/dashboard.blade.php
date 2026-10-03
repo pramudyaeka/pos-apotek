@@ -110,7 +110,7 @@
 
         <div class="bg-white rounded-2xl border border-gray-100 p-6">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900">Transaksi Riwayat</h3>
+                <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900">Riwayat Transaksi</h3>
                 <a href="{{ route('transaction') }}" class="text-sm text-[#1F4D3D] font-medium hover:underline">Lihat semua</a>
             </div>
 
