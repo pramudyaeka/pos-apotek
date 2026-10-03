@@ -1,44 +1,43 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('auth.login');
+Route::get('/', fn() => view('auth.login'))->name('login');
+Route::get('/signup', fn() => view('auth.signup'))->name('signup');
+Route::post('/login', [AuthController::class,'login'])->name('login.store');
+Route::post('/signup', [AuthController::class,'signup'])->name('signup.store');
+Route::post('/logout', [AuthController::class,'logout'])->name('logout');
+
+Route::middleware(['auth','role:Owner'])->group(function () {
+    Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
+    Route::get('/category',[CategoryController::class,'index'])->name('category');
+    Route::post('/category',[CategoryController::class,'store'])->name('category.store');
+    Route::put('/category/{category}',[CategoryController::class,'update'])->name('category.update');
+    Route::delete('/category/{category}',[CategoryController::class,'destroy'])->name('category.destroy');
+
+    Route::get('/product',[ProductController::class,'index'])->name('product');
+    Route::post('/product',[ProductController::class,'store'])->name('product.store');
+    Route::put('/product/{product}',[ProductController::class,'update'])->name('product.update');
+    Route::delete('/product/{product}',[ProductController::class,'destroy'])->name('product.destroy');
+
+    Route::get('/user',[UserController::class,'index'])->name('user-management');
+    Route::post('/user',[UserController::class,'store'])->name('user.store');
+    Route::put('/user/{user}',[UserController::class,'update'])->name('user.update');
+    Route::delete('/user/{user}',[UserController::class,'destroy'])->name('user.destroy');
+
+    Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
 });
 
-Route::get('/signup', function () {
-    return view('auth.signup');
+Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
+    Route::get('/cashier', fn() => view('cashier.overview.dashboard'))->name('cashier');
+    Route::get('/orders',[ProductController::class,'index'])->name('orders');
+    Route::post('/sales',[SaleController::class,'store'])->name('sales.store');
 });
 
-
-Route::get('/dashboard', function () {
-    return view('owner.overview.dashboard');
-})->name('dashboard');
-
-Route::get('/cashier', function () {
-    return view('cashier.overview.dashboard');
-})->name('cashier');
-
-Route::get('/orders', function () {
-    return view('owner.overview.orders');
-})->name('orders');
-
-Route::get('/transaction', function () {
-    return view('owner.overview.transaction');
-})->name('transaction');
-
-Route::get('/category', function () {
-    return view('owner.inventory.categories');
-})->name('category');
-
-Route::get('/product', function () {
-    return view('owner.inventory.products');
-})->name('product');
-
-Route::get('/reporting', function () {
-    return view('owner.report.reporting');
-})->name('reporting');
- 
-Route::get('/user', function () {
-    return view('owner.setting.user_management');
-})->name('user-management');
+Route::redirect('/reporting','/dashboard');
