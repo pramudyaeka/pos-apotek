@@ -102,10 +102,13 @@
 
         {{-- Modal Tambah/Ubah Produk --}}
         <div x-show="showModal" x-cloak
+            @keydown.escape.window="showModal && closeModal()"
             class="fixed inset-0 z-50 flex items-center justify-center p-4"
             style="background: rgba(0,0,0,0.45)">
             <div @click.outside="closeModal()"
+                @keydown.escape="closeModal()"
                 x-show="showModal"
+                x-trap.noscroll="showModal"
                 x-transition:enter="transition ease-out duration-150"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -122,14 +125,14 @@
                 <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Produk info</p>
                 <div class="space-y-4 mb-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Item Nama</label>
+                        <label for="productName" class="block text-sm font-medium text-gray-700 mb-1.5">Nama Produk</label>
                         <input type="text" id="productName" x-model="form.name" placeholder="Contoh: Paracetamol 500mg"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Kategori</label>
-                            <select x-model="form.category_id" class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
+                            <label for="productCategory" class="block text-sm font-medium text-gray-700 mb-1.5">Kategori</label>
+                            <select id="productCategory" x-model="form.category_id" class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                                 <option value="">Pilih</option>
                                 <template x-for="c in categoryOptions" :key="c.id">
                                     <option :value="c.id" x-text="c.name"></option>
@@ -137,9 +140,9 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Satuan</label>
-                            <select x-model="form.unit" class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
-                                <option value="">Select</option>
+                            <label for="productUnit" class="block text-sm font-medium text-gray-700 mb-1.5">Satuan</label>
+                            <select id="productUnit" x-model="form.unit" class="border border-gray-300 rounded-xl py-2.5 px-3 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
+                                <option value="">Pilih</option>
                                 <template x-for="u in unitOptions" :key="u">
                                     <option :value="u" x-text="u"></option>
                                 </template>
@@ -151,19 +154,19 @@
                 <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Harga dan Stok</p>
                 <div class="space-y-4 mb-7">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Harga</label>
-                        <input type="number" x-model.number="form.price" placeholder="0"
+                        <label for="productPrice" class="block text-sm font-medium text-gray-700 mb-1.5">Harga</label>
+                        <input type="number" id="productPrice" x-model.number="form.price" min="0" step="1" inputmode="numeric" placeholder="0"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Stok</label>
-                            <input type="number" x-model.number="form.stock" placeholder="0"
+                            <label for="productStock" class="block text-sm font-medium text-gray-700 mb-1.5">Stok</label>
+                            <input type="number" id="productStock" x-model.number="form.stock" min="0" step="1" inputmode="numeric" placeholder="0"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Minimum Stok</label>
-                            <input type="number" x-model.number="form.min_stock" placeholder="0"
+                            <label for="productMinStock" class="block text-sm font-medium text-gray-700 mb-1.5">Minimum Stok</label>
+                            <input type="number" id="productMinStock" x-model.number="form.min_stock" min="0" step="1" inputmode="numeric" placeholder="0"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                         </div>
                     </div>
@@ -187,8 +190,8 @@
                 products: @json($productData),
                 filteredProduk() { const q=this.searchQuery.trim().toLowerCase(); let rows=this.products.filter(p=>(!q || (p.name+' '+(p.category_name||'')).toLowerCase().includes(q)) && (this.stockFilter==='all' || (this.stockFilter==='out' && Number(p.stock)===0) || (this.stockFilter==='low' && Number(p.stock)>0 && Number(p.stock)<=Number(p.min_stock)) || (this.stockFilter==='healthy' && Number(p.stock)>Number(p.min_stock)))); return [...rows].sort((a,b)=>{if(this.sortBy==='stock-low')return a.stock-b.stock;if(this.sortBy==='stock-high')return b.stock-a.stock;if(this.sortBy==='price-low')return Number(a.price)-Number(b.price);if(this.sortBy==='price-high')return Number(b.price)-Number(a.price);return a.name.localeCompare(b.name);}); },
                 formatRupiah(n) { return 'Rp '+Number(n||0).toLocaleString('id-ID'); },
-                openAddModal(){this.editingProduk=null;this.form={name:'',category_id:'',unit:'',price:null,stock:null,min_stock:null,is_active:true};this.showModal=true;},
-                openUbahModal(item){this.editingProduk=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;},
+                openAddModal(){this.editingProduk=null;this.form={name:'',category_id:'',unit:'',price:null,stock:null,min_stock:null,is_active:true};this.showModal=true;this.$nextTick(()=>document.getElementById('productName')?.focus());},
+                openUbahModal(item){this.editingProduk=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;this.$nextTick(()=>document.getElementById('productName')?.focus());},
                 closeModal(){this.showModal=false;},
                 async saveProduk(){
                     if(!this.form.name.trim()){showToast('Nama produk wajib diisi.','warning');return;} if(!this.form.category_id){showToast('Pilih kategori produk.','warning');return;} if(!this.form.unit){showToast('Pilih satuan produk.','warning');return;}
