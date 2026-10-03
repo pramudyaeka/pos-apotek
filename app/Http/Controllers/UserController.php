@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(){return view('owner.setting.user_management',['users'=>User::orderBy('name')->get()]);}
     public function store(Request $request){
-        $data=$request->validate(['name'=>'required|string|max:255','email'=>'required|email|max:255|unique:users,email','password'=>'required|string|min:8','role'=>[Rule::in(['Owner','Cashier'])],'status'=>[Rule::in(['Active','Inactive'])]]);
+        $data=$request->validate(['name'=>'required|string|max:255','email'=>'required|email|max:255|unique:users,email','password'=>'required|string|min:8','role'=>['required',Rule::in(['Owner','Cashier'])],'status'=>['required',Rule::in(['Active','Inactive'])]]);
         return response()->json(User::create($data),201);
     }
     public function update(Request $request, User $user){
