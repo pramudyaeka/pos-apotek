@@ -34,6 +34,7 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::delete('/user/{user}',[UserController::class,'destroy'])->name('user.destroy');
 
     Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
+    Route::get('/transaction/{sale}/receipt',[SaleController::class,'receipt'])->name('transaction.receipt');
     Route::get('/reporting', [ReportingController::class, 'index'])->name('reporting');
 });
 
