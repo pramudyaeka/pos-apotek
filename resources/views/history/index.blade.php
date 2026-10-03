@@ -52,7 +52,7 @@
                             <td class="py-3 pr-4 whitespace-nowrap text-gray-500">
                                 {{ $activity->created_at->format('d M Y H:i') }}
                             </td>
-                            <td class="py-3 pr-4 font-medium">{{ $activity->user?->name ?? 'System' }}</td>
+                            <td class="py-3 pr-4 font-medium">{{ $activity->user?->name ?? 'Sistem' }}</td>
                             <td class="py-3 pr-4">
                                 <span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 text-xs">{{ $activity->module }}</span>
                             </td>
