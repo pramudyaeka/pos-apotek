@@ -20,9 +20,20 @@ class AuthController extends Controller
             Auth::logout();
             throw ValidationException::withMessages(['email'=>'Akun Anda sedang tidak aktif.']);
         }
+        $user = $request->user();
+
         $request->session()->regenerate();
-        ActivityLog::record(Auth::user(), 'Authentication', 'login', 'User '.$request->user()->name.' berhasil login.');
-        return redirect()->intended(route(Auth::user()->isOwner() ? 'dashboard' : 'cashier'));
+
+        // Pencatatan aktivitas tidak boleh menggagalkan autentikasi.
+        try {
+            ActivityLog::record($user, 'Authentication', 'login', 'Pengguna '.$user->name.' berhasil masuk.');
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        return redirect()->intended(
+            $user->isOwner() ? route('dashboard') : route('orders')
+        );
     }
 
     public function signup(Request $request)
@@ -35,7 +46,14 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = $request->user();
-        ActivityLog::record($user, 'Authentication', 'logout', 'User '.($user?->name ?? 'Unknown').' logout dari sistem.');
+        try {
+            if ($user) {
+                ActivityLog::record($user, 'Authentication', 'logout', 'Pengguna '.$user->name.' keluar dari sistem.');
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
