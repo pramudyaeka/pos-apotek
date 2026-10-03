@@ -235,7 +235,7 @@
                             <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email ??
                                 'pranata.dyo@gmail.com' }}</p>
                         </div>
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmAction('Keluar dari sistem sekarang?')">
                             @csrf
                             <button type="submit" aria-label="Logout"
                                 class="text-gray-400 hover:text-red-500 transition shrink-0 md:hidden lg:block"
