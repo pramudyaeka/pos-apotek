@@ -62,49 +62,49 @@
 
                 <nav class="flex-1 overflow-y-auto px-4 md:px-2 lg:px-4 py-6 space-y-7">
                     <div>
-                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Menu utama</p>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Operasional</p>
                         <ul class="space-y-1">
                             @if(auth()->user()->isOwner())
                             <li><a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"><span>⌂</span><span>Dasbor</span></a></li>
                             @endif
                             <li><a href="{{ route('orders') }}" class="nav-link {{ request()->routeIs('orders') ? 'active' : '' }}"><span>🛒</span><span>Penjualan</span></a></li>
-                            @if(auth()->user()->isOwner())
-                            <li><a href="{{ route('transaction') }}" class="nav-link {{ request()->routeIs('transaction') ? 'active' : '' }}"><span>↔</span><span>Transaksi</span></a></li>
-                            @endif
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Pemantauan</p>
-                        <ul class="space-y-1">
-                            <li><a href="{{ route('history') }}" class="nav-link {{ request()->routeIs('history') ? 'active' : '' }}"><span>◷</span><span>Riwayat Aktivitas</span></a></li>
                         </ul>
                     </div>
 
                     <div>
                         <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Persediaan</p>
                         <ul class="space-y-1">
-                            <li><a href="{{ route('category') }}" class="nav-link {{ request()->routeIs('category') ? 'active' : '' }}"><span>▦</span><span>Kategori</span></a></li>
                             <li><a href="{{ route('product') }}" class="nav-link {{ request()->routeIs('product') ? 'active' : '' }}"><span>▣</span><span>Produk</span></a></li>
+                            <li><a href="{{ route('category') }}" class="nav-link {{ request()->routeIs('category') ? 'active' : '' }}"><span>▦</span><span>Kategori</span></a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Pemantauan</p>
+                        <ul class="space-y-1">
+                            <li><a href="{{ route('history') }}" class="nav-link {{ request()->routeIs('history') ? 'active' : '' }}"><span>◷</span><span>Aktivitas Sistem</span></a></li>
+                            @if(auth()->user()->isOwner())
+                            <li><a href="{{ route('transaction') }}" class="nav-link {{ request()->routeIs('transaction') ? 'active' : '' }}"><span>↔</span><span>Riwayat Penjualan</span></a></li>
+                            @endif
                         </ul>
                     </div>
 
                     @if(auth()->user()->isOwner())
                     <div>
-                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Laporan</p>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Analisis</p>
                         <ul class="space-y-1">
                             <li><a href="{{ route('reporting') }}" class="nav-link {{ request()->routeIs('reporting') ? 'active' : '' }}"><span>▤</span><span>Laporan</span></a></li>
                         </ul>
                     </div>
 
                     <div>
-                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Pengaturan</p>
+                        <p class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">Administrasi</p>
                         <ul class="space-y-1">
                             <li><a href="{{ route('user-management') }}" class="nav-link {{ request()->routeIs('user-management') ? 'active' : '' }}"><span>♙</span><span>Pengguna</span></a></li>
                         </ul>
                     </div>
                     @endif
-                </nav>          </nav>
+                </nav>
 
                 <div class="p-3 border-t border-gray-100 shrink-0">
                     <div
@@ -122,9 +122,9 @@
                         </div>
                         <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmAction('Keluar dari sistem sekarang?')">
                             @csrf
-                            <button type="submit" aria-label="Logout"
+                            <button type="submit" aria-label="Keluar"
                                 class="text-gray-400 hover:text-red-500 transition shrink-0 md:hidden lg:block"
-                                title="Logout">
+                                title="Keluar">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     class="w-4.5 h-4.5">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -143,7 +143,7 @@
 
                 {{-- Top bar khusus HP: hamburger + logo --}}
                 <div class="md:hidden flex items-center gap-3 h-16 px-4 border-b border-gray-100 shrink-0">
-                    <button onclick="openMobileSidebar()" aria-label="Open menu"
+                    <button onclick="openMobileSidebar()" aria-label="Buka menu"
                         class="text-gray-600 hover:text-gray-900">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
