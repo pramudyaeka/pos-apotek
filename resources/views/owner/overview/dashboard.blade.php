@@ -100,7 +100,7 @@
                 <h3 class="font-['Space_Grotesk'] font-semibold text-gray-900">Today Transaction</h3>
                 <span class="font-['IBM_Plex_Mono'] text-[11px] text-gray-400 tracking-wider uppercase">Live</span>
             </div>
-            <div class="relative h-57.5">
+            <div class="relative h-[230px]">
                 <canvas id="transactionChart"></canvas>
             </div>
         </div>
