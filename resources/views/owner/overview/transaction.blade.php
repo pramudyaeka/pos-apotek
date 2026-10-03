@@ -35,9 +35,19 @@
                             class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
 
-                    <div class="flex gap-3 shrink-0">
-                        <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Sort</button>
-                        <button class="px-5 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition whitespace-nowrap">Filter</button>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        <select x-model="sortBy" aria-label="Sort transactions" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                            <option value="latest">Latest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="highest">Highest amount</option>
+                            <option value="lowest">Lowest amount</option>
+                        </select>
+                        <select x-model="methodFilter" aria-label="Filter payment method" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
+                            <option value="all">All methods</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Debit">Debit</option>
+                            <option value="QRIS">QRIS</option>
+                        </select>
                     </div>
                 </div>
 
@@ -53,6 +63,7 @@
                         <thead class="font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase bg-gray-50/70 border-b border-gray-100"
                             :class="selectedTransaction ? 'text-[9px]' : 'text-[11px]'">
                             <tr>
+                                <th scope="col" colspan="1" aria-label="Row"></th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaction ? 'px-3 py-2.5' : 'px-6 py-4'">#</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaction ? 'px-3 py-2.5' : 'px-6 py-4'">Date</th>
                                 <th scope="col" class="font-medium whitespace-nowrap" :class="selectedTransaction ? 'px-3 py-2.5' : 'px-6 py-4'">No. Invoice</th>
@@ -162,8 +173,8 @@
 
     <script>
         document.addEventListener('alpine:init',()=>{Alpine.data('transactionLogic',()=>({
-            selectedTransaction:null, searchQuery:'',
-            filteredTransactions(){const q=this.searchQuery.trim().toLowerCase(); return q ? this.transactions.filter(t=>(t.invoice+' '+t.method+' '+t.date).toLowerCase().includes(q)) : this.transactions;},
+            selectedTransaction:null, searchQuery:'', sortBy:'latest', methodFilter:'all',
+            filteredTransactions(){const q=this.searchQuery.trim().toLowerCase(); let rows=this.transactions.filter(t=>(!q || (t.invoice+' '+t.method+' '+t.date).toLowerCase().includes(q)) && (this.methodFilter==='all' || t.method===this.methodFilter)); return [...rows].sort((a,b)=>{if(this.sortBy==='oldest')return a.id-b.id;if(this.sortBy==='highest')return Number(b.amount)-Number(a.amount);if(this.sortBy==='lowest')return Number(a.amount)-Number(b.amount);return b.id-a.id;});},
             transactions: @json($transactionData),
             formatRupiah(value){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(value).replace('Rp','Rp ');}
         }))})
