@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'Sign Up')
+@section('title', 'Daftar')
 @section('content')
 
     <section class="min-h-screen flex items-center justify-center bg-[#EEF2EF] p-4">
@@ -33,7 +33,7 @@
             {{-- Panel kanan: form --}}
             <div class="w-full md:w-[58%] px-8 py-10 md:px-12 flex flex-col justify-center max-h-[92vh] overflow-y-auto">
                 <div class="w-full max-w-sm mx-auto">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Create account</h2>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Tambah account</h2>
                     <p class="text-sm text-gray-500 mt-1 mb-7">Set up a new staff account for this pharmacy.</p>
 
                     <form action="{{ route('signup.store') }}" method="POST" class="flex flex-col">
@@ -65,13 +65,13 @@
 
                         <button type="submit"
                             class="bg-[#1F4D3D] hover:bg-[#173B2F] text-white font-semibold py-3 px-4 rounded-xl w-full transition">
-                            Create account
+                            Tambah account
                         </button>
                     </form>
 
                     <p class="mt-7 text-sm text-gray-500 text-center">
-                        Already have an account?
-                        <a href="{{ route('login') }}" class="text-[#B8632E] font-semibold hover:text-[#96502A]">Sign in</a>
+                        Sudah memiliki akun?
+                        <a href="{{ route('login') }}" class="text-[#B8632E] font-semibold hover:text-[#96502A]">Masuk</a>
                     </p>
                 </div>
             </div>
