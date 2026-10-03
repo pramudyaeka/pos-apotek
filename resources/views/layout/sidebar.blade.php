@@ -62,6 +62,7 @@
 
                 <nav class="flex-1 overflow-y-auto px-4 md:px-2 lg:px-4 py-6 space-y-7">
 
+                    @if(auth()->user()->isOwner())
                     <div>
                         <p
                             class="block md:hidden lg:block px-3 text-[10px] font-['IBM_Plex_Mono'] tracking-[0.15em] text-gray-400 uppercase mb-2">
@@ -170,6 +171,8 @@
                         </ul>
                     </div>
 
+                    @endif
+
                     @if(auth()->user()->isOwner())
                     <div>
                         <p
@@ -277,6 +280,13 @@
     </div>
 
     {{-- Global toast notification --}}
+    @if(session('success'))
+        <script>document.addEventListener('DOMContentLoaded',()=>showToast(@json(session('success')),'success'));</script>
+    @endif
+    @if(session('error'))
+        <script>document.addEventListener('DOMContentLoaded',()=>showToast(@json(session('error')),'error'));</script>
+    @endif
+
     <div id="toastContainer" class="fixed top-4 right-4 z-[100] w-[min(92vw,380px)] space-y-2 pointer-events-none" aria-live="polite" aria-atomic="true"></div>
 
     <script>
