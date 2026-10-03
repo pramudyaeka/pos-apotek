@@ -45,3 +45,40 @@ it('rejects a sale when stock is insufficient', function () {
     expect($product->fresh()->stock)->toBe(2);
     $this->assertDatabaseCount('sales',0);
 });
+
+
+it('rejects unsupported payment methods', function () {
+    $owner=User::factory()->create(['role'=>'Owner','status'=>'Active']);
+    $category=Category::create(['name'=>'Vitamin','is_active'=>true]);
+    $product=Product::create(['category_id'=>$category->id,'name'=>'Vitamin C','unit'=>'Tablet','price'=>10000,'stock'=>5,'min_stock'=>1,'is_active'=>true]);
+
+    $this->actingAs($owner)->postJson(route('sales.store'),[
+        'payment_method'=>'Crypto',
+        'items'=>[['product_id'=>$product->id,'quantity'=>1]],
+    ])->assertStatus(422);
+});
+
+it('does not allow products to use inactive categories', function () {
+    $owner=User::factory()->create(['role'=>'Owner','status'=>'Active']);
+    $category=Category::create(['name'=>'Inactive','is_active'=>false]);
+
+    $this->actingAs($owner)->postJson(route('product.store'),[
+        'name'=>'Test Product',
+        'category_id'=>$category->id,
+        'unit'=>'Tablet',
+        'price'=>1000,
+        'stock'=>1,
+        'min_stock'=>1,
+        'is_active'=>true,
+    ])->assertStatus(422);
+});
+
+it('serves reporting and receipt pages for an owner', function () {
+    $owner=User::factory()->create(['role'=>'Owner','status'=>'Active']);
+    $this->actingAs($owner)->get(route('reporting'))->assertOk();
+    $category=Category::create(['name'=>'Pain Relief','is_active'=>true]);
+    $product=Product::create(['category_id'=>$category->id,'name'=>'Paracetamol','unit'=>'Tablet','price'=>5000,'stock'=>5,'min_stock'=>1,'is_active'=>true]);
+    $response=$this->actingAs($owner)->postJson(route('sales.store'),['payment_method'=>'Cash','items'=>[['product_id'=>$product->id,'quantity'=>1]]])->assertCreated();
+    $saleId=$response->json('id');
+    $this->actingAs($owner)->get(route('transaction.receipt',$saleId))->assertOk();
+});
