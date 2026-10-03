@@ -86,9 +86,9 @@
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'all'])) }}"
                 class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type', 'all') === 'all' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">Semua</a>
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'IN'])) }}"
-                class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type') === 'IN' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">IN</a>
+                class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type') === 'IN' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">Masuk</a>
             <a href="{{ route('history', array_merge(request()->query(), ['stock_type'=>'OUT'])) }}"
-                class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type') === 'OUT' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">OUT</a>
+                class="px-3 py-1.5 rounded-lg text-xs {{ request('stock_type') === 'OUT' ? 'bg-[#1F4D3D] text-white' : 'bg-gray-100 text-gray-600' }}">Keluar</a>
             </div>
         </div>
         <div class="overflow-x-auto">
