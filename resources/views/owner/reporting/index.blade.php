@@ -11,11 +11,11 @@
     <form method="GET" action="{{ route('reporting') }}" class="flex flex-wrap items-end gap-3 mb-6">
         <div>
             <label for="from" class="block text-xs font-medium text-gray-500 mb-1.5">Dari</label>
-            <input id="from" name="from" type="date" value="{{ $from->toTanggalString() }}" class="rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]">
+            <input id="from" name="from" type="date" value="{{ $from->toDateString() }}" class="rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]">
         </div>
         <div>
             <label for="to" class="block text-xs font-medium text-gray-500 mb-1.5">Sampai</label>
-            <input id="to" name="to" type="date" value="{{ $to->toTanggalString() }}" class="rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]">
+            <input id="to" name="to" type="date" value="{{ $to->toDateString() }}" class="rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]">
         </div>
         <button class="px-5 py-2.5 rounded-xl bg-[#1F4D3D] text-white text-sm font-semibold hover:bg-[#173B2F] transition">Terapkan</button>
     </form>
