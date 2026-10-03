@@ -93,6 +93,7 @@
 
         {{-- Modal Tambah/Ubah Kategori --}}
         <div x-show="showModal" x-cloak
+            @keydown.escape.window="showModal && closeModal()"
             class="fixed inset-0 z-50 flex items-center justify-center p-4"
             style="background: rgba(0,0,0,0.45)">
             <div @click.outside="closeModal()"
@@ -117,10 +118,10 @@
                 </div>
 
                 <div class="flex items-center justify-between mb-7">
-                    <span class="text-sm font-medium text-gray-700">Status Aktif</span>
+                    <span id="categoryStatusLabel" class="text-sm font-medium text-gray-700">Status Aktif</span>
                     <button type="button" @click="form.is_active = !form.is_active"
                         :aria-pressed="form.is_active"
-                        aria-label="Ubah status kategori"
+                        aria-labelledby="categoryStatusLabel"
                         class="w-11 h-6 rounded-full transition relative shrink-0"
                         :class="form.is_active ? 'bg-[#1F4D3D]' : 'bg-gray-300'">
                         <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all"
@@ -143,8 +144,8 @@
                 form:{name:'',is_active:true},
                 categories: @json($categoryData),
                 filteredKategori(){const q=this.searchQuery.trim().toLowerCase();let rows=this.categories.filter(c=>(!q||c.name.toLowerCase().includes(q))&&(this.statusFilter==='all'||(this.statusFilter==='active'&&c.is_active)||(this.statusFilter==='inactive'&&!c.is_active)));return [...rows].sort((a,b)=>{if(this.sortBy==='items-high')return b.products_count-a.products_count;if(this.sortBy==='items-low')return a.products_count-b.products_count;return a.name.localeCompare(b.name);});},
-                openAddModal(){this.editingKategori=null;this.form={name:'',is_active:true};this.showModal=true;},
-                openUbahModal(cat){this.editingKategori=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;},
+                openAddModal(){this.editingKategori=null;this.form={name:'',is_active:true};this.showModal=true;this.$nextTick(()=>document.getElementById('categoryNama')?.focus());},
+                openUbahModal(cat){this.editingKategori=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;this.$nextTick(()=>document.getElementById('categoryNama')?.focus());},
                 closeModal(){this.showModal=false;},
                 async saveKategori(){
                     if(!this.form.name.trim()){showToast('Nama kategori wajib diisi.','warning');return;}
