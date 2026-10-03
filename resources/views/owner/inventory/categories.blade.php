@@ -123,7 +123,7 @@
 
                 <div class="flex gap-3">
                     <button @click="closeModal()" class="flex-1 py-3 rounded-xl font-medium text-sm text-gray-700 border border-gray-200 hover:bg-gray-50 transition">Cancel</button>
-                    <button @click="saveCategory()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition">Save</button>
+                    <button data-category-save @click="saveCategory()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition">Save</button>
                 </div>
             </div>
         </div>
@@ -140,17 +140,17 @@
                 openEditModal(cat){this.editingCategory=cat;this.form={name:cat.name,is_active:cat.is_active};this.showModal=true;},
                 closeModal(){this.showModal=false;},
                 async saveCategory(){
-                    if(!this.form.name.trim())return;
+                    if(!this.form.name.trim()){showToast('Nama kategori wajib diisi.','warning');return;}
                     const editing=this.editingCategory;const url=editing?'{{ url('/category') }}/'+editing.id:'{{ route('category.store') }}';
-                    const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
-                    const data=await response.json();if(!response.ok){alert(data.message||Object.values(data.errors||{}).flat().join('\n')||'Unable to save category');return;}
+                    const saveButton=document.querySelector('[data-category-save]'); if(saveButton) saveButton.disabled=true; const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)});
+                    const data=await response.json();if(!response.ok){if(saveButton) saveButton.disabled=false;showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Kategori gagal disimpan.','error');return;}
                     const normalized={id:data.id,name:data.name,is_active:data.is_active,products_count:data.products_count??editing?.products_count??0};
-                    if(editing)Object.assign(editing,normalized);else this.categories.push(normalized);this.closeModal();
+                    if(editing)Object.assign(editing,normalized);else this.categories.push(normalized);this.closeModal();if(saveButton) saveButton.disabled=false;showToast(editing?'Kategori berhasil diperbarui.':'Kategori berhasil ditambahkan.');
                 },
                 async deleteCategory(id){
-                    if(!confirm('Delete this category?'))return;
+                    if(!confirmAction('Hapus kategori ini? Tindakan ini tidak dapat dibatalkan.'))return;
                     const response=await fetch('{{ url('/category') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});
-                    const data=await response.json();if(!response.ok){alert(data.message||'Unable to delete category');return;}this.categories=this.categories.filter(c=>c.id!==id);
+                    const data=await response.json();if(!response.ok){showToast(data.message||'Kategori gagal dihapus.','error');return;}this.categories=this.categories.filter(c=>c.id!==id);showToast('Kategori berhasil dihapus.');
                 }
             }))
         })
