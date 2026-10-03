@@ -108,3 +108,37 @@ it('aggregates duplicate product lines before checking stock', function () {
     expect($product->fresh()->stock)->toBe(3);
     $this->assertDatabaseCount('sales', 0);
 });
+
+
+it('allows owner and cashier to access history', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+
+    $this->actingAs($owner)->get(route('history'))->assertOk();
+    $this->actingAs($cashier)->get(route('history'))->assertOk();
+});
+
+it('records sales in activity history', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Antiviral', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Test Medicine',
+        'unit' => 'Tablet',
+        'price' => 7000,
+        'stock' => 5,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($owner)->postJson(route('sales.store'), [
+        'payment_method' => 'QRIS',
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated();
+
+    $this->assertDatabaseHas('activity_logs', [
+        'user_id' => $owner->id,
+        'module' => 'Sale',
+        'action' => 'sale',
+    ]);
+});
