@@ -123,7 +123,7 @@
                 <div class="space-y-4 mb-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap</label>
-                        <input type="text" x-model="form.name" placeholder="e.g. Jenny Wilson"
+                        <input type="text" x-model="form.name" placeholder="Contoh: Jenny Wilson"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
                     <div>
@@ -163,7 +163,7 @@
                     </button>
                 </div>
                 <p x-show="editingUser && editingUser.id === currentUserId" class="text-xs text-gray-400 -mt-5 mb-6">
-                    Anda can't deactivate your own account.
+                    Anda tidak dapat menonaktifkan akun sendiri.
                 </p>
 
                 <div class="flex gap-3">
@@ -193,7 +193,7 @@
                 const editing=this.editingUser,url=editing?'{{ url('/user') }}/'+editing.id:'{{ route('user.store') }}';
                 try { const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)}); const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Pengguna gagal disimpan.','error');return;} const normalized={id:data.id,name:data.name,email:data.email,role:data.role,status:data.status}; if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();showToast(editing?'Pengguna berhasil diperbarui.':'Pengguna berhasil ditambahkan.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
             },
-            async deleteUser(user){if(!this.canDelete(user)||!confirmAksi('Hapus pengguna '+user.name+'? Tindakan ini tidak dapat dibatalkan.'))return;try { const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Pengguna gagal dihapus.','error');return;}this.users=this.users.filter(u=>u.id!==user.id);showToast('Pengguna berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }}
+            async deleteUser(user){if(!this.canDelete(user)||!confirmAction('Hapus pengguna '+user.name+'? Tindakan ini tidak dapat dibatalkan.'))return;try { const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Pengguna gagal dihapus.','error');return;}this.users=this.users.filter(u=>u.id!==user.id);showToast('Pengguna berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }}
         }))})
     </script>    <style>
         [x-cloak] { display: none !important; }
