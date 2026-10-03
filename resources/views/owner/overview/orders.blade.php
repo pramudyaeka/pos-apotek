@@ -39,7 +39,7 @@
 
         {{-- Grid produk --}}
         <div class="min-w-0">
-            <div class="mb-3 flex items-center justify-between"><p id="productResultCount" class="text-xs text-gray-400"></p><button type="button" onclick="clearCart()" class="text-xs font-semibold text-gray-500 hover:text-red-600 transition">Kosongkan keranjang</button></div>
+            <div class="mb-3 flex items-center justify-between"><p id="productResultCount" class="text-xs text-gray-400">{{ $products->count() }} produk tersedia</p><button type="button" onclick="clearCart()" class="text-xs font-semibold text-gray-500 hover:text-red-600 transition">Kosongkan keranjang</button></div>
             <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
             @foreach ($products as $p)
                 @php $slug = \Illuminate\Support\Str::slug($p->name); $initials = strtoupper(substr($p->name, 0, 2)); @endphp
@@ -94,7 +94,7 @@
                 <div class="mb-4">
                     <label for="paymentMetode" class="block text-xs font-medium text-gray-500 mb-1.5">Metode Pembayaran</label>
                     <select id="paymentMetode" class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]">
-                        <option value="Tunai">Tunai</option>
+                        <option value="Cash">Tunai</option>
                         <option value="Debit">Debit</option>
                         <option value="QRIS">QRIS</option>
                     </select>
@@ -116,15 +116,15 @@
     <script>
         let cart = [];
         let orderSubmitting = false;
-        function clearCart(){if(!cart.length){showToast('Keranjang sudah kosong.','info');return;}if(!confirmAksi('Kosongkan semua item dalam pesanan?'))return;cart=[];document.getElementById('orderNumber').textContent='New Order';renderCart();showToast('Keranjang dikosongkan.','info');}
+        function clearCart(){if(!cart.length){showToast('Keranjang sudah kosong.','info');return;}if(!window.confirmAction('Kosongkan semua item dalam pesanan?'))return;cart=[];document.getElementById('orderNumber').textContent='Pesanan Baru';renderCart();showToast('Keranjang dikosongkan.','info');}
 
         function formatRupiah(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
         function escapeHtml(value){return String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);}
         function addToCart(el){
-            const productId=Number(el.dataset.productId), stock=Number(el.dataset.productStok);
+            const productId=Number(el.dataset.productId), stock=Number(el.dataset.productStock);
             const existing=cart.find(i=>i.product_id===productId);
             if(stock <= 0){showToast('Produk sedang habis.','warning');return;} if(existing){if(existing.qty>=stock){showToast('Jumlah melebihi stok yang tersedia.','warning');return;}existing.qty++;}
-            else cart.push({product_id:productId,name:el.dataset.productName,price:Number(el.dataset.productHarga),qty:1,initials:el.dataset.productInitials,slug:el.dataset.productSlug,stock});
+            else cart.push({product_id:productId,name:el.dataset.productName,price:Number(el.dataset.productPrice),qty:1,initials:el.dataset.productInitials,slug:el.dataset.productSlug,stock});
             renderCart();
         }
         function changeQty(index,delta){
@@ -150,7 +150,7 @@
             document.getElementById('cartSubtotal').textContent=formatRupiah(subtotal);
             document.getElementById('cartTax').textContent=formatRupiah(0);
             document.getElementById('cartTotal').textContent=formatRupiah(subtotal);
-            const count=cart.reduce((sum,i)=>sum+i.qty,0); document.getElementById('productResultCount').textContent=count ? count+' produk dalam keranjang' : 'Pilih produk untuk memulai';
+            const count=cart.reduce((sum,i)=>sum+i.qty,0); document.getElementById('productResultCount').textContent=count ? count+' produk dalam keranjang' : document.querySelectorAll('.product-card:not(.hidden)').length+' produk tersedia';
             btn.disabled=!cart.length || orderSubmitting; updateProductBadges();
         }
         function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productSlug);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
