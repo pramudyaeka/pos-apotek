@@ -70,7 +70,7 @@
             </table>
         </div>
 
-        @if($activities->hasHalamans())
+        @if($activities->hasPages())
             <div class="mt-4">{{ $activities->links() }}</div>
         @endif
     </section>
@@ -115,7 +115,7 @@
                 </tbody>
             </table>
         </div>
-        @if($stockMovements->hasHalamans())
+        @if($stockMovements->hasPages())
             <div class="mt-4">{{ $stockMovements->links() }}</div>
         @endif
     </section>
