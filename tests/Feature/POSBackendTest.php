@@ -375,7 +375,7 @@ it('persists cash received and change amounts on a sale', function () {
         'change_amount' => 3000,
     ]);
 
-    $response->assertJsonPath('change_amount', 3000);
+    $response->assertJsonPath('change_amount', '3000.00');
 });
 
 it('limits cashier receipt access to their own sale', function () {
