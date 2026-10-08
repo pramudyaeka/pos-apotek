@@ -22,7 +22,11 @@
             <tr><td>{{ $item->quantity }} × {{ $item->product_name }}</td><td>Rp {{ number_format($item->subtotal,0,',','.') }}</td></tr>
         @endforeach
         <tr><td>Subtotal</td><td>Rp {{ number_format($sale->subtotal,0,',','.') }}</td></tr>
-        <tr><td>Pembayaran</td><td>{{ $sale->payment_method }}</td></tr>
+        <tr><td>Pembayaran</td><td>{{ $sale->payment_method === 'Cash' ? 'Tunai' : $sale->payment_method }}</td></tr>
+        @if($sale->amount_received !== null)
+            <tr><td>Uang diterima</td><td>Rp {{ number_format($sale->amount_received,0,',','.') }}</td></tr>
+            <tr><td>Kembalian</td><td>Rp {{ number_format($sale->change_amount ?? 0,0,',','.') }}</td></tr>
+        @endif
         <tr class="total"><td>Total</td><td>Rp {{ number_format($sale->total,0,',','.') }}</td></tr>
     </table>
     <div class="actions"><button onclick="window.print()">Print Receipt</button></div>
