@@ -48,7 +48,6 @@ it('rejects a sale when stock is insufficient', function () {
     $this->assertDatabaseCount('sales',0);
 });
 
-
 it('rejects unsupported payment methods', function () {
     $owner=User::factory()->create(['role'=>'Owner','status'=>'Active']);
     $category=Category::create(['name'=>'Vitamin','is_active'=>true]);
@@ -85,7 +84,6 @@ it('serves reporting and receipt pages for an owner', function () {
     $this->actingAs($owner)->get(route('transaction.receipt',$saleId))->assertOk();
 });
 
-
 it('aggregates duplicate product lines before checking stock', function () {
     $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
     $category = Category::create(['name' => 'Digestive', 'is_active' => true]);
@@ -110,7 +108,6 @@ it('aggregates duplicate product lines before checking stock', function () {
     expect($product->fresh()->stock)->toBe(3);
     $this->assertDatabaseCount('sales', 0);
 });
-
 
 it('allows owner and cashier to access history', function () {
     $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
@@ -144,7 +141,6 @@ it('records sales in activity history', function () {
         'action' => 'sale',
     ]);
 });
-
 
 it('renders the owner dashboard with all expected inventory and sales data', function () {
     $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
@@ -221,9 +217,18 @@ it('limits cashier history to the cashier own activity and stock movements', fun
     $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
     $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
     $category = Category::create(['name' => 'Test Category', 'is_active' => true]);
-    $product = Product::create([
+    $ownerProduct = Product::create([
         'category_id' => $category->id,
-        'name' => 'Test Product',
+        'name' => 'Owner Product',
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 10,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+    $cashierProduct = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Cashier Product',
         'unit' => 'Tablet',
         'price' => 5000,
         'stock' => 10,
@@ -235,7 +240,7 @@ it('limits cashier history to the cashier own activity and stock movements', fun
     ActivityLog::record($cashier, 'Product', 'update', 'Aktivitas milik Cashier.');
 
     StockMovement::create([
-        'product_id' => $product->id,
+        'product_id' => $ownerProduct->id,
         'user_id' => $owner->id,
         'type' => 'IN',
         'quantity' => 5,
@@ -244,7 +249,7 @@ it('limits cashier history to the cashier own activity and stock movements', fun
         'note' => 'Stok Owner',
     ]);
     StockMovement::create([
-        'product_id' => $product->id,
+        'product_id' => $cashierProduct->id,
         'user_id' => $cashier->id,
         'type' => 'OUT',
         'quantity' => -1,
@@ -258,6 +263,6 @@ it('limits cashier history to the cashier own activity and stock movements', fun
         ->assertOk()
         ->assertSee('Aktivitas milik Cashier.')
         ->assertDontSee('Aktivitas milik Owner.')
-        ->assertDontSee('Stok Owner')
-        ->assertSee('Stok Cashier');
+        ->assertDontSee('Owner Product')
+        ->assertSee('Cashier Product');
 });
