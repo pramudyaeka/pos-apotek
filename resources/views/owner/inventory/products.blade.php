@@ -3,6 +3,7 @@
 @section('content')
 
     <div x-data="productsLogic()">
+        @php($isOwner = auth()->user()->isOwner())
 
         {{-- Breadcrumb --}}
         <p class="text-sm text-gray-400 mb-2">
@@ -31,11 +32,15 @@
                 <select x-model="stockFilter" aria-label="Filter stok" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                     <option value="all">Semua stok</option><option value="low">Stok menipis</option><option value="out">Habis</option><option value="healthy">Stok aman</option>
                 </select>
+                @if($isOwner)
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
                     Tambah Produk
                 </button>
+                @else
+                <span class="px-4 py-3 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-200 rounded-xl">Kasir: hanya penyesuaian stok</span>
+                @endif
                             </div>
         </div>
 
@@ -77,14 +82,14 @@
                             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900" x-text="item.unit"></td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button @click="openUbahModal(item)" aria-label="Ubah"
+                                    <button @click="openUbahModal(item)" aria-label="{{ $isOwner ? 'Ubah produk' : 'Sesuaikan stok' }}"
                                         class="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:text-[#1F4D3D] hover:border-[#1F4D3D]/30 hover:bg-[#1F4D3D]/5 transition">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1 1-4Z"/></svg>
                                     </button>
-                                    <button @click="deleteProduk(item.id)" aria-label="Hapus"
+                                    @if($isOwner)<button @click="deleteProduk(item.id)" aria-label="Hapus"
                                         class="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-12"/></svg>
-                                    </button>
+                                    </button>@endif
 
                                 </div>
                             </td>
@@ -114,15 +119,15 @@
                 class="bg-white rounded-2xl w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto">
 
                 <div class="flex items-start justify-between mb-1">
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="editingProduk ? 'Ubah Produk' : 'Tambah Produk'"></h2>
+                    <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900" x-text="@json($isOwner) ? (editingProduk ? 'Ubah Produk' : 'Tambah Produk') : 'Penyesuaian Stok'"></h2>
                     <button @click="closeModal()" aria-label="Tutup" class="text-gray-400 hover:text-gray-600 shrink-0">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
                     </button>
                 </div>
-                <p class="text-sm text-gray-400 mb-6">Isi informasi produk di bawah.</p>
+                <p class="text-sm text-gray-400 mb-6" x-text="@json($isOwner) ? 'Isi informasi produk di bawah.' : 'Perbarui jumlah stok aktual produk.'"></p>
 
-                <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Informasi Produk</p>
-                <div class="space-y-4 mb-6">
+                <template x-if="@json($isOwner)"><p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Informasi Produk</p></template>
+                <div class="space-y-4 mb-6" x-show="@json($isOwner)">
                     <div>
                         <label for="productName" class="block text-sm font-medium text-gray-700 mb-1.5">Nama Produk</label>
                         <input type="text" id="productName" x-model="form.name" placeholder="Contoh: Paracetamol 500mg"
@@ -152,7 +157,7 @@
 
                 <p class="text-[11px] font-['IBM_Plex_Mono'] tracking-widest text-gray-400 uppercase mb-2">Harga dan Stok</p>
                 <div class="space-y-4 mb-7">
-                    <div>
+                    <div x-show="@json($isOwner)">
                         <label for="productPrice" class="block text-sm font-medium text-gray-700 mb-1.5">Harga</label>
                         <input type="number" id="productPrice" x-model.number="form.price" min="0" step="1" inputmode="numeric" placeholder="0"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
@@ -163,7 +168,7 @@
                             <input type="number" id="productStock" x-model.number="form.stock" min="0" step="1" inputmode="numeric" placeholder="0"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                         </div>
-                        <div>
+                        <div x-show="@json($isOwner)">
                             <label for="productMinStock" class="block text-sm font-medium text-gray-700 mb-1.5">Minimum Stok</label>
                             <input type="number" id="productMinStock" x-model.number="form.min_stock" min="0" step="1" inputmode="numeric" placeholder="0"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
@@ -173,7 +178,7 @@
 
                 <div class="flex gap-3">
                     <button @click="closeModal()" class="flex-1 py-3 rounded-xl font-medium text-sm text-gray-700 border border-gray-200 hover:bg-gray-50 transition">Batal</button>
-                    <button data-product-save @click="saveProduk()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition" x-text="editingProduk ? 'Simpan' : 'Tambah Produk'"></button>
+                    <button data-product-save @click="saveProduk()" class="flex-1 py-3 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition" x-text="@json($isOwner) ? (editingProduk ? 'Simpan' : 'Tambah Produk') : 'Simpan Stok'"></button>
                 </div>
             </div>
         </div>
@@ -190,13 +195,15 @@
                 filteredProduk() { const q=this.searchQuery.trim().toLowerCase(); let rows=this.products.filter(p=>(!q || (p.name+' '+(p.category_name||'')).toLowerCase().includes(q)) && (this.stockFilter==='all' || (this.stockFilter==='out' && Number(p.stock)===0) || (this.stockFilter==='low' && Number(p.stock)>0 && Number(p.stock)<=Number(p.min_stock)) || (this.stockFilter==='healthy' && Number(p.stock)>Number(p.min_stock)))); return [...rows].sort((a,b)=>{if(this.sortBy==='stock-low')return a.stock-b.stock;if(this.sortBy==='stock-high')return b.stock-a.stock;if(this.sortBy==='price-low')return Number(a.price)-Number(b.price);if(this.sortBy==='price-high')return Number(b.price)-Number(a.price);return a.name.localeCompare(b.name);}); },
                 formatRupiah(n) { return 'Rp '+Number(n||0).toLocaleString('id-ID'); },
                 openAddModal(){this.editingProduk=null;this.form={name:'',category_id:'',unit:'',price:null,stock:null,min_stock:null,is_active:true};this.showModal=true;this.$nextTick(()=>document.getElementById('productName')?.focus());},
-                openUbahModal(item){this.editingProduk=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;this.$nextTick(()=>document.getElementById('productName')?.focus());},
+                openUbahModal(item){this.editingProduk=item;this.form={name:item.name,category_id:item.category_id,unit:item.unit,price:item.price,stock:item.stock,min_stock:item.min_stock,is_active:item.is_active};this.showModal=true;this.$nextTick(()=>document.getElementById(@json($isOwner) ? 'productName' : 'productStock')?.focus());},
                 closeModal(){this.showModal=false;},
                 async saveProduk(){
                     if(!this.form.name.trim()){showToast('Nama produk wajib diisi.','warning');return;} if(!this.form.category_id){showToast('Pilih kategori produk.','warning');return;} if(!this.form.unit){showToast('Pilih satuan produk.','warning');return;}
-                    const editing=this.editingProduk; const url=editing?'{{ url('/product') }}/'+editing.id:'{{ route('product.store') }}';
+                    const editing=this.editingProduk;
+                    const url=editing?'{{ url('/product') }}/'+editing.id:'{{ route('product.store') }}';
+                    const payload=@json($isOwner) ? this.form : { stock: Number(this.form.stock) };
                     const saveButton=document.querySelector('[data-product-save]'); if(saveButton) saveButton.disabled=true;
-                    try { const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)}); const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Produk gagal disimpan.','error');return;} const normalized={id:data.id,name:data.name,category_id:data.category_id,category_name:data.category?.name,price:Number(data.price),stock:data.stock,min_stock:data.min_stock,unit:data.unit,is_active:data.is_active}; if(editing) Object.assign(editing,normalized); else this.products.push(normalized); this.closeModal();showToast(editing?'Produk berhasil diperbarui.':'Produk berhasil ditambahkan.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); } finally { if(saveButton) saveButton.disabled=false; }
+                    try { const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(payload)}); const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Produk gagal disimpan.','error');return;} const normalized={id:data.id,name:data.name,category_id:data.category_id,category_name:data.category?.name,price:Number(data.price),stock:data.stock,min_stock:data.min_stock,unit:data.unit,is_active:data.is_active}; if(editing) Object.assign(editing,normalized); else this.products.push(normalized); this.closeModal();showToast(editing?'Produk berhasil diperbarui.':'Produk berhasil ditambahkan.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); } finally { if(saveButton) saveButton.disabled=false; }
                 },
                 async deleteProduk(id){if(!await confirmAction('Hapus produk ini? Tindakan ini tidak dapat dibatalkan.', {title:'Hapus produk?', confirmButtonText:'Ya, hapus'}))return;try { const response=await fetch('{{ url('/product') }}/'+id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Produk gagal dihapus.','error');return;}this.products=this.products.filter(p=>p.id!==id);showToast('Produk berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }}
             }))
