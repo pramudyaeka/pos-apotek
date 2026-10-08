@@ -11,8 +11,8 @@ class Sale extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['invoice_number','user_id','subtotal','tax','total','payment_method','status'];
-    protected $casts = ['subtotal'=>'decimal:2','tax'=>'decimal:2','total'=>'decimal:2'];
+    protected $fillable = ['invoice_number','user_id','subtotal','tax','total','amount_received','change_amount','payment_method','status'];
+    protected $casts = ['subtotal'=>'decimal:2','tax'=>'decimal:2','total'=>'decimal:2','amount_received'=>'decimal:2','change_amount'=>'decimal:2'];
 
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
     public function items(): HasMany { return $this->hasMany(SaleItem::class); }
