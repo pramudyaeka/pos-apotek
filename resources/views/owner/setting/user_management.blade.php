@@ -82,6 +82,11 @@
                                         class="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:text-[#1F4D3D] hover:border-[#1F4D3D]/30 hover:bg-[#1F4D3D]/5 transition">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1 1-4Z"/></svg>
                                     </button>
+                                    <button @click="resetPassword(u)" :disabled="u.id === currentUserId" :title="u.id === currentUserId ? 'Gunakan menu Ubah Password untuk akun sendiri' : 'Reset password'"
+                                        class="w-9 h-9 rounded-lg border flex items-center justify-center transition"
+                                        :class="u.id !== currentUserId ? 'border-gray-200 text-gray-500 hover:text-[#1F4D3D] hover:border-[#1F4D3D]/30 hover:bg-[#1F4D3D]/5' : 'border-gray-100 text-gray-300 cursor-not-allowed'">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V8a4 4 0 0 1 8 0v3M6 11h12v9H6z"/><path stroke-linecap="round" d="M12 14v3"/></svg>
+                                    </button>
                                     <button @click="deleteUser(u)" :disabled="!canDelete(u)" :title="!canDelete(u) ? deleteBlockedReason(u) : 'Hapus pengguna'"
                                         class="w-9 h-9 rounded-lg border flex items-center justify-center transition"
                                         :class="canDelete(u) ? 'border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50' : 'border-gray-100 text-gray-300 cursor-not-allowed'">
@@ -192,6 +197,23 @@
                 if(!this.form.name.trim()){showToast('Nama wajib diisi.','warning');return;}if(!this.form.email.trim()){showToast('Surel wajib diisi.','warning');return;}if(!this.editingUser&&!this.form.password.trim()){showToast('Kata Sandi wajib diisi.','warning');return;}
                 const editing=this.editingUser,url=editing?'{{ url('/user') }}/'+editing.id:'{{ route('user.store') }}';
                 try { const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)}); const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Pengguna gagal disimpan.','error');return;} const normalized={id:data.id,name:data.name,email:data.email,role:data.role,status:data.status}; if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();showToast(editing?'Pengguna berhasil diperbarui.':'Pengguna berhasil ditambahkan.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
+            },
+            async resetPassword(user){
+                if(user.id===this.currentUserId)return;
+                if(!await confirmAction('Password '+user.name+' akan diganti dengan password sementara. Password lama tidak dapat dilihat kembali.',{title:'Reset password?',confirmButtonText:'Ya, reset password'}))return;
+                try{
+                    const response=await fetch('{{ url('/user') }}/'+user.id+'/reset-password',{method:'POST',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});
+                    const data=await response.json();
+                    if(!response.ok){showToast(data.message||'Password gagal direset.','error');return;}
+                    await Swal.fire({
+                        icon:'success',
+                        title:'Password berhasil direset',
+                        html:'<div class="text-left text-sm"><p class="text-gray-500 mb-2">Password sementara untuk <strong>'+escapeHtml(data.user_name)+'</strong>:</p><div class="rounded-xl bg-gray-100 px-4 py-3 text-center font-mono text-lg font-bold tracking-wider select-all">'+escapeHtml(data.temporary_password)+'</div><p class="text-xs text-gray-400 mt-3">Sampaikan password ini kepada pengguna dan minta pengguna menggantinya setelah login.</p></div>',
+                        confirmButtonText:'Selesai',
+                        buttonsStyling:false,
+                        customClass:{popup:'rounded-2xl',confirmButton:'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold'}
+                    });
+                }catch(error){showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error');}
             },
             async deleteUser(user){if(!this.canDelete(user)||!await confirmAction('Hapus pengguna '+user.name+'? Tindakan ini tidak dapat dibatalkan.', {title:'Hapus pengguna?', confirmButtonText:'Ya, hapus'}))return;try { const response=await fetch('{{ url('/user') }}/'+user.id,{method:'DELETE',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content}});const data=await response.json();if(!response.ok){showToast(data.message||'Pengguna gagal dihapus.','error');return;}this.users=this.users.filter(u=>u.id!==user.id);showToast('Pengguna berhasil dihapus.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }}
         }))})
