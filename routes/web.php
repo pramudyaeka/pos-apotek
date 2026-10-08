@@ -33,7 +33,6 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::post('/user/{user}/reset-password',[UserController::class,'resetPassword'])->name('user.reset-password');
 
     Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
-    Route::get('/transaction/{sale}/receipt',[SaleController::class,'receipt'])->name('transaction.receipt');
     Route::get('/reporting', [ReportingController::class, 'index'])->name('reporting');
     Route::get('/reporting/export/excel', [ReportingController::class, 'exportExcel'])->name('reporting.export.excel');
     Route::get('/reporting/export/pdf', [ReportingController::class, 'exportPdf'])->name('reporting.export.pdf');
@@ -46,6 +45,7 @@ Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
     Route::get('/cashier', fn() => redirect()->route('orders'))->name('cashier');
     Route::get('/orders',[OrderController::class,'index'])->name('orders');
     Route::post('/sales',[SaleController::class,'store'])->name('sales.store');
+    Route::get('/transaction/{sale}/receipt',[SaleController::class,'receipt'])->name('transaction.receipt');
 
     Route::get('/category',[CategoryController::class,'index'])->name('category');
     Route::get('/product',[ProductController::class,'index'])->name('product');
