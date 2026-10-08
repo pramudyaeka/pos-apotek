@@ -25,31 +25,34 @@
             {{-- Kolom kiri: action bar + tabel --}}
             <div class="min-w-0">
 
-                {{-- Cari, Urutkan, Filter --}}
-                <div class="flex flex-wrap lg:flex-nowrap items-center gap-3 mb-4">
+                {{-- Filter server-side --}}
+                <form method="GET" action="{{ route('transaction') }}" class="flex flex-wrap lg:flex-nowrap items-center gap-3 mb-4">
                     <div class="relative flex-1 w-full min-w-[200px]">
                         <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4.5 h-4.5"><circle cx="11" cy="11" r="6.5"/><path stroke-linecap="round" d="m20 20-3.2-3.2"/></svg>
                         </span>
-                        <input type="text" x-model="searchQuery" placeholder="Cari..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari faktur atau kasir..."
                             class="pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm w-full bg-white focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
-
-                    <div class="flex flex-wrap gap-2 shrink-0">
-                        <select x-model="sortBy" aria-label="Urutkan transaksi" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
-                            <option value="latest">Terbaru</option>
-                            <option value="oldest">Terlama</option>
-                            <option value="highest">Nominal terbesar</option>
-                            <option value="lowest">Nominal terkecil</option>
-                        </select>
-                        <select x-model="methodFilter" aria-label="Filter metode pembayaran" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
-                            <option value="all">Semua metode</option>
-                            <option value="Cash">Tunai</option>
-                            <option value="Debit">Debit</option>
-                            <option value="QRIS">QRIS</option>
-                        </select>
-                    </div>
-                </div>
+                    <input type="date" name="from" value="{{ request('from') }}" aria-label="Tanggal mulai" class="px-3 py-3 text-sm border border-gray-200 rounded-xl bg-white">
+                    <input type="date" name="to" value="{{ request('to') }}" aria-label="Tanggal akhir" class="px-3 py-3 text-sm border border-gray-200 rounded-xl bg-white">
+                    <select name="sort" aria-label="Urutkan transaksi" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl">
+                        <option value="latest" @selected(request('sort','latest') === 'latest')>Terbaru</option>
+                        <option value="oldest" @selected(request('sort') === 'oldest')>Terlama</option>
+                        <option value="highest" @selected(request('sort') === 'highest')>Nominal terbesar</option>
+                        <option value="lowest" @selected(request('sort') === 'lowest')>Nominal terkecil</option>
+                    </select>
+                    <select name="payment_method" aria-label="Filter metode pembayaran" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl">
+                        <option value="all" @selected(request('payment_method','all') === 'all')>Semua metode</option>
+                        <option value="Cash" @selected(request('payment_method') === 'Cash')>Tunai</option>
+                        <option value="Debit" @selected(request('payment_method') === 'Debit')>Debit</option>
+                        <option value="QRIS" @selected(request('payment_method') === 'QRIS')>QRIS</option>
+                    </select>
+                    <button type="submit" class="px-4 py-3 rounded-xl bg-[#1F4D3D] text-white text-sm font-semibold whitespace-nowrap">Terapkan</button>
+                    @if(request()->hasAny(['search','from','to','sort','payment_method']))
+                        <a href="{{ route('transaction') }}" class="px-4 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium whitespace-nowrap hover:bg-gray-50">Reset</a>
+                    @endif
+                </form>
 
                 {{--
                     Tabel transaksi.
@@ -173,7 +176,7 @@
     <script>
         document.addEventListener('alpine:init',()=>{Alpine.data('transactionLogic',()=>({
             selectedTransaksi:null, searchQuery:'', sortBy:'latest', methodFilter:'all',
-            filteredTransaksis(){const q=this.searchQuery.trim().toLowerCase(); let rows=this.transactions.filter(t=>(!q || (t.invoice+' '+t.method+' '+t.date).toLowerCase().includes(q)) && (this.methodFilter==='all' || t.method===this.methodFilter)); return [...rows].sort((a,b)=>{if(this.sortBy==='oldest')return a.id-b.id;if(this.sortBy==='highest')return Number(b.amount)-Number(a.amount);if(this.sortBy==='lowest')return Number(a.amount)-Number(b.amount);return b.id-a.id;});},
+            filteredTransaksis(){return this.transactions;},
             transactions: @json($transactionData),
             formatRupiah(value){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(value).replace('Rp','Rp ');}
         }))})
