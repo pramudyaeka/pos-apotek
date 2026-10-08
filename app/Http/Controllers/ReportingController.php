@@ -51,14 +51,16 @@ class ReportingController extends Controller
         $html .= '</table>';
 
         $html .= '<h2>Daftar Transaksi</h2><table>';
-        $html .= '<tr><th>No.</th><th>Nomor Faktur</th><th>Tanggal</th><th>Kasir</th><th>Pembayaran</th><th>Total</th></tr>';
+        $html .= '<tr><th>No.</th><th>Nomor Faktur</th><th>Tanggal</th><th>Kasir</th><th>Pembayaran</th><th>Uang Diterima</th><th>Kembalian</th><th>Total</th></tr>';
         foreach ($sales as $index => $sale) {
             $method = $sale->payment_method === 'Cash' ? 'Tunai' : $sale->payment_method;
             $cashier = $sale->user?->name ?? 'Sistem';
-            $html .= '<tr><td class="number">' . ($index + 1) . '</td><td>' . $e($sale->invoice_number) . '</td><td>' . $e($sale->created_at->format('d M Y H:i')) . '</td><td>' . $e($cashier) . '</td><td>' . $e($method) . '</td><td class="number">Rp ' . number_format($sale->total, 0, ',', '.') . '</td></tr>';
+            $received = $sale->amount_received !== null ? 'Rp ' . number_format($sale->amount_received, 0, ',', '.') : '-';
+            $change = $sale->change_amount !== null ? 'Rp ' . number_format($sale->change_amount, 0, ',', '.') : '-';
+            $html .= '<tr><td class="number">' . ($index + 1) . '</td><td>' . $e($sale->invoice_number) . '</td><td>' . $e($sale->created_at->format('d M Y H:i')) . '</td><td>' . $e($cashier) . '</td><td>' . $e($method) . '</td><td class="number">' . $received . '</td><td class="number">' . $change . '</td><td class="number">Rp ' . number_format($sale->total, 0, ',', '.') . '</td></tr>';
         }
         if ($sales->isEmpty()) {
-            $html .= '<tr><td colspan="6">Belum ada transaksi pada periode ini.</td></tr>';
+            $html .= '<tr><td colspan="8">Belum ada transaksi pada periode ini.</td></tr>';
         }
         $html .= '</table>';
 
