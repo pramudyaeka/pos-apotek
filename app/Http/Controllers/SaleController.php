@@ -128,8 +128,4 @@ class SaleController extends Controller
         return view('owner.overview.receipt', compact('sale'));
     }
 
-    private function nextInvoiceNumber(): string
-    {
-        return '#'.str_pad((string)((int)Sale::max('id')+1),4,'0',STR_PAD_LEFT);
-    }
 }
