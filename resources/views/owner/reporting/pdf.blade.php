@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Penjualan {{ $from->format('Y-m-d') }} - {{ $to->format('Y-m-d') }}</title>
+    <title>Laporan Penjualan - {{ $from->locale('id')->translatedFormat('F Y') }}</title>
     <style>
         *{box-sizing:border-box}
         body{font-family:Arial,Helvetica,sans-serif;color:#1f2937;background:#fff;margin:0;padding:32px}
@@ -34,7 +34,7 @@
         <button class="print" onclick="window.print()">Cetak / Simpan PDF</button>
     </div>
 
-    <h1>Laporan Penjualan</h1>
+    <h1>Laporan Penjualan - {{ $from->locale('id')->translatedFormat('F Y') }}</h1>
     <p class="subtitle">Periode {{ $from->format('d M Y') }} — {{ $to->format('d M Y') }}</p>
 
     <div class="summary">
