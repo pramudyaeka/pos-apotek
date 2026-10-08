@@ -26,6 +26,7 @@ it('creates a sale and decrements stock atomically', function () {
 
     $response=$this->actingAs($owner)->postJson(route('sales.store'),[
         'payment_method'=>'Cash',
+        'amount_received'=>100000,
         'items'=>[['product_id'=>$product->id,'quantity'=>3]],
     ]);
 
@@ -42,6 +43,7 @@ it('rejects a sale when stock is insufficient', function () {
 
     $this->actingAs($owner)->postJson(route('sales.store'),[
         'payment_method'=>'Cash',
+        'amount_received'=>100000,
         'items'=>[['product_id'=>$product->id,'quantity'=>3]],
     ])->assertStatus(422);
 
@@ -80,7 +82,7 @@ it('serves reporting and receipt pages for an owner', function () {
     $this->actingAs($owner)->get(route('reporting'))->assertOk();
     $category=Category::create(['name'=>'Pain Relief','is_active'=>true]);
     $product=Product::create(['category_id'=>$category->id,'name'=>'Paracetamol','unit'=>'Tablet','price'=>5000,'stock'=>5,'min_stock'=>1,'is_active'=>true]);
-    $response=$this->actingAs($owner)->postJson(route('sales.store'),['payment_method'=>'Cash','items'=>[['product_id'=>$product->id,'quantity'=>1]]])->assertCreated();
+    $response=$this->actingAs($owner)->postJson(route('sales.store'),['payment_method'=>'Cash','amount_received'=>100000,'items'=>[['product_id'=>$product->id,'quantity'=>1]]])->assertCreated();
     $saleId=$response->json('id');
     $this->actingAs($owner)->get(route('transaction.receipt',$saleId))->assertOk();
 });
@@ -336,7 +338,6 @@ it('blocks deleting a user who already has sales and recommends deactivation', f
 
     $this->actingAs($cashier)->postJson(route('sales.store'), [
         'payment_method' => 'Cash',
-        'amount_received' => 100000,
         'amount_received' => 10000,
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertCreated();
@@ -363,7 +364,6 @@ it('persists cash received and change amounts on a sale', function () {
 
     $response = $this->actingAs($cashier)->postJson(route('sales.store'), [
         'payment_method' => 'Cash',
-        'amount_received' => 100000,
         'amount_received' => 10000,
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertCreated();
@@ -394,14 +394,12 @@ it('limits cashier receipt access to their own sale', function () {
 
     $ownerSale = $this->actingAs($owner)->postJson(route('sales.store'), [
         'payment_method' => 'Cash',
-        'amount_received' => 100000,
         'amount_received' => 10000,
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertCreated()->json('id');
 
     $cashierSale = $this->actingAs($cashier)->postJson(route('sales.store'), [
         'payment_method' => 'Cash',
-        'amount_received' => 100000,
         'amount_received' => 10000,
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertCreated()->json('id');
@@ -425,7 +423,6 @@ it('filters transaction history on the server before pagination', function () {
 
     $this->actingAs($owner)->postJson(route('sales.store'), [
         'payment_method' => 'Cash',
-        'amount_received' => 100000,
         'amount_received' => 10000,
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertCreated();
