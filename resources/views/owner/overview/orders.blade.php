@@ -193,7 +193,7 @@
                     '<label for="swalPaymentAmount" class="block text-sm font-medium text-gray-700 mb-1.5">Jumlah uang diterima</label>' +
                     '<div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-500">Rp</span><input id="swalPaymentAmount" type="text" inputmode="numeric" autocomplete="off" class="swal2-input !m-0 !w-full !rounded-xl !border-gray-200 !pl-10 !pr-3 focus:!border-[#1F4D3D] focus:!ring-[#1F4D3D]" placeholder="0"></div>' +
                     '' +
-                    '<div class="mt-3"><p class="text-xs font-medium text-gray-500 mb-2">Nominal cepat</p><div class="grid grid-cols-3 gap-1.5">'
+                    '<div class="mt-3"><p class="text-xs font-medium text-gray-500 mb-2">Nominal cepat</p><div class="grid grid-cols-3 gap-1.5">' +
                     quickAmounts.map(amount => '<button type="button" data-quick-amount="' + amount + '" class="quick-payment-amount px-2 py-2 rounded-lg border border-gray-200 bg-white text-xs font-semibold text-gray-700 hover:border-[#1F4D3D] hover:text-[#1F4D3D] transition">' + formatRupiah(amount) + '</button>').join('') +
                     '</div><button type="button" id="exactPaymentAmount" class="w-full mt-2 px-3 py-2 rounded-lg border border-dashed border-[#1F4D3D]/40 bg-[#1F4D3D]/5 text-xs font-semibold text-[#1F4D3D] hover:bg-[#1F4D3D]/10 transition">Uang Pas (' + formatRupiah(total) + ')</button></div>' +
                     '<div class="flex items-center justify-between mt-4 px-1"><span class="text-sm text-gray-500">Kembalian</span><strong id="swalChangeAmount" class="text-base font-semibold text-[#1F4D3D]">Rp 0</strong></div></div>',
