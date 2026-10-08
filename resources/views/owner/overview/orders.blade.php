@@ -240,11 +240,19 @@
 
             const btn=document.getElementById('placeOrderBtn'); const originalText=btn.textContent; orderSubmitting=true; btn.disabled=true; btn.textContent='Memproses...';
             try {
-                const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:paymentMethod,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
+                const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:paymentMethod,amount_received:paymentMethod==='Cash'?confirmation.amount:null,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
                 const data=await response.json();
                 if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Transaksi gagal.','error');return;}
                 const changeText=paymentMethod==='Cash' && confirmation.change !== undefined ? ' Kembalian: '+formatRupiah(confirmation.change)+'.' : '';
-                showToast('Transaksi berhasil. Nomor Faktur: '+data.invoice_number+'.'+changeText,'success',6000);
+                const receiptResult = await Swal.fire({
+                    icon:'success', title:'Transaksi berhasil',
+                    html:'<div class="text-left text-sm space-y-2"><div class="flex justify-between"><span class="text-gray-500">Nomor Faktur</span><strong>'+data.invoice_number+'</strong></div><div class="flex justify-between"><span class="text-gray-500">Total</span><strong>'+formatRupiah(data.total)+'</strong></div>'+(paymentMethod==='Cash' ? '<div class="flex justify-between"><span class="text-gray-500">Kembalian</span><strong>'+formatRupiah(data.change_amount||0)+'</strong></div>' : '')+'</div>',
+                    showCancelButton:true, confirmButtonText:'Cetak Struk', cancelButtonText:'Selesai',
+                    reverseButtons:true, buttonsStyling:false,
+                    customClass:{popup:'rounded-2xl !w-[min(92vw,420px)]',confirmButton:'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1',cancelButton:'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1'}
+                });
+                if(receiptResult.isConfirmed && data.id){ window.open('{{ url('/transaction') }}/'+data.id+'/receipt','_blank'); }
+                if (changeText) showToast('Kembalian: '+formatRupiah(confirmation.change)+'.','success',3500);
                 cart=[]; document.getElementById('orderNumber').textContent='Nomor Faktur: '+data.invoice_number; renderCart();
             } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
             finally { orderSubmitting=false; btn.disabled=!cart.length; btn.textContent=originalText; }
