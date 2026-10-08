@@ -36,7 +36,7 @@
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
-                    Add Kategori
+                    Tambah Kategori
                 </button>
                 @else
                 <span class="px-4 py-3 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-200 rounded-xl">Kasir: hanya dapat melihat kategori</span>
