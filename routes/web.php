@@ -22,6 +22,10 @@ Route::middleware(['auth','role:Owner'])->group(function () {
 
     Route::delete('/product/{product}',[ProductController::class,'destroy'])->name('product.destroy');
 
+    Route::post('/category',[CategoryController::class,'store'])->name('category.store');
+    Route::put('/category/{category}',[CategoryController::class,'update'])->name('category.update');
+    Route::post('/product',[ProductController::class,'store'])->name('product.store');
+
     Route::get('/user',[UserController::class,'index'])->name('user-management');
     Route::post('/user',[UserController::class,'store'])->name('user.store');
     Route::put('/user/{user}',[UserController::class,'update'])->name('user.update');
@@ -44,10 +48,6 @@ Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
     Route::post('/sales',[SaleController::class,'store'])->name('sales.store');
 
     Route::get('/category',[CategoryController::class,'index'])->name('category');
-    Route::post('/category',[CategoryController::class,'store'])->name('category.store');
-    Route::put('/category/{category}',[CategoryController::class,'update'])->name('category.update');
-
     Route::get('/product',[ProductController::class,'index'])->name('product');
-    Route::post('/product',[ProductController::class,'store'])->name('product.store');
     Route::put('/product/{product}',[ProductController::class,'update'])->name('product.update');
 });
