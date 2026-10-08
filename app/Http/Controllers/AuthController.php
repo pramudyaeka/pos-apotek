@@ -23,13 +23,6 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        // Pencatatan aktivitas tidak boleh menggagalkan autentikasi.
-        try {
-            ActivityLog::record($user, 'Authentication', 'login', 'Pengguna '.$user->name.' berhasil masuk.');
-        } catch (\Throwable $e) {
-            report($e);
-        }
-
         return redirect()->intended(
             $user->isOwner() ? route('dashboard') : route('orders')
         );
