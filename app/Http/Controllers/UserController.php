@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function index(){return view('owner.setting.user_management',['users'=>User::orderBy('name')->get()]);}
+    public function index(){return view('owner.setting.user_management',['users'=>User::withCount('sales')->orderBy('name')->get()]);}
 
     public function password(){return view('account.password');}
 
@@ -71,6 +71,7 @@ class UserController extends Controller
     public function destroy(Request $request, User $user){
         if($user->id===$request->user()->id) abort(422,'Anda tidak dapat menghapus akun sendiri.');
         if($user->role==='Owner' && User::where('role','Owner')->count()<=1) abort(422,'Minimal harus ada satu Owner.');
+        if($user->sales()->exists()) abort(422,'Akun ini sudah memiliki transaksi. Nonaktifkan akun agar riwayat transaksi tetap tersimpan.');
         $name = $user->name;
         $id = $user->id;
         $user->delete();
