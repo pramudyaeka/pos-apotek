@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\ActivityLog;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\StockMovement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -186,12 +188,76 @@ it('rejects inactive accounts during login', function () {
 it('filters activity history by the stored backend module values', function () {
     $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
 
-    \App\Models\ActivityLog::record($owner, 'Product', 'create', 'Membuat produk "Paracetamol".');
-    \App\Models\ActivityLog::record($owner, 'User', 'create', 'Membuat akun Kasir.');
+    ActivityLog::record($owner, 'Product', 'create', 'Membuat produk "Paracetamol".');
+    ActivityLog::record($owner, 'User', 'create', 'Membuat akun Kasir.');
 
     $this->actingAs($owner)
         ->get(route('history', ['module' => 'Product']))
         ->assertOk()
         ->assertSee('Membuat produk "Paracetamol".')
         ->assertDontSee('Membuat akun Kasir.');
+});
+
+it('does not record a login in activity history', function () {
+    $owner = User::factory()->create([
+        'role' => 'Owner',
+        'status' => 'Active',
+        'password' => 'password',
+    ]);
+
+    $this->post(route('login.store'), [
+        'email' => $owner->email,
+        'password' => 'password',
+    ])->assertRedirect(route('dashboard'));
+
+    $this->assertDatabaseMissing('activity_logs', [
+        'user_id' => $owner->id,
+        'module' => 'Authentication',
+        'action' => 'login',
+    ]);
+});
+
+it('limits cashier history to the cashier own activity and stock movements', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Test Category', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Test Product',
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 10,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    ActivityLog::record($owner, 'Product', 'create', 'Aktivitas milik Owner.');
+    ActivityLog::record($cashier, 'Product', 'update', 'Aktivitas milik Cashier.');
+
+    StockMovement::create([
+        'product_id' => $product->id,
+        'user_id' => $owner->id,
+        'type' => 'IN',
+        'quantity' => 5,
+        'stock_before' => 5,
+        'stock_after' => 10,
+        'note' => 'Stok Owner',
+    ]);
+    StockMovement::create([
+        'product_id' => $product->id,
+        'user_id' => $cashier->id,
+        'type' => 'OUT',
+        'quantity' => -1,
+        'stock_before' => 10,
+        'stock_after' => 9,
+        'note' => 'Stok Cashier',
+    ]);
+
+    $this->actingAs($cashier)
+        ->get(route('history'))
+        ->assertOk()
+        ->assertSee('Aktivitas milik Cashier.')
+        ->assertDontSee('Aktivitas milik Owner.')
+        ->assertDontSee('Stok Owner')
+        ->assertSee('Stok Cashier');
 });
