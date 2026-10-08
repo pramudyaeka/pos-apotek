@@ -40,7 +40,7 @@
         {{-- Grid produk --}}
         <div class="min-w-0">
             <div class="mb-3 flex items-center justify-between"><p id="productResultCount" class="text-xs text-gray-400">{{ $products->count() }} produk tersedia</p><button type="button" onclick="clearCart()" class="text-xs font-semibold text-gray-500 hover:text-red-600 transition">Kosongkan keranjang</button></div>
-            <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-210px)] overflow-y-auto pr-1 pb-2">
+            <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 md:max-h-[calc(100vh-260px)] overflow-y-auto pr-1 pb-2">
             @foreach ($products as $p)
                 @php $slug = \Illuminate\Support\Str::slug($p->name); $initials = strtoupper(substr($p->name, 0, 2)); @endphp
                 <button type="button" data-product-id="{{ $p->id }}" data-product-name="{{ $p->name }}" data-product-price="{{ $p->price }}"
@@ -68,7 +68,7 @@
         </div>
 
         {{-- Ringkasan order --}}
-        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-4 flex flex-col h-[calc(100vh-120px)] min-h-[520px] max-h-[760px]">
+        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-4 flex flex-col md:h-[calc(100vh-260px)] md:min-h-[440px] md:max-h-[620px]">
 
             <div class="text-center px-6 pt-6 pb-4 shrink-0">
                 <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Ringkasan Penjualan</h2>
