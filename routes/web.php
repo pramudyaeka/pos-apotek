@@ -31,6 +31,8 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
     Route::get('/transaction/{sale}/receipt',[SaleController::class,'receipt'])->name('transaction.receipt');
     Route::get('/reporting', [ReportingController::class, 'index'])->name('reporting');
+    Route::get('/reporting/export/excel', [ReportingController::class, 'exportExcel'])->name('reporting.export.excel');
+    Route::get('/reporting/export/pdf', [ReportingController::class, 'exportPdf'])->name('reporting.export.pdf');
 });
 
 Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
