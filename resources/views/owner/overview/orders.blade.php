@@ -68,7 +68,7 @@
         </div>
 
         {{-- Ringkasan order --}}
-        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-4 flex flex-col md:h-[calc(100vh-260px)] md:min-h-[440px] md:max-h-[620px]">
+        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-6 flex flex-col max-h-[calc(100vh-160px)]">
 
             <div class="text-center px-6 pt-6 pb-4 shrink-0">
                 <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Ringkasan Penjualan</h2>
