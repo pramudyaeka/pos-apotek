@@ -47,7 +47,7 @@
     <section class="transactions">
         <h2>Daftar Transaksi</h2>
         <table>
-            <thead><tr><th class="number">No.</th><th>Nomor Faktur</th><th>Tanggal</th><th>Kasir</th><th>Pembayaran</th><th class="number">Total</th></tr></thead>
+            <thead><tr><th class="number">No.</th><th>Nomor Faktur</th><th>Tanggal</th><th>Kasir</th><th>Pembayaran</th><th class="number">Uang Diterima</th><th class="number">Kembalian</th><th class="number">Total</th></tr></thead>
             <tbody>
                 @forelse($sales as $index => $sale)
                     <tr>
@@ -56,10 +56,12 @@
                         <td>{{ $sale->created_at->format('d M Y H:i') }}</td>
                         <td>{{ $sale->user?->name ?? 'Sistem' }}</td>
                         <td>{{ $sale->payment_method === 'Cash' ? 'Tunai' : $sale->payment_method }}</td>
+                        <td class="number">{{ $sale->amount_received !== null ? 'Rp '.number_format($sale->amount_received, 0, ',', '.') : '-' }}</td>
+                        <td class="number">{{ $sale->change_amount !== null ? 'Rp '.number_format($sale->change_amount, 0, ',', '.') : '-' }}</td>
                         <td class="number">Rp {{ number_format($sale->total, 0, ',', '.') }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="empty">Belum ada transaksi pada periode ini.</td></tr>
+                    <tr><td colspan="8" class="empty">Belum ada transaksi pada periode ini.</td></tr>
                 @endforelse
             </tbody>
         </table>
