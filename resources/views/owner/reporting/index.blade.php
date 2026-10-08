@@ -14,7 +14,9 @@
                 <p class="text-gray-500 mt-1">Ringkasan penjualan berdasarkan periode yang dipilih</p>
             </div>
 
-            <form method="GET" action="{{ route('reporting') }}" class="flex flex-wrap items-end gap-2.5 bg-white rounded-2xl border border-gray-200 p-3 shadow-sm">
+            <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2.5">
+                <form method="GET" action="{{ route('reporting') }}" class="flex flex-wrap items-end gap-2.5 bg-white rounded-2xl border border-gray-200 p-3 shadow-sm">
+
                 <div>
                     <label for="from" class="block text-xs font-medium text-gray-500 mb-1.5">Dari</label>
                     <input id="from" name="from" type="date" value="{{ $from->toDateString() }}"
@@ -33,7 +35,21 @@
                         Atur Ulang
                     </a>
                 @endif
-            </form>
+                </form>
+
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('reporting.export.excel', request()->only('from', 'to')) }}"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#1F4D3D]/20 bg-white text-[#1F4D3D] text-sm font-semibold hover:bg-[#1F4D3D]/5 transition">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14v16H5zM8 8l3 4-3 4M13 16h3"/></svg>
+                        Excel
+                    </a>
+                    <a href="{{ route('reporting.export.pdf', request()->only('from', 'to')) }}" target="_blank"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[#B8632E]/20 bg-white text-[#B8632E] text-sm font-semibold hover:bg-[#B8632E]/5 transition">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6 4h9l3 3v13H6zM14 4v4h4M9 12h6M9 15h6"/></svg>
+                        PDF
+                    </a>
+                </div>
+            </div>
         </div>
 
         <div class="mb-5 flex items-center gap-2 text-xs text-gray-500">
