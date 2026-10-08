@@ -102,51 +102,6 @@
             </div>
         </div>
 
-        <section class="mt-5 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <div>
-                    <h2 class="font-['Space_Grotesk'] font-semibold text-gray-900">Daftar Transaksi</h2>
-                    <p class="text-xs text-gray-400 mt-0.5">Seluruh transaksi pada periode yang dipilih</p>
-                </div>
-                <span class="text-xs font-semibold text-[#1F4D3D] bg-[#1F4D3D]/10 px-3 py-1.5 rounded-full">
-                    {{ number_format($sales->count()) }} transaksi
-                </span>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-50">
-                        <tr class="text-left text-xs font-semibold text-gray-500">
-                            <th class="px-5 py-3">No.</th>
-                            <th class="px-5 py-3">Nomor Faktur</th>
-                            <th class="px-5 py-3">Tanggal</th>
-                            <th class="px-5 py-3">Kasir</th>
-                            <th class="px-5 py-3">Pembayaran</th>
-                            <th class="px-5 py-3 text-right">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @forelse($sales as $index => $sale)
-                            <tr class="hover:bg-gray-50/70">
-                                <td class="px-5 py-3 text-gray-500">{{ $index + 1 }}</td>
-                                <td class="px-5 py-3 font-semibold text-gray-800 whitespace-nowrap">{{ $sale->invoice_number }}</td>
-                                <td class="px-5 py-3 text-gray-600 whitespace-nowrap">{{ $sale->created_at->format('d M Y H:i') }}</td>
-                                <td class="px-5 py-3 text-gray-600">{{ $sale->user?->name ?? 'Sistem' }}</td>
-                                <td class="px-5 py-3 text-gray-600">{{ $sale->payment_method === 'Cash' ? 'Tunai' : $sale->payment_method }}</td>
-                                <td class="px-5 py-3 text-right font-semibold text-gray-900 whitespace-nowrap">Rp {{ number_format($sale->total, 0, ',', '.') }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-5 py-10 text-center">
-                                    <p class="text-sm font-medium text-gray-500">Belum ada transaksi</p>
-                                    <p class="text-xs text-gray-400 mt-1">Tidak ada transaksi pada periode yang dipilih.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
             <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
