@@ -49,8 +49,45 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
+        if ($request->user()->isCashier()) {
+            $data = $request->validate([
+                'stock' => 'required|integer|min:0',
+            ]);
+
+            DB::transaction(function () use ($data, $product, $request) {
+                $product = Product::lockForUpdate()->findOrFail($product->id);
+                $before = $product->stock;
+                $product->update(['stock' => $data['stock']]);
+
+                if ($before !== $product->stock) {
+                    StockMovement::create([
+                        'product_id' => $product->id,
+                        'user_id' => $request->user()->id,
+                        'type' => $product->stock > $before ? 'IN' : 'OUT',
+                        'quantity' => $product->stock - $before,
+                        'stock_before' => $before,
+                        'stock_after' => $product->stock,
+                        'reference_type' => 'adjustment',
+                        'note' => 'Penyesuaian stok oleh Kasir',
+                    ]);
+                }
+
+                ActivityLog::record(
+                    $request->user(),
+                    'Product',
+                    'update',
+                    'Menyesuaikan stok produk "'.$product->name.'" dari '.$before.' menjadi '.$product->stock.'.',
+                    Product::class,
+                    $product->id
+                );
+            });
+
+            return response()->json($product->fresh()->load('category'));
+        }
+
         $data=$request->validate(['name'=>'required|string|max:255','category_id'=>['required','exists:categories,id',Rule::exists('categories','id')->where(fn($query) => $query->where('is_active', true))],'unit'=>'required|string|max:50','price'=>'required|numeric|min:0','stock'=>'required|integer|min:0','min_stock'=>'required|integer|min:0','is_active'=>'required|boolean']);
         DB::transaction(function() use($data,$product,$request){
+            $product = Product::lockForUpdate()->findOrFail($product->id);
             $before=$product->stock; $product->update($data);
             if($before!==$product->stock) StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>$product->stock>$before?'IN':'OUT','quantity'=>$product->stock-$before,'stock_before'=>$before,'stock_after'=>$product->stock,'reference_type'=>'adjustment','note'=>'Penyesuaian stok manual']);
             ActivityLog::record($request->user(), 'Product', 'update', 'Memperbarui produk "'.$product->name.'".' . ($before !== $product->stock ? ' Stok berubah dari '.$before.' menjadi '.$product->stock.'.' : ''), Product::class, $product->id);
