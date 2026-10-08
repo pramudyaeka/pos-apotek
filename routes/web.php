@@ -26,6 +26,7 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::post('/user',[UserController::class,'store'])->name('user.store');
     Route::put('/user/{user}',[UserController::class,'update'])->name('user.update');
     Route::delete('/user/{user}',[UserController::class,'destroy'])->name('user.destroy');
+    Route::post('/user/{user}/reset-password',[UserController::class,'resetPassword'])->name('user.reset-password');
 
     Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
     Route::get('/transaction/{sale}/receipt',[SaleController::class,'receipt'])->name('transaction.receipt');
@@ -33,6 +34,8 @@ Route::middleware(['auth','role:Owner'])->group(function () {
 });
 
 Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
+    Route::get('/password', [UserController::class, 'password'])->name('password.edit');
+    Route::put('/password', [UserController::class, 'changePassword'])->name('password.update');
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/cashier', fn() => redirect()->route('orders'))->name('cashier');
     Route::get('/orders',[OrderController::class,'index'])->name('orders');
