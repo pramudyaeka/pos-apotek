@@ -107,6 +107,13 @@
                     @endif
                 </nav>
 
+                <div class="px-4 md:px-2 lg:px-4 pb-3 shrink-0">
+                    <a href="{{ route('password.edit') }}" class="nav-link {{ request()->routeIs('password.edit') ? 'active' : '' }}">
+                        <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                        <span>Ubah Password</span>
+                    </a>
+                </div>
+
                 <div class="p-3 border-t border-gray-100 shrink-0">
                     <div
                         class="flex items-center gap-3 md:justify-center lg:justify-start px-2.5 py-2.5 rounded-xl hover:bg-gray-50 transition">
