@@ -10,7 +10,14 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
+
         $query = ActivityLog::with('user')->latest();
+
+        // Owner dapat melihat seluruh riwayat, sedangkan Cashier hanya riwayat miliknya.
+        if ($user?->isCashier()) {
+            $query->where('user_id', $user->id);
+        }
 
         if ($request->filled('module') && $request->module !== 'all') {
             $query->where('module', $request->module);
@@ -32,6 +39,11 @@ class HistoryController extends Controller
         $activities = $query->paginate(20)->withQueryString();
 
         $stockQuery = StockMovement::with(['product', 'user'])->latest();
+
+        // Riwayat pergerakan stok Cashier juga dibatasi pada aktivitas akun sendiri.
+        if ($user?->isCashier()) {
+            $stockQuery->where('user_id', $user->id);
+        }
 
         if ($request->filled('stock_type') && $request->stock_type !== 'all') {
             $stockQuery->where('type', $request->stock_type);
