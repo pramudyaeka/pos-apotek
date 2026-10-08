@@ -154,6 +154,22 @@
             btn.disabled=!cart.length || orderSubmitting; updateProductBadges();
         }
         function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productId);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
+        function parseRupiah(value){return Number(String(value||'').replace(/[^0-9]/g,''))||0;}
+        function setPaymentAmount(value){
+            const input=document.getElementById('swalPaymentAmount');
+            if(!input)return;
+            input.value=value ? formatRupiah(value).replace('Rp ','') : '';
+            input.dispatchEvent(new Event('input',{bubbles:true}));
+            input.focus();
+        }
+        function updatePaymentChange(total){
+            const input=document.getElementById('swalPaymentAmount');
+            const change=document.getElementById('swalChangeAmount');
+            if(!input||!change)return;
+            const amount=parseRupiah(input.value), difference=amount-total;
+            change.textContent=formatRupiah(Math.max(0,difference));
+            change.className='text-base font-semibold '+(difference>=0?'text-[#1F4D3D]':'text-red-600');
+        }
         async function confirmOrder(total, paymentMethod) {
             const paymentLabel = paymentMethod === 'Cash' ? 'Tunai' : paymentMethod;
             if (paymentMethod !== 'Cash') {
@@ -168,24 +184,46 @@
                 return result.isConfirmed;
             }
 
+            const quickAmounts = [1000,2000,5000,10000,20000,50000,100000,200000,500000];
             const result = await Swal.fire({
-                icon: 'question', title: 'Konfirmasi Pembayaran',
-                html: '<div class="text-left"><div class="flex items-center justify-between rounded-xl bg-[#F5F6F4] px-4 py-3 mb-4"><span class="text-sm text-gray-500">Total belanja</span><strong class="text-lg text-gray-900">' + formatRupiah(total) + '</strong></div><label for="swalPaymentAmount" class="block text-sm font-medium text-gray-700 mb-1.5">Jumlah uang diterima</label><input id="swalPaymentAmount" type="number" min="' + total + '" step="100" inputmode="numeric" class="swal2-input !m-0 !w-full !rounded-xl !border-gray-200 focus:!border-[#1F4D3D] focus:!ring-[#1F4D3D]" placeholder="Masukkan nominal"><div class="flex items-center justify-between mt-3 px-1"><span class="text-sm text-gray-500">Kembalian</span><strong id="swalChangeAmount" class="text-base text-[#1F4D3D]">Rp 0</strong></div></div>',
+                icon: 'question',
+                title: 'Konfirmasi Pembayaran',
+                html: '<div class="text-left">' +
+                    '<div class="flex items-center justify-between rounded-xl bg-[#F5F6F4] px-4 py-3 mb-4"><span class="text-sm text-gray-500">Total belanja</span><strong class="text-lg text-gray-900">' + formatRupiah(total) + '</strong></div>' +
+                    '<label for="swalPaymentAmount" class="block text-sm font-medium text-gray-700 mb-1.5">Jumlah uang diterima</label>' +
+                    '<div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-500">Rp</span><input id="swalPaymentAmount" type="text" inputmode="numeric" autocomplete="off" class="swal2-input !m-0 !w-full !rounded-xl !border-gray-200 !pl-10 !pr-3 focus:!border-[#1F4D3D] focus:!ring-[#1F4D3D]" placeholder="0"></div>' +
+                    '<p class="text-xs text-gray-400 mt-1.5">Nominal akan otomatis menggunakan format Rupiah.</p>' +
+                    '<div class="mt-3"><p class="text-xs font-medium text-gray-500 mb-2">Nominal cepat</p><div class="grid grid-cols-3 gap-2">' +
+                    quickAmounts.map(amount => '<button type="button" data-quick-amount="' + amount + '" class="quick-payment-amount px-2 py-2 rounded-lg border border-gray-200 bg-white text-xs font-semibold text-gray-700 hover:border-[#1F4D3D] hover:text-[#1F4D3D] transition">' + formatRupiah(amount) + '</button>').join('') +
+                    '</div><button type="button" id="exactPaymentAmount" class="w-full mt-2 px-3 py-2 rounded-lg border border-dashed border-[#1F4D3D]/40 bg-[#1F4D3D]/5 text-xs font-semibold text-[#1F4D3D] hover:bg-[#1F4D3D]/10 transition">Uang Pas (' + formatRupiah(total) + ')</button></div>' +
+                    '<div class="flex items-center justify-between mt-4 px-1"><span class="text-sm text-gray-500">Kembalian</span><strong id="swalChangeAmount" class="text-base font-semibold text-[#1F4D3D]">Rp 0</strong></div></div>',
                 showCancelButton: true, confirmButtonText: 'Ya, buat pesanan', cancelButtonText: 'Batal',
                 reverseButtons: true, focusConfirm: false, buttonsStyling: false,
                 customClass: { popup: 'rounded-2xl', confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1', cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1' },
                 didOpen: () => {
                     const input = document.getElementById('swalPaymentAmount');
-                    const change = document.getElementById('swalChangeAmount');
                     input?.addEventListener('input', () => {
-                        const amount = Number(input.value || 0), difference = amount - total;
-                        change.textContent = formatRupiah(Math.max(0, difference));
-                        change.className = 'text-base ' + (difference >= 0 ? 'text-[#1F4D3D]' : 'text-red-600');
+                        const cursorPosition = input.selectionStart;
+                        const digitsBeforeCursor = String(input.value).slice(0,cursorPosition).replace(/[^0-9]/g,'').length;
+                        const formatted = parseRupiah(input.value).toLocaleString('id-ID');
+                        input.value = formatted;
+                        let newCursor = formatted.length;
+                        let digitCount = 0;
+                        for(let i=0;i<formatted.length;i++){
+                            if(/[0-9]/.test(formatted[i])) digitCount++;
+                            if(digitCount>=digitsBeforeCursor){newCursor=i+1;break;}
+                        }
+                        input.setSelectionRange(newCursor,newCursor);
+                        updatePaymentChange(total);
                     });
+                    document.querySelectorAll('.quick-payment-amount').forEach(button => {
+                        button.addEventListener('click', () => setPaymentAmount(Number(button.dataset.quickAmount)));
+                    });
+                    document.getElementById('exactPaymentAmount')?.addEventListener('click', () => setPaymentAmount(total));
                     input?.focus();
                 },
                 preConfirm: () => {
-                    const amount = Number(document.getElementById('swalPaymentAmount')?.value || 0);
+                    const amount = parseRupiah(document.getElementById('swalPaymentAmount')?.value);
                     if (!amount) { Swal.showValidationMessage('Masukkan jumlah uang yang diterima.'); return false; }
                     if (amount < total) { Swal.showValidationMessage('Jumlah uang kurang dari total pembayaran.'); return false; }
                     return { amount, change: amount - total };
@@ -193,7 +231,6 @@
             });
             return result.isConfirmed ? result.value : false;
         }
-
         async function placeOrder(){
             if(!cart.length){showToast('Tambahkan minimal satu produk ke pesanan.','warning');return;} if(orderSubmitting)return;
             const paymentMethod=document.getElementById('paymentMetode').value;
