@@ -25,7 +25,7 @@ class ReportingController extends Controller
         $payments = $report['payments'];
         $topProducts = $report['topProducts'];
 
-        $filename = 'laporan-penjualan-' . $from->format('Y-m-d') . '-' . $to->format('Y-m-d') . '.xls';
+        $filename = 'Laporan Penjualan - ' . $from->translatedFormat('F Y') . '.xls';
 
         $e = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 
