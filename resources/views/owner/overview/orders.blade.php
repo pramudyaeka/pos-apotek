@@ -40,7 +40,7 @@
         {{-- Grid produk --}}
         <div class="min-w-0">
             <div class="mb-3 flex items-center justify-between"><p id="productResultCount" class="text-xs text-gray-400">{{ $products->count() }} produk tersedia</p><button type="button" onclick="clearCart()" class="text-xs font-semibold text-gray-500 hover:text-red-600 transition">Kosongkan keranjang</button></div>
-            <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 pb-2">
+            <div id="productGrid" class="grid grid-cols-2 min-[860px]:grid-cols-3 gap-3 min-[860px]:gap-4 min-h-0 max-h-[calc(100vh-210px)] overflow-y-auto pr-1 pb-2">
             @foreach ($products as $p)
                 @php $slug = \Illuminate\Support\Str::slug($p->name); $initials = strtoupper(substr($p->name, 0, 2)); @endphp
                 <button type="button" data-product-id="{{ $p->id }}" data-product-name="{{ $p->name }}" data-product-price="{{ $p->price }}"
@@ -192,8 +192,8 @@
                     '<div class="flex items-center justify-between rounded-xl bg-[#F5F6F4] px-4 py-3 mb-4"><span class="text-sm text-gray-500">Total belanja</span><strong class="text-lg text-gray-900">' + formatRupiah(total) + '</strong></div>' +
                     '<label for="swalPaymentAmount" class="block text-sm font-medium text-gray-700 mb-1.5">Jumlah uang diterima</label>' +
                     '<div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-500">Rp</span><input id="swalPaymentAmount" type="text" inputmode="numeric" autocomplete="off" class="swal2-input !m-0 !w-full !rounded-xl !border-gray-200 !pl-10 !pr-3 focus:!border-[#1F4D3D] focus:!ring-[#1F4D3D]" placeholder="0"></div>' +
-                    '<p class="text-xs text-gray-400 mt-1.5">Nominal akan otomatis menggunakan format Rupiah.</p>' +
-                    '<div class="mt-3"><p class="text-xs font-medium text-gray-500 mb-2">Nominal cepat</p><div class="grid grid-cols-3 gap-2">' +
+                    '' +
+                    '<div class="mt-3"><p class="text-xs font-medium text-gray-500 mb-2">Nominal cepat</p><div class="grid grid-cols-3 gap-1.5">'
                     quickAmounts.map(amount => '<button type="button" data-quick-amount="' + amount + '" class="quick-payment-amount px-2 py-2 rounded-lg border border-gray-200 bg-white text-xs font-semibold text-gray-700 hover:border-[#1F4D3D] hover:text-[#1F4D3D] transition">' + formatRupiah(amount) + '</button>').join('') +
                     '</div><button type="button" id="exactPaymentAmount" class="w-full mt-2 px-3 py-2 rounded-lg border border-dashed border-[#1F4D3D]/40 bg-[#1F4D3D]/5 text-xs font-semibold text-[#1F4D3D] hover:bg-[#1F4D3D]/10 transition">Uang Pas (' + formatRupiah(total) + ')</button></div>' +
                     '<div class="flex items-center justify-between mt-4 px-1"><span class="text-sm text-gray-500">Kembalian</span><strong id="swalChangeAmount" class="text-base font-semibold text-[#1F4D3D]">Rp 0</strong></div></div>',
