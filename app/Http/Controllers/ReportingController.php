@@ -24,6 +24,7 @@ class ReportingController extends Controller
         $summary = $report['summary'];
         $payments = $report['payments'];
         $topProducts = $report['topProducts'];
+        $sales = $report['sales'];
 
         $filename = 'Laporan Penjualan - ' . $from->translatedFormat('F Y') . '.xls';
 
@@ -47,6 +48,18 @@ class ReportingController extends Controller
         $html .= '<tr><td>Total Transaksi</td><td class="number">' . number_format($summary['orders']) . '</td></tr>';
         $html .= '<tr><td>Pendapatan</td><td class="number">Rp ' . number_format($summary['revenue'], 0, ',', '.') . '</td></tr>';
         $html .= '<tr><td>Rata-rata Transaksi</td><td class="number">Rp ' . number_format($summary['average'], 0, ',', '.') . '</td></tr>';
+        $html .= '</table>';
+
+        $html .= '<h2>Daftar Transaksi</h2><table>';
+        $html .= '<tr><th>No.</th><th>Nomor Faktur</th><th>Tanggal</th><th>Kasir</th><th>Pembayaran</th><th>Total</th></tr>';
+        foreach ($sales as $index => $sale) {
+            $method = $sale->payment_method === 'Cash' ? 'Tunai' : $sale->payment_method;
+            $cashier = $sale->user?->name ?? 'Sistem';
+            $html .= '<tr><td class="number">' . ($index + 1) . '</td><td>' . $e($sale->invoice_number) . '</td><td>' . $e($sale->created_at->format('d M Y H:i')) . '</td><td>' . $e($cashier) . '</td><td>' . $e($method) . '</td><td class="number">Rp ' . number_format($sale->total, 0, ',', '.') . '</td></tr>';
+        }
+        if ($sales->isEmpty()) {
+            $html .= '<tr><td colspan="6">Belum ada transaksi pada periode ini.</td></tr>';
+        }
         $html .= '</table>';
 
         $html .= '<h2>Metode Pembayaran</h2><table>';
@@ -106,6 +119,12 @@ class ReportingController extends Controller
             ->orderByDesc('total')
             ->get();
 
+        $sales = (clone $salesQuery)
+            ->with('user:id,name')
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get();
+
         $topProducts = SaleItem::query()
             ->join('sales', 'sales.id', '=', 'sale_items.sale_id')
             ->whereBetween('sales.created_at', [$from, $to])
@@ -115,6 +134,6 @@ class ReportingController extends Controller
             ->limit(10)
             ->get();
 
-        return compact('from', 'to', 'summary', 'payments', 'topProducts');
+        return compact('from', 'to', 'summary', 'payments', 'topProducts', 'sales');
     }
 }
