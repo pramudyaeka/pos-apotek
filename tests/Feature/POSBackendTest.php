@@ -266,3 +266,171 @@ it('limits cashier history to the cashier own activity and stock movements', fun
         ->assertDontSee('Owner Product')
         ->assertSee('Cashier Product');
 });
+
+
+it('allows cashier to view inventory and adjust stock but not manage master data', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Stock Test', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Stock Product',
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 10,
+        'min_stock' => 2,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($cashier)->get(route('product'))->assertOk();
+    $this->actingAs($cashier)->get(route('category'))->assertOk();
+
+    $this->actingAs($cashier)->postJson(route('product.store'), [
+        'name' => 'Unauthorized Product',
+        'category_id' => $category->id,
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 1,
+        'min_stock' => 1,
+        'is_active' => true,
+    ])->assertForbidden();
+
+    $this->actingAs($cashier)->postJson(route('category.store'), [
+        'name' => 'Unauthorized Category',
+        'is_active' => true,
+    ])->assertForbidden();
+
+    $this->actingAs($cashier)->putJson(route('product.update', $product), [
+        'stock' => 7,
+    ])->assertOk();
+
+    expect($product->fresh()->stock)->toBe(7);
+    $this->assertDatabaseHas('stock_movements', [
+        'product_id' => $product->id,
+        'user_id' => $cashier->id,
+        'type' => 'OUT',
+        'quantity' => -3,
+    ]);
+
+    $this->actingAs($cashier)->putJson(route('category.update', $category), [
+        'name' => 'Changed Category',
+        'is_active' => true,
+    ])->assertForbidden();
+});
+
+it('blocks deleting a user who already has sales and recommends deactivation', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Delete Test', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Delete Product',
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 5,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($cashier)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'amount_received' => 10000,
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated();
+
+    $this->actingAs($owner)->deleteJson(route('user.destroy', $cashier))
+        ->assertStatus(422)
+        ->assertJsonFragment(['message' => 'Akun ini sudah memiliki transaksi. Nonaktifkan akun agar riwayat transaksi tetap tersimpan.']);
+
+    expect($cashier->fresh())->not->toBeNull();
+});
+
+it('persists cash received and change amounts on a sale', function () {
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Payment Test', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Payment Product',
+        'unit' => 'Tablet',
+        'price' => 7000,
+        'stock' => 5,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $response = $this->actingAs($cashier)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'amount_received' => 10000,
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated();
+
+    $saleId = $response->json('id');
+    $this->assertDatabaseHas('sales', [
+        'id' => $saleId,
+        'amount_received' => 10000,
+        'change_amount' => 3000,
+    ]);
+
+    $response->assertJsonPath('change_amount', 3000);
+});
+
+it('limits cashier receipt access to their own sale', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Receipt Test', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Receipt Product',
+        'unit' => 'Tablet',
+        'price' => 6000,
+        'stock' => 5,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $ownerSale = $this->actingAs($owner)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'amount_received' => 10000,
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated()->json('id');
+
+    $cashierSale = $this->actingAs($cashier)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'amount_received' => 10000,
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated()->json('id');
+
+    $this->actingAs($cashier)->get(route('transaction.receipt', $cashierSale))->assertOk();
+    $this->actingAs($cashier)->get(route('transaction.receipt', $ownerSale))->assertForbidden();
+});
+
+it('filters transaction history on the server before pagination', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Filter Test', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Filter Product',
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 20,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($owner)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'amount_received' => 10000,
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated();
+
+    $this->actingAs($owner)->postJson(route('sales.store'), [
+        'payment_method' => 'QRIS',
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated();
+
+    $this->actingAs($owner)
+        ->get(route('transaction', ['payment_method' => 'QRIS']))
+        ->assertOk()
+        ->assertSee('QRIS')
+        ->assertDontSee('Tunai');
+});
