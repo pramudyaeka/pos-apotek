@@ -4,6 +4,7 @@ use App\Models\ActivityLog;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\StockMovement;
+use App\Models\Sale;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -422,15 +423,17 @@ it('filters transaction history on the server before pagination', function () {
         'amount_received' => 10000,
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertCreated();
+    $cashInvoice = Sale::where('payment_method', 'Cash')->latest('id')->value('invoice_number');
 
     $this->actingAs($owner)->postJson(route('sales.store'), [
         'payment_method' => 'QRIS',
         'items' => [['product_id' => $product->id, 'quantity' => 1]],
     ])->assertCreated();
+    $qrisInvoice = Sale::where('payment_method', 'QRIS')->latest('id')->value('invoice_number');
 
     $this->actingAs($owner)
         ->get(route('transaction', ['payment_method' => 'QRIS']))
         ->assertOk()
-        ->assertSee('QRIS')
-        ->assertDontSee('Tunai');
+        ->assertSee($qrisInvoice)
+        ->assertDontSee($cashInvoice);
 });
