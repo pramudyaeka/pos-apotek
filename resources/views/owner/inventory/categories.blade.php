@@ -3,6 +3,7 @@
 @section('content')
 
     <div x-data="categoriesLogic()">
+        @php($isOwner = auth()->user()->isOwner())
 
         {{-- Breadcrumb --}}
         <p class="text-sm text-gray-400 mb-2">
@@ -31,6 +32,7 @@
                 <select x-model="statusFilter" aria-label="Filter status kategori" class="px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1F4D3D]/20">
                     <option value="all">Semua status</option><option value="active">Aktif</option><option value="inactive">Tidak Aktif</option>
                 </select>
+                @if($isOwner)
                 <button @click="openAddModal()"
                     class="px-5 py-3 text-sm font-semibold text-white bg-[#1F4D3D] hover:bg-[#173B2F] rounded-xl transition whitespace-nowrap flex items-center gap-2">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="w-4.5 h-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
