@@ -180,6 +180,7 @@
     </div>
 
     <script>
+        function escapeHtml(value){return String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);}
         document.addEventListener('alpine:init',()=>{Alpine.data('usersLogic',()=>({
             searchQuery:'',roleFilter:'all',statusFilter:'all',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
             form:{name:'',email:'',password:'',role:'Cashier',status:'Active'},
