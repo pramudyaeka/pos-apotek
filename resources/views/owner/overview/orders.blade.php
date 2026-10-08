@@ -68,7 +68,7 @@
         </div>
 
         {{-- Ringkasan order --}}
-        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-6 flex flex-col min-h-0 max-h-[calc(100vh-160px)]">
+        <div class="bg-[#F5F6F4] rounded-2xl border border-gray-100 md:sticky md:top-4 flex flex-col h-[calc(100vh-120px)] min-h-[520px] max-h-[760px]">
 
             <div class="text-center px-6 pt-6 pb-4 shrink-0">
                 <h2 class="font-['Space_Grotesk'] font-semibold text-xl text-gray-900">Ringkasan Penjualan</h2>
@@ -179,7 +179,7 @@
                     html: '<div class="text-left text-sm space-y-2"><div class="flex justify-between"><span class="text-gray-500">Total</span><strong>' + formatRupiah(total) + '</strong></div><div class="flex justify-between"><span class="text-gray-500">Pembayaran</span><strong>' + paymentLabel + '</strong></div></div>',
                     showCancelButton: true, confirmButtonText: 'Ya, buat pesanan', cancelButtonText: 'Batal',
                     reverseButtons: true, focusCancel: true, buttonsStyling: false,
-                    customClass: { popup: 'rounded-2xl', confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1', cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1' }
+                    customClass: { popup: 'rounded-2xl !w-[min(92vw,460px)] !max-w-[460px]', htmlContainer: '!overflow-visible', confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1', cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1' }
                 });
                 return result.isConfirmed;
             }
@@ -199,7 +199,7 @@
                     '<div class="flex items-center justify-between mt-4 px-1"><span class="text-sm text-gray-500">Kembalian</span><strong id="swalChangeAmount" class="text-base font-semibold text-[#1F4D3D]">Rp 0</strong></div></div>',
                 showCancelButton: true, confirmButtonText: 'Ya, buat pesanan', cancelButtonText: 'Batal',
                 reverseButtons: true, focusConfirm: false, buttonsStyling: false,
-                customClass: { popup: 'rounded-2xl', confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1', cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1' },
+                customClass: { popup: 'rounded-2xl !w-[min(92vw,460px)] !max-w-[460px]', htmlContainer: '!overflow-visible', confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1', cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1' },
                 didOpen: () => {
                     const input = document.getElementById('swalPaymentAmount');
                     input?.addEventListener('input', () => {
