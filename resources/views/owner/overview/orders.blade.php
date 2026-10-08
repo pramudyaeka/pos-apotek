@@ -154,14 +154,60 @@
             btn.disabled=!cart.length || orderSubmitting; updateProductBadges();
         }
         function updateProductBadges(){document.querySelectorAll('[data-product-slug]').forEach(card=>{const item=cart.find(i=>i.product_id===Number(card.dataset.productId)),badge=document.getElementById('badge-'+card.dataset.productId);if(item){badge.textContent=item.qty;badge.classList.remove('hidden');badge.classList.add('flex');}else{badge.classList.add('hidden');badge.classList.remove('flex');}});}
+        async function confirmOrder(total, paymentMethod) {
+            const paymentLabel = paymentMethod === 'Cash' ? 'Tunai' : paymentMethod;
+            if (paymentMethod !== 'Cash') {
+                const result = await Swal.fire({
+                    icon: 'question',
+                    title: 'Konfirmasi Pesanan',
+                    html: '<div class="text-left text-sm space-y-2"><div class="flex justify-between"><span class="text-gray-500">Total</span><strong>' + formatRupiah(total) + '</strong></div><div class="flex justify-between"><span class="text-gray-500">Pembayaran</span><strong>' + paymentLabel + '</strong></div></div>',
+                    showCancelButton: true, confirmButtonText: 'Ya, buat pesanan', cancelButtonText: 'Batal',
+                    reverseButtons: true, focusCancel: true, buttonsStyling: false,
+                    customClass: { popup: 'rounded-2xl', confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1', cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1' }
+                });
+                return result.isConfirmed;
+            }
+
+            const result = await Swal.fire({
+                icon: 'question', title: 'Konfirmasi Pembayaran',
+                html: '<div class="text-left"><div class="flex items-center justify-between rounded-xl bg-[#F5F6F4] px-4 py-3 mb-4"><span class="text-sm text-gray-500">Total belanja</span><strong class="text-lg text-gray-900">' + formatRupiah(total) + '</strong></div><label for="swalPaymentAmount" class="block text-sm font-medium text-gray-700 mb-1.5">Jumlah uang diterima</label><input id="swalPaymentAmount" type="number" min="' + total + '" step="100" inputmode="numeric" class="swal2-input !m-0 !w-full !rounded-xl !border-gray-200 focus:!border-[#1F4D3D] focus:!ring-[#1F4D3D]" placeholder="Masukkan nominal"><div class="flex items-center justify-between mt-3 px-1"><span class="text-sm text-gray-500">Kembalian</span><strong id="swalChangeAmount" class="text-base text-[#1F4D3D]">Rp 0</strong></div></div>',
+                showCancelButton: true, confirmButtonText: 'Ya, buat pesanan', cancelButtonText: 'Batal',
+                reverseButtons: true, focusConfirm: false, buttonsStyling: false,
+                customClass: { popup: 'rounded-2xl', confirmButton: 'px-4 py-2.5 rounded-xl bg-[#1F4D3D] text-white font-semibold mx-1', cancelButton: 'px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-semibold mx-1' },
+                didOpen: () => {
+                    const input = document.getElementById('swalPaymentAmount');
+                    const change = document.getElementById('swalChangeAmount');
+                    input?.addEventListener('input', () => {
+                        const amount = Number(input.value || 0), difference = amount - total;
+                        change.textContent = formatRupiah(Math.max(0, difference));
+                        change.className = 'text-base ' + (difference >= 0 ? 'text-[#1F4D3D]' : 'text-red-600');
+                    });
+                    input?.focus();
+                },
+                preConfirm: () => {
+                    const amount = Number(document.getElementById('swalPaymentAmount')?.value || 0);
+                    if (!amount) { Swal.showValidationMessage('Masukkan jumlah uang yang diterima.'); return false; }
+                    if (amount < total) { Swal.showValidationMessage('Jumlah uang kurang dari total pembayaran.'); return false; }
+                    return { amount, change: amount - total };
+                }
+            });
+            return result.isConfirmed ? result.value : false;
+        }
+
         async function placeOrder(){
             if(!cart.length){showToast('Tambahkan minimal satu produk ke pesanan.','warning');return;} if(orderSubmitting)return;
+            const paymentMethod=document.getElementById('paymentMetode').value;
+            const total=cart.reduce((sum,i)=>sum+i.price*i.qty,0);
+            const confirmation=await confirmOrder(total,paymentMethod);
+            if(!confirmation)return;
+
             const btn=document.getElementById('placeOrderBtn'); const originalText=btn.textContent; orderSubmitting=true; btn.disabled=true; btn.textContent='Memproses...';
             try {
-                const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:document.getElementById('paymentMetode').value,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
+                const response=await fetch('{{ route('sales.store') }}',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify({payment_method:paymentMethod,items:cart.map(i=>({product_id:i.product_id,quantity:i.qty}))})});
                 const data=await response.json();
                 if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Transaksi gagal.','error');return;}
-                showToast('Transaksi berhasil. Nomor Faktur: '+data.invoice_number,'success',5000);
+                const changeText=paymentMethod==='Cash' && confirmation.change !== undefined ? ' Kembalian: '+formatRupiah(confirmation.change)+'.' : '';
+                showToast('Transaksi berhasil. Nomor Faktur: '+data.invoice_number+'.'+changeText,'success',6000);
                 cart=[]; document.getElementById('orderNumber').textContent='Nomor Faktur: '+data.invoice_number; renderCart();
             } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
             finally { orderSubmitting=false; btn.disabled=!cart.length; btn.textContent=originalText; }
