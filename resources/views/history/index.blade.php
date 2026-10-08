@@ -26,7 +26,7 @@
                 </select>
                 <select name="action" class="px-3 py-2 rounded-xl border border-gray-200 text-sm">
                     <option value="all">Semua aksi</option>
-                    @foreach(['create'=>'Tambah','update'=>'Perbarui','delete'=>'Hapus','sale'=>'Penjualan','login'=>'Masuk','logout'=>'Keluar'] as $value => $label)
+                    @foreach(['create'=>'Tambah','update'=>'Perbarui','delete'=>'Hapus','sale'=>'Penjualan','logout'=>'Keluar'] as $value => $label)
                         <option value="{{ $value }}" @selected(request('action') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -58,7 +58,7 @@
                             </td>
                             <td class="py-3 pr-4">
                                 <span class="px-2.5 py-1 rounded-full bg-[#1F4D3D]/10 text-[#1F4D3D] text-xs font-medium">
-                                    {{ ['create' => 'Tambah', 'update' => 'Perbarui', 'delete' => 'Hapus', 'sale' => 'Penjualan', 'login' => 'Masuk', 'logout' => 'Keluar'][$activity->action] ?? ucfirst($activity->action) }}
+                                    {{ ['create' => 'Tambah', 'update' => 'Perbarui', 'delete' => 'Hapus', 'sale' => 'Penjualan', 'logout' => 'Keluar'][$activity->action] ?? ucfirst($activity->action) }}
                                 </span>
                             </td>
                             <td class="py-3 text-gray-600">{{ $activity->description }}</td>
