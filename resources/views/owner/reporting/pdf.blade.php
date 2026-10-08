@@ -14,7 +14,7 @@
         .card{border:1px solid #e5e7eb;border-radius:10px;padding:16px}
         .label{font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:700}
         .value{font-size:19px;font-weight:700;margin-top:8px}
-        section{margin-top:22px} h2{font-size:16px;margin:0 0 10px}
+        section{margin-top:22px} .transactions{page-break-before:auto} h2{font-size:16px;margin:0 0 10px}
         table{width:100%;border-collapse:collapse;font-size:12px}
         th{background:#1F4D3D;color:#fff;text-align:left}
         th,td{border:1px solid #d1d5db;padding:8px}
@@ -22,6 +22,7 @@
         .empty{text-align:center;color:#6b7280;padding:16px}
         @media print{
             body{padding:0}
+            .transactions tr{break-inside:avoid}
             .toolbar{display:none}
             @page{size:A4;margin:14mm}
         }
@@ -42,6 +43,27 @@
         <div class="card"><div class="label">Pendapatan</div><div class="value">Rp {{ number_format($summary['revenue'], 0, ',', '.') }}</div></div>
         <div class="card"><div class="label">Rata-rata Transaksi</div><div class="value">Rp {{ number_format($summary['average'], 0, ',', '.') }}</div></div>
     </div>
+
+    <section class="transactions">
+        <h2>Daftar Transaksi</h2>
+        <table>
+            <thead><tr><th class="number">No.</th><th>Nomor Faktur</th><th>Tanggal</th><th>Kasir</th><th>Pembayaran</th><th class="number">Total</th></tr></thead>
+            <tbody>
+                @forelse($sales as $index => $sale)
+                    <tr>
+                        <td class="number">{{ $index + 1 }}</td>
+                        <td>{{ $sale->invoice_number }}</td>
+                        <td>{{ $sale->created_at->format('d M Y H:i') }}</td>
+                        <td>{{ $sale->user?->name ?? 'Sistem' }}</td>
+                        <td>{{ $sale->payment_method === 'Cash' ? 'Tunai' : $sale->payment_method }}</td>
+                        <td class="number">Rp {{ number_format($sale->total, 0, ',', '.') }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="6" class="empty">Belum ada transaksi pada periode ini.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </section>
 
     <section>
         <h2>Metode Pembayaran</h2>
