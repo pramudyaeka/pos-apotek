@@ -1,17 +1,16 @@
 @extends('layout.sidebar')
 @section('title', 'Laporan')
 @section('content')
-<div class="-m-5 md:-m-6 lg:-m-8 min-h-screen bg-[#F7F9F7] p-5 md:p-6 lg:p-8">
-    <div class="max-w-7xl mx-auto">
-        <p class="text-sm text-gray-400 mb-2">
-            Operasional <span class="mx-1">&gt;</span>
-            <span class="text-gray-900 font-medium">Laporan</span>
+<div class="max-w-7xl mx-auto">
+        <p class="text-sm text-gray-500 mb-2">
+            Analisis <span class="mx-1 text-gray-300">/</span>
+            <span class="font-medium text-gray-800" aria-current="page">Laporan</span>
         </p>
 
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6">
             <div>
-                <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Laporan</h1>
-                <p class="text-gray-500 mt-1">Ringkasan penjualan berdasarkan periode yang dipilih</p>
+                <h1 class="font-['Space_Grotesk'] text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Laporan</h1>
+                <p class="text-gray-500 mt-1.5 text-sm sm:text-base">Ringkasan penjualan berdasarkan periode yang dipilih</p>
             </div>
 
             <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2.5">
@@ -52,10 +51,13 @@
             </div>
         </div>
 
-        <div class="mb-5 flex items-center gap-2 text-xs text-gray-500">
-            <span class="w-2 h-2 rounded-full bg-[#1F4D3D]"></span>
-            Periode laporan:
-            <span class="font-semibold text-gray-700">{{ $from->format('d M Y') }} — {{ $to->format('d M Y') }}</span>
+        <div class="mb-5 rounded-xl border border-[#1F4D3D]/10 bg-white px-4 py-3 text-sm text-gray-600">
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span class="w-2 h-2 rounded-full bg-[#1F4D3D]"></span>
+                <span>Periode laporan:</span>
+                <span class="font-semibold text-gray-800">{{ $from->format('d M Y') }} — {{ $to->format('d M Y') }}</span>
+            </div>
+            <p class="mt-1.5 text-xs leading-relaxed text-gray-500">Pendapatan dan ringkasan hanya menghitung transaksi berhasil. Transaksi yang dibatalkan tidak termasuk.</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
