@@ -2,14 +2,7 @@
 @section('title', 'Ubah Password')
 @section('content')
 <div class="max-w-xl">
-    <p class="text-sm text-gray-400 mb-2">
-        Akun <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Ubah Password</span>
-    </p>
-
-    <div class="mb-6">
-        <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Ubah Password</h1>
-        <p class="text-gray-500 mt-1">Perbarui password akun Anda untuk menjaga keamanan akun.</p>
-    </div>
+    @include('components.page-header', ['eyebrow' => 'Akun', 'heading' => 'Ubah Password', 'description' => 'Perbarui password akun Anda untuk menjaga keamanan akun.'])
 
     <div class="bg-white rounded-2xl border border-gray-100 p-6 md:p-7">
         <form id="passwordForm" class="space-y-5">
