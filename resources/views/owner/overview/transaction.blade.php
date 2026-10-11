@@ -84,7 +84,7 @@
                         <tbody class="divide-y divide-gray-100">
                             <template x-for="(trx, index) in filteredTransaksis()" :key="trx.id">
                                 <tr @click="selectedTransaksi = trx"
-                                    :class="selectedTransaksi && selectedTransaksi.id === trx.id ? 'bg-[#1F4D3D]/5' : 'hover:bg-gray-50'"
+                                    :class="trx.status === 'Cancelled' ? 'bg-red-50/50 text-gray-400' : (selectedTransaksi && selectedTransaksi.id === trx.id ? 'bg-[#1F4D3D]/5' : 'hover:bg-gray-50')"
                                     class="transition-colors cursor-pointer">
                                     <td class="whitespace-nowrap text-gray-400" :class="selectedTransaksi ? 'px-3 py-2' : 'px-6 py-4'" x-text="index + 1"></td>
                                     <td class="whitespace-nowrap" :class="selectedTransaksi ? 'px-3 py-2' : 'px-6 py-4'" x-text="trx.date"></td>
@@ -140,7 +140,7 @@
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm text-gray-500">Status</span>
-                                    <span class="text-[11px] font-medium text-[#1F4D3D] bg-[#1F4D3D]/10 px-2.5 py-1 rounded-full" x-text="selectedTransaksi.status"></span>
+                                    <span class="text-[11px] font-medium px-2.5 py-1 rounded-full" :class="selectedTransaksi.status === 'Cancelled' ? 'text-red-700 bg-red-100' : 'text-[#1F4D3D] bg-[#1F4D3D]/10'" x-text="selectedTransaksi.status === 'Cancelled' ? 'Dibatalkan' : 'Berhasil'"></span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm text-gray-500">Waktu</span>
