@@ -21,7 +21,7 @@
                         <span class="text-white text-xl font-['Space_Grotesk'] leading-none">+</span>
                     </div>
                     <h1 class="font-['Space_Grotesk'] font-semibold text-2xl text-white leading-snug">
-                        Apotek Sehat<br>Sentosa
+                        Apotek Seniman<br>Farma
                     </h1>
                 </div>
 
