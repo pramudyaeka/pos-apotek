@@ -58,7 +58,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-medium text-gray-900 truncate" x-text="u.name"></p>
-                                        <p class="text-xs text-gray-400 truncate" x-text="u.email"></p>
+                                        <p class="text-xs text-gray-400 truncate" x-text="'@'+u.username"></p>
                                     </div>
                                     <span x-show="u.id === currentUserId" class="text-[10px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full shrink-0">Anda</span>
                                 </div>
@@ -132,8 +132,8 @@
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Surel</label>
-                        <input type="email" x-model="form.email" placeholder="name@apotek.com"
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                        <input type="text" x-model="form.username" placeholder="contoh: kasir01" maxlength="50"
                             class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                     </div>
                     <div>
@@ -183,21 +183,21 @@
         function escapeHtml(value){return String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);}
         document.addEventListener('alpine:init',()=>{Alpine.data('usersLogic',()=>({
             searchQuery:'',roleFilter:'all',statusFilter:'all',showModal:false,editingUser:null,currentUserId:{{ auth()->id() }},
-            form:{name:'',email:'',password:'',role:'Cashier',status:'Active'},
+            form:{name:'',username:'',password:'',role:'Cashier',status:'Active'},
             users: @json($users),
-            filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return this.users.filter(u=>(!q||(u.name+' '+u.email+' '+u.role).toLowerCase().includes(q))&&(this.roleFilter==='all'||u.role===this.roleFilter)&&(this.statusFilter==='all'||u.status===this.statusFilter));},
+            filteredUsers(){const q=this.searchQuery.trim().toLowerCase();return this.users.filter(u=>(!q||(u.name+' '+u.username+' '+u.role).toLowerCase().includes(q))&&(this.roleFilter==='all'||u.role===this.roleFilter)&&(this.statusFilter==='all'||u.status===this.statusFilter));},
             initials(name){return name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();},
             ownerCount(){return this.users.filter(u=>u.role==='Owner').length;},
             isLastOwner(user){return user.role==='Owner'&&this.ownerCount()===1;},
             canDelete(user){return user.id!==this.currentUserId&&!this.isLastOwner(user)&&Number(user.sales_count||0)===0;},
             deleteBlockedReason(user){if(user.id===this.currentUserId)return "Anda tidak dapat menghapus akun sendiri";if(this.isLastOwner(user))return "Tidak dapat menghapus akun Owner terakhir";if(Number(user.sales_count||0)>0)return "Akun sudah memiliki transaksi; nonaktifkan akun sebagai gantinya";return '';},
-            openAddModal(){this.editingUser=null;this.form={name:'',email:'',password:'',role:'Cashier',status:'Active'};this.showModal=true;},
-            openEditModal(user){this.editingUser=user;this.form={name:user.name,email:user.email,password:'',role:user.role,status:user.status};this.showModal=true;},
+            openAddModal(){this.editingUser=null;this.form={name:'',username:'',password:'',role:'Cashier',status:'Active'};this.showModal=true;},
+            openEditModal(user){this.editingUser=user;this.form={name:user.name,username:user.username,password:'',role:user.role,status:user.status};this.showModal=true;},
             closeModal(){this.showModal=false;},
             async saveUser(){
-                if(!this.form.name.trim()){showToast('Nama wajib diisi.','warning');return;}if(!this.form.email.trim()){showToast('Surel wajib diisi.','warning');return;}if(!this.editingUser&&!this.form.password.trim()){showToast('Kata Sandi wajib diisi.','warning');return;}
+                if(!this.form.name.trim()){showToast('Nama wajib diisi.','warning');return;}if(!this.form.username.trim()){showToast('Username wajib diisi.','warning');return;}if(!this.editingUser&&!this.form.password.trim()){showToast('Kata Sandi wajib diisi.','warning');return;}
                 const editing=this.editingUser,url=editing?'{{ url('/user') }}/'+editing.id:'{{ route('user.store') }}';
-                try { const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)}); const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Pengguna gagal disimpan.','error');return;} const normalized={id:data.id,name:data.name,email:data.email,role:data.role,status:data.status}; if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();showToast(editing?'Pengguna berhasil diperbarui.':'Pengguna berhasil ditambahkan.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
+                try { const response=await fetch(url,{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},body:JSON.stringify(this.form)}); const data=await response.json();if(!response.ok){showToast(data.message||Object.values(data.errors||{}).flat().join(' ')||'Pengguna gagal disimpan.','error');return;} const normalized={id:data.id,name:data.name,username:data.username,role:data.role,status:data.status}; if(editing)Object.assign(editing,normalized);else this.users.push(normalized);this.closeModal();showToast(editing?'Pengguna berhasil diperbarui.':'Pengguna berhasil ditambahkan.'); } catch (error) { showToast('Tidak dapat terhubung ke server. Silakan coba lagi.','error'); }
             },
             async resetPassword(user){
                 if(user.id===this.currentUserId)return;
