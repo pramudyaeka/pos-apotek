@@ -57,12 +57,70 @@ class SaleController extends Controller
             foreach($rows as $row){
                 $product=$row['product']; $before=$product->stock; $product->decrement('stock',$row['quantity']);
                 $sale->items()->create(['product_id'=>$product->id,'product_name'=>$product->name,'unit'=>$product->unit,'quantity'=>$row['quantity'],'unit_price'=>$product->price,'subtotal'=>$row['subtotal']]);
-                StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>'OUT','quantity'=>-$row['quantity'],'stock_before'=>$before,'stock_after'=>$before-$row['quantity'],'reference_type'=>'sale','reference_id'=>$sale->id,'note'=>'Sale '.$sale->invoice_number]);
+                StockMovement::create(['product_id'=>$product->id,'user_id'=>$request->user()->id,'type'=>'OUT','quantity'=>-$row['quantity'],'stock_before'=>$before,'stock_after'=>$before-$row['quantity'],'reference_type'=>'sale','reference_id'=>$sale->id,'note'=>'Penjualan '.$sale->invoice_number]);
             }
             ActivityLog::record($request->user(), 'Sale', 'sale', 'Membuat transaksi '.$sale->invoice_number.' sebesar Rp '.number_format($sale->total, 0, ',', '.').'.', Sale::class, $sale->id, ['payment_method' => $sale->payment_method]);
             return $sale->load('items','user');
         });
         return response()->json($sale,201);
+    }
+
+    public function cancel(Request $request, Sale $sale)
+    {
+        $cancelled = DB::transaction(function () use ($request, $sale) {
+            $lockedSale = Sale::query()->lockForUpdate()->with('items')->findOrFail($sale->id);
+
+            if ($lockedSale->status !== 'Success') {
+                return false;
+            }
+
+            foreach ($lockedSale->items as $item) {
+                if (!$item->product_id) {
+                    continue;
+                }
+
+                $product = Product::query()->lockForUpdate()->find($item->product_id);
+                if (!$product) {
+                    continue;
+                }
+
+                $before = (int) $product->stock;
+                $quantity = (int) $item->quantity;
+                $product->increment('stock', $quantity);
+
+                StockMovement::create([
+                    'product_id' => $product->id,
+                    'user_id' => $request->user()->id,
+                    'type' => 'IN',
+                    'quantity' => $quantity,
+                    'stock_before' => $before,
+                    'stock_after' => $before + $quantity,
+                    'reference_type' => 'sale_cancellation',
+                    'reference_id' => $lockedSale->id,
+                    'note' => 'Pengembalian stok dari pembatalan '.$lockedSale->invoice_number,
+                ]);
+            }
+
+            $lockedSale->update(['status' => 'Cancelled']);
+
+            ActivityLog::record(
+                $request->user(),
+                'Sale',
+                'cancel',
+                'Membatalkan transaksi '.$lockedSale->invoice_number.' dan mengembalikan stok produk.',
+                Sale::class,
+                $lockedSale->id,
+                ['previous_status' => 'Success', 'status' => 'Cancelled', 'stock_restored' => true]
+            );
+
+            return true;
+        });
+
+        if (!$cancelled) {
+            return back()->with('error', 'Transaksi ini sudah dibatalkan atau tidak dapat dibatalkan.');
+        }
+
+        return back()->with('success', 'Transaksi berhasil dibatalkan dan stok telah dikembalikan. Pembatalan ini tidak memproses pengembalian uang secara otomatis.');
     }
 
     public function index(Request $request)
@@ -109,10 +167,12 @@ class SaleController extends Controller
             'status' => $sale->status,
             'time' => $sale->created_at->format('H:i, D, d F Y'),
             'items' => $sale->items->map(fn ($item) => [
+                'product_id' => $item->product_id,
                 'name' => $item->quantity . 'x ' . $item->product_name,
                 'price' => (float) $item->subtotal,
             ])->values(),
             'receipt_url' => route('transaction.receipt', $sale),
+            'cancel_url' => route('transaction.cancel', $sale),
         ])->values();
 
         return view('owner.overview.transaction', compact('transactions', 'transactionData'));
@@ -127,5 +187,4 @@ class SaleController extends Controller
         $sale->load('items', 'user');
         return view('owner.overview.receipt', compact('sale'));
     }
-
 }
