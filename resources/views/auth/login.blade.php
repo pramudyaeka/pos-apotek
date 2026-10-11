@@ -42,14 +42,14 @@
             <div class="w-full md:w-[58%] px-8 py-10 md:px-12 flex flex-col justify-center">
                 <div class="w-full max-w-sm mx-auto">
                     <h2 class="font-['Space_Grotesk'] font-semibold text-2xl text-gray-900">Masuk</h2>
-                    <p class="text-sm text-gray-500 mt-1 mb-7">Masukkan email dan password untuk masuk ke sistem.</p>
+                    <p class="text-sm text-gray-500 mt-1 mb-7">Masukkan username dan password untuk masuk ke sistem.</p>
 
                     <form action="{{ route('login.store') }}" method="POST" class="flex flex-col">
                         @csrf
 
                         <div class="mb-4">
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                            <input type="email" id="email" name="email" autocomplete="username"
+                            <label for="username" class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                            <input type="text" id="username" name="username" autocomplete="username"
                                 class="border border-gray-300 rounded-xl py-2.5 px-4 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#1F4D3D] focus:border-transparent transition">
                         </div>
 
