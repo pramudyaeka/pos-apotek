@@ -423,7 +423,7 @@ it('cancels a sale once, restores stock, and records the cancellation', function
 
     $saleId = $this->actingAs($owner)->postJson(route('sales.store'), [
         'payment_method' => 'Cash',
-        'amount_received' => 10000,
+        'amount_received' => 20000,
         'items' => [['product_id' => $product->id, 'quantity' => 3]],
     ])->assertCreated()->json('id');
 
