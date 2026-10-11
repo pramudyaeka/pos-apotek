@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $owner=User::updateOrCreate(['email'=>'owner@apotek.com'],['name'=>'Apotek Owner','password'=>Hash::make('password'),'role'=>'Owner','status'=>'Active']);
+        $owner=User::updateOrCreate(['username'=>'owner'],['name'=>'Apotek Owner','password'=>Hash::make('password'),'role'=>'Owner','status'=>'Active']);
         $categories=['Vitamin','Antibiotic','Allergy','Cold & Flu','Digestive','Antiviral','Pain Relief'];
         foreach($categories as $name) Category::firstOrCreate(['name'=>$name],['is_active'=>true]);
         $categoryIds=Category::pluck('id','name');
@@ -24,6 +24,6 @@ class DatabaseSeeder extends Seeder
             ['name'=>'Acyclovir','category'=>'Antiviral','price'=>15000,'stock'=>10,'min_stock'=>5,'unit'=>'Tablet'],
         ];
         foreach($products as $p) Product::updateOrCreate(['name'=>$p['name']],['category_id'=>$categoryIds[$p['category']],'unit'=>$p['unit'],'price'=>$p['price'],'stock'=>$p['stock'],'min_stock'=>$p['min_stock'],'is_active'=>true]);
-        $this->command?->info('Owner: owner@apotek.com / password');
+        $this->command?->info('Owner: owner / password');
     }
 }
