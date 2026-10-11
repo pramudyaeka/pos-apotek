@@ -14,6 +14,32 @@ class UserController extends Controller
 
     public function password(){return view('account.password');}
 
+    public function profile(){return view('account.profile');}
+
+    public function updateProfile(Request $request){
+        $data=$request->validate([
+            'name'=>'required|string|max:255',
+        ],[
+            'name.required'=>'Nama wajib diisi.',
+            'name.max'=>'Nama maksimal 255 karakter.',
+        ]);
+
+        $user=$request->user();
+        $oldName=$user->name;
+        $newName=trim($data['name']);
+
+        if($newName === ''){
+            return response()->json(['message'=>'Nama wajib diisi.'],422);
+        }
+
+        if($oldName !== $newName){
+            $user->update(['name'=>$newName]);
+            ActivityLog::record($user, 'User', 'update', 'Mengubah nama akun dari "'.$oldName.'" menjadi "'.$newName.'".', User::class, $user->id);
+        }
+
+        return response()->json(['message'=>'Nama berhasil diperbarui.','name'=>$user->name]);
+    }
+
     public function changePassword(Request $request){
         $data=$request->validate([
             'current_password'=>'required|string',
