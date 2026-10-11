@@ -2,15 +2,7 @@
 @section('title', 'Penjualan')
 @section('content')
 
-    {{-- Breadcrumb --}}
-    <p class="text-sm text-gray-400 mb-2">
-        Menu Utama <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Penjualan</span>
-    </p>
-
-    <div class="mb-6">
-        <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Penjualan</h1>
-        <p class="text-gray-500 mt-1">Kelola dan pantau penjualan dalam satu halaman</p>
-    </div>
+    @include('components.page-header', ['eyebrow' => 'Operasional', 'heading' => 'Penjualan', 'description' => 'Kelola dan pantau penjualan dalam satu halaman'])
 
     {{-- Cari + live date/time --}}
     <div class="flex flex-col sm:flex-row gap-3 mb-6">
