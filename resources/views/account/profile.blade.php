@@ -2,14 +2,7 @@
 @section('title', 'Profil Akun')
 @section('content')
 <div class="max-w-xl">
-    <p class="text-sm text-gray-400 mb-2">
-        Akun <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Profil Akun</span>
-    </p>
-
-    <div class="mb-6">
-        <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Profil Akun</h1>
-        <p class="text-gray-500 mt-1">Perbarui nama yang ditampilkan di dalam sistem.</p>
-    </div>
+    @include('components.page-header', ['eyebrow' => 'Akun', 'heading' => 'Profil Akun', 'description' => 'Perbarui nama yang ditampilkan di dalam sistem.'])
 
     <div class="bg-white rounded-2xl border border-gray-100 p-6 md:p-7">
         <form id="profileForm" class="space-y-5">
