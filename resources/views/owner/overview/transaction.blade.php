@@ -14,6 +14,13 @@
             <p class="text-gray-500 mt-1">Kelola dan pantau penjualan dalam satu halaman</p>
         </div>
 
+        @if(session('success'))
+            <div class="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{{ session('error') }}</div>
+        @endif
+
         {{--
             Grid utama: tabel (kiri) + panel detail (kanan).
             Kolom kanan (380px) HANYA dialokasikan saat ada transaksi
@@ -165,6 +172,13 @@
                             <button @click="window.open(selectedTransaksi.receipt_url, '_blank')" class="w-full py-3.5 rounded-xl font-semibold text-sm text-white bg-[#1F4D3D] hover:bg-[#173B2F] transition">
                                 Cetak Struk
                             </button>
+                            <form x-show="selectedTransaksi.status === 'Success'" method="POST" :action="selectedTransaksi.cancel_url" class="mt-3" @submit="if (!confirm('Batalkan transaksi ini? Stok akan dikembalikan, tetapi pengembalian uang tidak diproses otomatis.')) $event.preventDefault()">
+                                @csrf
+                                <button type="submit" class="w-full py-3 rounded-xl border border-red-200 text-red-700 bg-white hover:bg-red-50 font-semibold text-sm transition">
+                                    Batalkan Transaksi
+                                </button>
+                            </form>
+                            <p x-show="selectedTransaksi.status === 'Cancelled'" class="mt-3 text-center text-sm text-gray-500">Transaksi telah dibatalkan. Stok sudah dikembalikan.</p>
                         </div>
                     </div>
                 </template>
