@@ -4,10 +4,7 @@
 
 @section('content')
 <div class="space-y-6">
-    <div>
-        <h1 class="text-2xl font-['Space_Grotesk'] font-semibold">Riwayat</h1>
-        <p class="text-sm text-gray-500 mt-1">Pantau aktivitas pengguna dan perubahan stok pada sistem.</p>
-    </div>
+    @include('components.page-header', ['eyebrow' => 'Pemantauan', 'heading' => 'Aktivitas Sistem', 'description' => 'Pantau aktivitas pengguna dan perubahan stok pada sistem.'])
 
     <section class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
