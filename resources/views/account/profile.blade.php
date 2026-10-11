@@ -22,10 +22,10 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-                <input type="email" value="{{ auth()->user()->email }}" disabled
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                <input type="text" value="{{ auth()->user()->username }}" disabled
                     class="w-full rounded-xl border border-gray-200 bg-gray-50 text-gray-500 px-4 py-3 text-sm cursor-not-allowed">
-                <p class="text-xs text-gray-400 mt-1.5">Email tidak dapat diubah dari menu ini.</p>
+                <p class="text-xs text-gray-400 mt-1.5">Username digunakan untuk masuk dan tidak dapat diubah dari menu ini.</p>
             </div>
 
             <div class="rounded-xl bg-[#1F4D3D]/5 border border-[#1F4D3D]/10 px-4 py-3 text-sm text-gray-600">
