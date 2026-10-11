@@ -11,14 +11,24 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->validate(['email'=>'required|email','password'=>'required|string']);
+        $credentials = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-            throw ValidationException::withMessages(['email'=>'Email atau password tidak sesuai.']);
+            throw ValidationException::withMessages([
+                'username' => 'Username atau password tidak sesuai.',
+            ]);
         }
+
         if (Auth::user()->status !== 'Active') {
             Auth::logout();
-            throw ValidationException::withMessages(['email'=>'Akun Anda sedang tidak aktif.']);
+            throw ValidationException::withMessages([
+                'username' => 'Akun Anda sedang tidak aktif.',
+            ]);
         }
+
         $user = $request->user();
 
         $request->session()->regenerate();
@@ -31,6 +41,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = $request->user();
+
         try {
             if ($user) {
                 ActivityLog::record($user, 'Authentication', 'logout', 'Pengguna '.$user->name.' keluar dari sistem.');
@@ -42,6 +53,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/');
     }
 }
