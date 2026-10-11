@@ -177,7 +177,7 @@ it('rejects inactive accounts during login', function () {
     ]);
 
     $this->from(route('login'))->post(route('login.store'), [
-        'email' => $cashier->email,
+        'username' => $cashier->username,
         'password' => 'password',
     ])->assertRedirect(route('login'))
         ->assertSessionHasErrors('username');
@@ -206,7 +206,7 @@ it('does not record a login in activity history', function () {
     ]);
 
     $this->post(route('login.store'), [
-        'email' => $owner->email,
+        'username' => $owner->username,
         'password' => 'password',
     ])->assertRedirect(route('dashboard'));
 
