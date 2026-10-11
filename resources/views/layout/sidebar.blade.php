@@ -129,7 +129,7 @@
                         <div class="flex-1 min-w-0 md:hidden lg:block">
                             <p class="text-sm font-medium truncate">{{ auth()->user()->name }}
                             </p>
-                            <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email }}</p>
+                            <p class="text-xs text-gray-400 truncate">{{ '@'.auth()->user()->username }}</p>
                         </div>
                         <form method="POST" action="{{ route('logout') }}" onsubmit="handleLogout(event, this)">
                             @csrf
