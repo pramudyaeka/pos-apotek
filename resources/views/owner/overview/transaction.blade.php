@@ -4,15 +4,7 @@
 
     <div x-data="transactionLogic()">
 
-        {{-- Breadcrumb & Header --}}
-        <p class="text-sm text-gray-400 mb-2">
-            Menu Utama <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Transaksi</span>
-        </p>
-
-        <div class="mb-6">
-            <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Transaksi</h1>
-            <p class="text-gray-500 mt-1">Kelola dan pantau penjualan dalam satu halaman</p>
-        </div>
+        @include('components.page-header', ['eyebrow' => 'Pemantauan', 'heading' => 'Riwayat Penjualan', 'description' => 'Cari transaksi, periksa detail, dan kelola pembatalan penjualan.'])
 
         @if(session('success'))
             <div class="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">{{ session('success') }}</div>
