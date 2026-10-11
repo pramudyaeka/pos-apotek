@@ -408,6 +408,81 @@ it('limits cashier receipt access to their own sale', function () {
     $this->actingAs($cashier)->get(route('transaction.receipt', $ownerSale))->assertForbidden();
 });
 
+it('cancels a sale once, restores stock, and records the cancellation', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Cancellation Test', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Cancellation Product',
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 10,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $saleId = $this->actingAs($owner)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'amount_received' => 10000,
+        'items' => [['product_id' => $product->id, 'quantity' => 3]],
+    ])->assertCreated()->json('id');
+
+    expect($product->fresh()->stock)->toBe(7);
+
+    $this->actingAs($owner)->post(route('transaction.cancel', $saleId))
+        ->assertRedirect()
+        ->assertSessionHas('success');
+
+    expect($product->fresh()->stock)->toBe(10);
+    $this->assertDatabaseHas('sales', ['id' => $saleId, 'status' => 'Cancelled']);
+    $this->assertDatabaseHas('stock_movements', [
+        'product_id' => $product->id,
+        'user_id' => $owner->id,
+        'type' => 'IN',
+        'quantity' => 3,
+        'reference_type' => 'sale_cancellation',
+        'reference_id' => $saleId,
+    ]);
+    $this->assertDatabaseHas('activity_logs', [
+        'user_id' => $owner->id,
+        'module' => 'Sale',
+        'action' => 'cancel',
+        'reference_id' => $saleId,
+    ]);
+
+    $this->actingAs($owner)->post(route('transaction.cancel', $saleId))
+        ->assertRedirect()
+        ->assertSessionHas('error');
+
+    expect($product->fresh()->stock)->toBe(10);
+    $this->assertDatabaseCount('stock_movements', 2);
+});
+
+it('does not allow a cashier to cancel a sale', function () {
+    $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
+    $cashier = User::factory()->create(['role' => 'Cashier', 'status' => 'Active']);
+    $category = Category::create(['name' => 'Permission Test', 'is_active' => true]);
+    $product = Product::create([
+        'category_id' => $category->id,
+        'name' => 'Permission Product',
+        'unit' => 'Tablet',
+        'price' => 5000,
+        'stock' => 5,
+        'min_stock' => 1,
+        'is_active' => true,
+    ]);
+
+    $saleId = $this->actingAs($cashier)->postJson(route('sales.store'), [
+        'payment_method' => 'Cash',
+        'amount_received' => 10000,
+        'items' => [['product_id' => $product->id, 'quantity' => 1]],
+    ])->assertCreated()->json('id');
+
+    $this->actingAs($cashier)->post(route('transaction.cancel', $saleId))->assertForbidden();
+    expect($product->fresh()->stock)->toBe(4);
+    $this->assertDatabaseHas('sales', ['id' => $saleId, 'status' => 'Success']);
+});
+
 it('filters transaction history on the server before pagination', function () {
     $owner = User::factory()->create(['role' => 'Owner', 'status' => 'Active']);
     $category = Category::create(['name' => 'Filter Test', 'is_active' => true]);
