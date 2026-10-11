@@ -4,15 +4,7 @@
 
     <div x-data="usersLogic()">
 
-        {{-- Breadcrumb --}}
-        <p class="text-sm text-gray-400 mb-2">
-            Administrasi <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Manajemen Pengguna</span>
-        </p>
-
-        <div class="mb-6">
-            <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Manajemen Pengguna</h1>
-            <p class="text-gray-500 mt-1">Kelola akun pengguna dan hak akses apotek.</p>
-        </div>
+        @include('components.page-header', ['eyebrow' => 'Administrasi', 'heading' => 'Manajemen Pengguna', 'description' => 'Kelola akun pengguna dan hak akses apotek.'])
 
         {{-- Search + Tambah Pengguna + Sort + Filter --}}
         <div class="flex flex-wrap lg:flex-nowrap items-center gap-3 mb-5">
