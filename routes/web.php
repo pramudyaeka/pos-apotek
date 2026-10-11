@@ -39,6 +39,8 @@ Route::middleware(['auth','role:Owner'])->group(function () {
 });
 
 Route::middleware(['auth','role:Owner,Cashier'])->group(function () {
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile.edit');
+    Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::get('/password', [UserController::class, 'password'])->name('password.edit');
     Route::put('/password', [UserController::class, 'changePassword'])->name('password.update');
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
