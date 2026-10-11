@@ -49,7 +49,7 @@
                         <div class="w-8 h-8 rounded-lg bg-[#1F4D3D] flex items-center justify-center shrink-0">
                             <span class="text-white text-sm font-['Space_Grotesk'] leading-none">+</span>
                         </div>
-                        <span class="font-['Space_Grotesk'] font-semibold text-lg md:hidden lg:inline">Apotek</span>
+                        <span class="font-['Space_Grotesk'] font-semibold text-lg md:hidden lg:inline">Seniman Farma</span>
                     </div>
 
                     {{-- Tombol tutup, hanya tampil di mode drawer mobile --}}
