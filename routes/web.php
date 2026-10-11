@@ -19,9 +19,7 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
 
     Route::delete('/category/{category}',[CategoryController::class,'destroy'])->name('category.destroy');
-
     Route::delete('/product/{product}',[ProductController::class,'destroy'])->name('product.destroy');
-
     Route::post('/category',[CategoryController::class,'store'])->name('category.store');
     Route::put('/category/{category}',[CategoryController::class,'update'])->name('category.update');
     Route::post('/product',[ProductController::class,'store'])->name('product.store');
@@ -33,6 +31,7 @@ Route::middleware(['auth','role:Owner'])->group(function () {
     Route::post('/user/{user}/reset-password',[UserController::class,'resetPassword'])->name('user.reset-password');
 
     Route::get('/transaction',[SaleController::class,'index'])->name('transaction');
+    Route::post('/transaction/{sale}/cancel',[SaleController::class,'cancel'])->name('transaction.cancel');
     Route::get('/reporting', [ReportingController::class, 'index'])->name('reporting');
     Route::get('/reporting/export/excel', [ReportingController::class, 'exportExcel'])->name('reporting.export.excel');
     Route::get('/reporting/export/pdf', [ReportingController::class, 'exportPdf'])->name('reporting.export.pdf');
