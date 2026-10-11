@@ -107,7 +107,11 @@
                     @endif
                 </nav>
 
-                <div class="px-4 md:px-2 lg:px-4 pb-3 shrink-0">
+                <div class="px-4 md:px-2 lg:px-4 pb-3 shrink-0 space-y-1">
+                    <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                        <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+                        <span>Profil Akun</span>
+                    </a>
                     <a href="{{ route('password.edit') }}" class="nav-link {{ request()->routeIs('password.edit') ? 'active' : '' }}">
                         <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
                         <span>Ubah Password</span>
