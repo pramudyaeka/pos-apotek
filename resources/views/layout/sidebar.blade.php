@@ -18,7 +18,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-['Inter'] antialiased bg-white text-gray-900">
+<body class="font-['Inter'] antialiased bg-[#F7F9F7] text-gray-900">
     <div class="flex min-h-screen">
 
         {{-- Overlay gelap, hanya aktif saat drawer mobile terbuka --}}
@@ -168,7 +168,7 @@
                     </div>
                 </div>
 
-                <main class="flex-1 p-5 md:p-6 lg:p-8">
+                <main class="flex-1 min-w-0 p-4 sm:p-5 md:p-6 lg:p-8">
                     @yield('content')
                 </main>
             </div>
@@ -184,6 +184,17 @@
     @endif
 
     <style>
+        /* Shared keyboard focus and interaction states across the app. */
+        :where(a, button, input, select, textarea):focus-visible {
+            outline: 3px solid rgba(31, 77, 61, 0.35);
+            outline-offset: 2px;
+        }
+
+        ::selection {
+            background: rgba(31, 77, 61, 0.16);
+            color: #173B2F;
+        }
+
         .nav-link {
             display: flex;
             align-items: center;
@@ -231,13 +242,13 @@
 
         @media (min-width: 768px) and (max-width: 1023px) {
             .nav-link {
-                min-height: 62px;
+                min-height: 68px;
                 padding: 0.5rem 0.25rem;
                 flex-direction: column;
                 justify-content: center;
                 gap: 0.25rem;
-                font-size: 0.625rem;
-                line-height: 0.875rem;
+                font-size: 0.6875rem;
+                line-height: 1rem;
                 text-align: center;
             }
 
