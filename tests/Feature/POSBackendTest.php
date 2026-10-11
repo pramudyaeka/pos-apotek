@@ -13,7 +13,7 @@ uses(RefreshDatabase::class);
 it('allows an owner to sign in and access protected pages', function () {
     $owner=User::factory()->create(['role'=>'Owner','status'=>'Active','password'=>'password']);
 
-    $this->post(route('login.store'),['email'=>$owner->email,'password'=>'password'])
+    $this->post(route('login.store'),['username'=>$owner->username,'password'=>'password'])
         ->assertRedirect(route('dashboard'));
 
     $this->actingAs($owner)->get(route('product'))->assertOk();
@@ -180,7 +180,7 @@ it('rejects inactive accounts during login', function () {
         'email' => $cashier->email,
         'password' => 'password',
     ])->assertRedirect(route('login'))
-        ->assertSessionHasErrors('email');
+        ->assertSessionHasErrors('username');
 
     expect(auth()->check())->toBeFalse();
 });
