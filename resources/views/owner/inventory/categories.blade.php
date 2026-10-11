@@ -5,15 +5,7 @@
     <div x-data="categoriesLogic()">
         @php($isOwner = auth()->user()->isOwner())
 
-        {{-- Breadcrumb --}}
-        <p class="text-sm text-gray-400 mb-2">
-            Menu Utama <span class="mx-1">&gt;</span> <span class="text-gray-900 font-medium">Kategori</span>
-        </p>
-
-        <div class="mb-6">
-            <h1 class="font-['Space_Grotesk'] font-bold text-3xl text-gray-900">Kategori</h1>
-            <p class="text-gray-500 mt-1">Kelola kategori produk apotek.</p>
-        </div>
+        @include('components.page-header', ['eyebrow' => 'Persediaan', 'heading' => 'Kategori', 'description' => 'Kelola kategori produk apotek.'])
 
         {{-- Cari + Tambah Kategori + Urutkan + Filter --}}
         <div class="flex flex-wrap lg:flex-nowrap items-center gap-3 mb-5">
